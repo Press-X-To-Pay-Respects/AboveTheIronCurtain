@@ -4,7 +4,7 @@ function preload() {
 }
  
 function create() {
-   console.log("run succsess");
+   console.log("run success");
 }
  
 function update() {
