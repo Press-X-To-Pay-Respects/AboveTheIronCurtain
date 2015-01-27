@@ -1,1 +1,11 @@
-console.log('This would be the main JS file.');
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+ 
+function preload() {
+}
+ 
+function create() {
+   console.log("run succsess");
+}
+ 
+function update() {
+}
