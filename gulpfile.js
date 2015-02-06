@@ -75,6 +75,12 @@ gulp.task('compile', ['clean'], function () {
   return bundlee();
 });
 
+gulp.task('lint', function() {
+   return gulp.src('src/js/**/*.js')
+      .pipe(jshint())
+      .pipe(jshint.reporter('jshint-stylish'));
+});
+
 gulp.task('minifycss', ['clean'], function () {
  gulp.src(paths.css)
     .pipe(gulpif(!watching, minifycss({
@@ -120,4 +126,4 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', ['connect', 'watch', 'build']);
-gulp.task('build', ['clean', 'copy', 'copylibs', 'compile', 'minifycss', 'processhtml', 'minifyhtml']);
+gulp.task('build', ['lint', 'clean', 'copy', 'copylibs', 'compile', 'minifycss', 'processhtml', 'minifyhtml']);
