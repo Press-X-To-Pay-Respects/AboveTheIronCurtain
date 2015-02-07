@@ -21,6 +21,6 @@ Menu.prototype = {
   },
 
   onDown: function () {
-    // this.game.state.start(playerState.currentLevel);
+    this.game.state.start(playerState.currentLevel);
   }
 };
