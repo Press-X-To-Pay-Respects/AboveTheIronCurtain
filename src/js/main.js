@@ -1,6 +1,6 @@
 'use strict';
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'atic-game');
+var game = new Phaser.Game(800, 800, Phaser.AUTO, 'atic-game');
 
 window.Utils = require('./utils');
 window.playerState = {

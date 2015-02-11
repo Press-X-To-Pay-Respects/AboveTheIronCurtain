@@ -1,3 +1,7 @@
+/*
+Defines a cube module for a cubesat.
+*/
+
 var Cube = function (game, x, y) {
     Phaser.Sprite.call(this, game, x, y, 'testsprite');
     game.add.existing(this);
