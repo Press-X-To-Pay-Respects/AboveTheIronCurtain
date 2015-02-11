@@ -4,6 +4,8 @@ Main testing environment.
 
 var Cube = require('../entities/cube');
 
+var Utils = require('../utils');
+
 var mouseBody; // physics body for mouse
 
 var Game = function () {
@@ -24,9 +26,11 @@ Game.prototype = {
 
     this.testentity = new Cube(this.game, x, y);
     this.testentity.anchor.setTo(0.5, 0.5);
-    this.game.physics.p2.enable(this.testentity, true);
-    this.baseDamping = 0.9;
-    this.testentity.body.damping = this.baseDamping;
+    this.game.physics.p2.enable(this.testentity);
+    this.testentity.body.damping = 0.9;
+    this.scale = 0.5;
+    this.testentity.scale.x = this.scale;
+    this.testentity.scale.y = this.scale;
     
     this.input.onDown.add(this.click, this);
     this.input.onUp.add(this.release, this);
@@ -37,10 +41,11 @@ Game.prototype = {
 
   update: function () {
     if (this.grabbed) {
-      var angle = Math.atan2(this.grabbed.sprite.y - this.input.position.y, this.grabbed.sprite.x - this.input.position.x) + Math.PI; // i hate math >:(
-      var speed = 200;
-      this.grabbed.force.x = Math.cos(angle) * speed;
-      this.grabbed.force.y = Math.sin(angle) * speed;
+      var angle = Math.atan2(this.grabbed.sprite.y - this.input.position.y, this.grabbed.sprite.x - this.input.position.x) + Math.PI;
+      var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, this.input.position.x, this.input.position.y);
+      var weight = 10;
+      this.grabbed.force.x = Math.cos(angle) * dist * weight;
+      this.grabbed.force.y = Math.sin(angle) * dist * weight;
       this.line.setTo(this.testentity.x, this.testentity.y, this.input.position.x, this.input.position.y);
     } else {
        this.line.setTo(0, 0, 0, 0);
@@ -56,13 +61,11 @@ Game.prototype = {
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
-        this.grabbed.damping = 0;
     }
   },
   
   release: function () {
      if (this.grabbed) {
-        this.grabbed.damping = this.baseDamping;
         this.grabbed = undefined;
      }
   },

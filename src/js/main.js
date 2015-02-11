@@ -2,7 +2,6 @@
 
 var game = new Phaser.Game(800, 800, Phaser.AUTO, 'atic-game');
 
-window.Utils = require('./utils');
 window.playerState = {
     currentLevel: 'Game'
 };
