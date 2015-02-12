@@ -1,25 +1,30 @@
-var game = new Phaser.Game(800, 800, Phaser.CANVAS, 'P2-Test', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'P2-Test', { preload: preload, create: create, update: update, render: render });
 
 function preload() { //Load sprites & collision polygons
 	game.load.spritesheet('squareSheet', 'sprites/squareSheet.png', 32, 32, 2);
 	game.load.image('circle', 'sprites/asteroid.png');
+	game.load.image('earth', 'sprites/bg_earth.jpg');
 }
 
 //Global Variables
 var square;
+var bg;
+
 var keys;
 var space;
+
 var numRoids = 10; //Determines the number of asteroids
 var asteroidArr;
 
 function create() {
-	game.world.setBounds(0, 0, 800, 800);
+	game.world.setBounds(0, 0, 3605, 3605);
 	
 	game.physics.startSystem(Phaser.Physics.P2JS); //Add P2 physics
 	//The coefficient of restitution that determines how elastic/inelastic collisions are (1 being perfectly elastic, & 0 being completely inelastic)
 	//The effect of game.physics.p2.restitution is secondary to contact materials in a collision pair; something that we should be using moving forward
 	game.physics.p2.restitution = .5;
 	
+	bg = game.add.sprite(0, 0, 'earth');
 	square = game.add.sprite(400, 400, 'squareSheet', 0); //Add sprite
 	asteroidArr = new Array();
 	for(i = 0; i < numRoids; i++) {
@@ -46,6 +51,7 @@ function create() {
 	square.body.damping = .75; //This value (from 0 to 1) determines the proportion of velocity lost per second
 	square.body.angularDamping = .90;  //Same but for angular velocity
 	
+	game.camera.follow(square);
 }
 
 function toggleSquare(pointer) {
