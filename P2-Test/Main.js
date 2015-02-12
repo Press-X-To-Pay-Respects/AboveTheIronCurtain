@@ -31,7 +31,7 @@ function create() {
 	square = game.add.sprite(400, 400, 'squareSheet', 0); //Add sprite
 	asteroidArr = new Array();
 	for(i = 0; i < numRoids; i++) {
-		var asteroid = game.add.sprite(Math.random() * 800, Math.random() * 800, 'circle');
+		var asteroid = game.add.sprite(Math.random() * 3580, Math.random() * 3580, 'circle');
 		asteroidArr.push(asteroid);
 	}
 		
@@ -55,7 +55,6 @@ function create() {
 	square.body.angularDamping = .90;  //Same but for angular velocity
 	
 	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
-	music.play(); //Plays the music upon loading
 	
 	game.camera.follow(square); //Camera follows the module
 }
@@ -65,11 +64,27 @@ function toggleSquare(pointer) {
 	//The second argument can be an array of sprites or bodies that hitTest will check against, otherwise hitTest will check against all bodies
 	var clicked = game.physics.p2.hitTest(pointer.position, [square]);
 	
-	if(clicked[0].parent.sprite.frame == 0) {
-		clicked[0].parent.sprite.frame = 1;
+	if(clicked.length === 0) {
+		if(!music.isPlaying) {
+			if(music.paused){
+				music.resume();
+			}
+			else {
+				music.play(); //Play the music if no bodies are clicked
+			}
+		}
+		else {
+			music.pause();
+		}
+		
 	}
 	else {
-		clicked[0].parent.sprite.frame = 0;
+		if(clicked[0].parent.sprite.frame == 0) {
+			clicked[0].parent.sprite.frame = 1;
+		}
+		else {
+			clicked[0].parent.sprite.frame = 0;
+		}
 	}
 }
 
