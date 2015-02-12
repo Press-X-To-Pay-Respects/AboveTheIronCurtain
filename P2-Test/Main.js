@@ -1,9 +1,10 @@
 var game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'P2-Test', { preload: preload, create: create, update: update, render: render });
 
-function preload() { //Load sprites & collision polygons
+function preload() { //Load sprites, music, & collision polygons
 	game.load.spritesheet('squareSheet', 'sprites/squareSheet.png', 32, 32, 2);
 	game.load.image('circle', 'sprites/asteroid.png');
 	game.load.image('earth', 'sprites/bg_earth.jpg');
+	game.load.audio('FlyLo', 'music/17 Galaxy In Janaki.mp3');
 }
 
 //Global Variables
@@ -15,6 +16,8 @@ var space;
 
 var numRoids = 10; //Determines the number of asteroids
 var asteroidArr;
+
+var music;
 
 function create() {
 	game.world.setBounds(0, 0, 3605, 3605);
@@ -51,7 +54,10 @@ function create() {
 	square.body.damping = .75; //This value (from 0 to 1) determines the proportion of velocity lost per second
 	square.body.angularDamping = .90;  //Same but for angular velocity
 	
-	game.camera.follow(square);
+	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
+	music.play(); //Plays the music upon loading
+	
+	game.camera.follow(square); //Camera follows the module
 }
 
 function toggleSquare(pointer) {
