@@ -43,7 +43,7 @@ function create() {
 	asteroids.enableBody = true;
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	
-	//generateAsteroids();
+	generateAsteroids();
 	
 	square = game.add.sprite(game.world.centerX, game.world.centerY, 'squareSheet', 0); //Add sprite
 	
@@ -56,20 +56,22 @@ function create() {
 	//Enable P2 physics for the object (this also enables physics for all of its children)
 	//By default, this will give the sprite a rectangular physics body the size of the sprite (which should be fine for modules)
 	game.physics.p2.enable(square);
+	square.body.setCollisionGroup(playerCG); //Assign the square to a collision group
+	square.body.collides(asteroidCG); //Set the square to collide with asteroids
 	square.body.damping = .75; //This value (from 0 to 1) determines the proportion of velocity lost per second
 	square.body.angularDamping = .90;  //Same but for angular velocity
 	square.body.collideWorldBounds = false;
 	
-	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
-	
 	game.camera.follow(square); //Camera follows the module
+	
+	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
 }
 
 function toggleSquare(pointer) {
 	//hitTest is used to check collision on a body and returns the body clicked on, or nothing if a blank space is clicked on
 	//The second argument can be an array of sprites or bodies that hitTest will check against, otherwise hitTest will check against all bodies
 	var point = new Phaser.Point(pointer.x + game.camera.x, pointer.y + game.camera.y);
-	var clicked = game.physics.p2.hitTest(point);
+	var clicked = game.physics.p2.hitTest(point, [square]);
 	clickDebug = clicked[0].parent.sprite.key;
 	
 	if(clicked[0].parent.sprite === square) {
