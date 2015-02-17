@@ -14,10 +14,19 @@ var bg;
 var keys;
 var space;
 
-var numRoids = 10; //Determines the number of asteroids
-var asteroidArr;
+var asteroids;
+var maxRoids = 100; //Determines the number of asteroids
+var numRoids = 0;
+
+var asteroidsCG;
+var playerCG;
 
 var music;
+
+var clickDebug;
+var xRand;
+var yRand;
+var coin;
 
 function create() {
 	game.world.setBounds(0, 0, 3605, 3605);
@@ -27,14 +36,19 @@ function create() {
 	//The effect of game.physics.p2.restitution is secondary to contact materials in a collision pair; something that we should be using moving forward
 	game.physics.p2.restitution = .5;
 	
+	//Creates collision groups for the player and the asteroids
+	playerCG = game.physics.p2.createCollisionGroup();
+	asteroidCG = game.physics.p2.createCollisionGroup();
+	
 	bg = game.add.sprite(0, 0, 'earth');
-	square = game.add.sprite(400, 400, 'squareSheet', 0); //Add sprite
-	asteroidArr = new Array();
-	for(i = 0; i < numRoids; i++) {
-		var asteroid = game.add.sprite(Math.random() * 3580, Math.random() * 3580, 'circle');
-		asteroidArr.push(asteroid);
-	}
-		
+	
+	asteroids = game.add.group();
+	asteroids.enableBody = true;
+	asteroids.physicsBodyType = Phaser.Physics.P2JS;
+	
+	square = game.add.sprite(game.world.centerX, game.world.centerY, 'squareSheet', 0); //Add sprite
+	
+	generateAsteroids();
 	
 	//Input definitions
 	keys = game.input.keyboard.createCursorKeys();
@@ -45,46 +59,64 @@ function create() {
 	//Enable P2 physics for the object (this also enables physics for all of its children)
 	//By default, this will give the sprite a rectangular physics body the size of the sprite (which should be fine for modules)
 	game.physics.p2.enable(square);
-	for(i = 0; i < numRoids; i++) {
-		game.physics.p2.enable(asteroidArr[i]);
-		asteroidArr[i].body.setCircle(16); //Change the collision detection from an AABB to a circle
-		asteroidArr[i].body.angularDamping = 0;
-	}
-	
+	square.body.setCollisionGroup(playerCG); //Assign the square to a collision group
+	square.body.collides(asteroidCG); //Set the square to collide with asteroids
 	square.body.damping = .75; //This value (from 0 to 1) determines the proportion of velocity lost per second
 	square.body.angularDamping = .90;  //Same but for angular velocity
-	
-	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
+	square.body.collideWorldBounds = false;
 	
 	game.camera.follow(square); //Camera follows the module
+	
+	music = game.add.audio('FlyLo', .2, true); //Add the music to the game
 }
 
 function toggleSquare(pointer) {
 	//hitTest is used to check collision on a body and returns the body clicked on, or nothing if a blank space is clicked on
 	//The second argument can be an array of sprites or bodies that hitTest will check against, otherwise hitTest will check against all bodies
-	var clicked = game.physics.p2.hitTest(pointer.position, [square]);
+	var point = new Phaser.Point(pointer.x + game.camera.x, pointer.y + game.camera.y);
+	var clicked = game.physics.p2.hitTest(point, [square]);
+	clickDebug = clicked[0].parent.sprite.key;
 	
-	if(clicked.length === 0) {
-		if(!music.isPlaying) {
-			if(music.paused){
-				music.resume();
-			}
-			else {
-				music.play(); //Play the music if no bodies are clicked
-			}
-		}
-		else {
-			music.pause();
-		}
-		
-	}
-	else {
+	if(clicked[0].parent.sprite === square) {
 		if(clicked[0].parent.sprite.frame == 0) {
 			clicked[0].parent.sprite.frame = 1;
 		}
 		else {
 			clicked[0].parent.sprite.frame = 0;
 		}
+	}
+}
+
+function generateAsteroids() {
+	for(;numRoids < maxRoids; numRoids++) {
+		coinA = game.rnd.integerInRange(0,1);
+		coinB = game.rnd.integerInRange(0,1);
+		
+		if(coinA == 1) {
+			if(coinB == 1) { //Spawn asteroid above screen
+				var asteroid = asteroids.create(square.x + game.rnd.integerInRange(-game.camera.width/2, game.camera.width/2), square.y - game.camera.height/2 - game.rnd.integerInRange(32, 300), 'circle');
+			}
+			else { //Spawn asteroid below screen
+				var asteroid = asteroids.create(square.x + game.rnd.integerInRange(-game.camera.width/2, game.camera.width/2), square.y + game.camera.height/2 + game.rnd.integerInRange(32, 300), 'circle');
+			}
+		}
+		else {
+			if(coinB == 1) { //Spawn asteroid to left of screen
+				var asteroid = asteroids.create(square.x - game.camera.width/2 - game.rnd.integerInRange(32, 300), square.y + game.rnd.integerInRange(-game.camera.height/2, game.camera.height/2), 'circle');
+			}
+			else { //Spawn asteroid to right
+				var asteroid = asteroids.create(square.x + game.camera.width/2 + game.rnd.integerInRange(32, 300), square.y + game.rnd.integerInRange(-game.camera.height/2, game.camera.height/2), 'circle');
+			}
+		}
+		
+		asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
+		asteroid.body.angularDamping = 0;
+		asteroid.body.damping = 0;
+		asteroid.body.rotation = game.rnd.realInRange(0, 2 * 3.14);
+		asteroid.body.force.x = game.rnd.integerInRange(-10, 10) * 750;
+		asteroid.body.force.y = game.rnd.integerInRange(-10, 10) * 750;
+		asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
+		asteroid.body.collides([asteroidCG, playerCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
 	}
 }
 
@@ -106,8 +138,14 @@ function update() {
 		//If not, we'll have to calculate thrust depending on number of number of modules & number of thrusters
 		square.body.thrust(300); 
 	}
+	if(maxRoids > numRoids) {
+		generateAsteroids();
+	}
 }
 
 function render() {
-	//This could probably be useful for something
+	game.debug.spriteInfo(square, 32, 32);
+	game.debug.cameraInfo(game.camera, 32, 128);
+	game.debug.text(clickDebug, 32, 224);
+	game.debug.text(xRand + ', ' + yRand + '; '+ game.camera.width, 32, 256);
 }
