@@ -1,4 +1,5 @@
 /*
+DEPRECATED
 Defines a cubesat, a group of cubes.
 */
 
