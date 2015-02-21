@@ -36,11 +36,17 @@ Game.prototype = {
     this.rootSpawned = false;
     
     this.debugNum = 0;
+    this.myRoot = undefined;
     
      // var thisPoint = new Phaser.Point(10, 10);
      // var otherPoint = new Phaser.Point(10, 11);
      // var angleToOther = Phaser.Point.angle(thisPoint, otherPoint);
      // console.log(angleToOther);
+     
+     // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
+     // this.game.physics.p2.enableBody(polygonTest, true);
+     // polygonTest.body.clearShapes();
+     // polygonTest.body.loadPolygon('module_physics', 'test2');
   },
 
   update: function () {
@@ -66,7 +72,8 @@ Game.prototype = {
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
-        console.log(this.grabbed.sprite.name, this.grabbed.sprite.north, this.grabbed.sprite.east, this.grabbed.sprite.south, this.grabbed.sprite.west);
+        //console.log(this.grabbed.sprite.name, this.grabbed.sprite.north, this.grabbed.sprite.east, this.grabbed.sprite.south, this.grabbed.sprite.west);
+        console.log(this.grabbed.sprite.toString());
     }
   },
   

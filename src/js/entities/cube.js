@@ -92,6 +92,15 @@ Cube.prototype.cubeCollide = function(other) {
       return;
    }
    // if (this.hasRoot()) {
+   if (this.myRoot) {
+      if (other.sprite.myRoot && this.myRoot === other.sprite.myRoot) {
+         return;
+      }
+   } else {
+      if (this.root) {
+         this.myRoot = this.name;
+      }
+   }
    if (this.hasRoot() && !other.sprite.hasRoot()) {
       this.addConnection(other);
    }
@@ -113,8 +122,7 @@ Cube.prototype.hasRoot = function() {
   }
   return false;
   */
-  console.log('new test');
-  console.log(this);
+  // console.log('root test');
   if (this.root) {
      return true;
   }
@@ -135,8 +143,11 @@ Cube.prototype.hasRoot = function() {
 };
 
 Cube.prototype.hasRootR = function(visited, cur) {
-   console.log(cur);
+   // console.log(cur);
    if (cur.root) {
+      if (!this.myRoot) {
+         this.myRoot = cur.name;
+      }
       return true;
    }
    visited.push(cur);
@@ -231,6 +242,22 @@ Cube.prototype.getSide = function(side) {
   }
   return undefined;
 };
+
+Cube.prototype.toString = function() {
+   var string = '';
+   string += this.concat('name', this.name);
+   string += this.concat('isRoot', this.root);
+   string += this.concat('myRoot', this.myRoot);
+   string += this.concat('north', this.north != undefined);
+   string += this.concat('east', this.east != undefined);
+   string += this.concat('south', this.south != undefined);
+   string += this.concat('west', this.west != undefined);
+   return string;
+}
+
+Cube.prototype.concat = function(string, val) {
+   return string + ': ' + val + '\n';
+}
 
 module.exports = Cube;
 
