@@ -35,6 +35,8 @@ Game.prototype = {
     
     this.rootSpawned = false;
     
+    this.debugNum = 0;
+    
      // var thisPoint = new Phaser.Point(10, 10);
      // var otherPoint = new Phaser.Point(10, 11);
      // var angleToOther = Phaser.Point.angle(thisPoint, otherPoint);
@@ -59,10 +61,12 @@ Game.prototype = {
   },
 
   click: function (pointer) {
+    // console.log(this.grabbed);
     var bodies = this.game.physics.p2.hitTest(pointer.position);
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
+        console.log(this.grabbed.sprite.name, this.grabbed.sprite.north, this.grabbed.sprite.east, this.grabbed.sprite.south, this.grabbed.sprite.west);
     }
   },
   
@@ -81,9 +85,9 @@ Game.prototype = {
   },
   
   placeCube: function () {
-    // console.log('place', this.mouseX, this.mouseY);
     var entity = new Cube(this.game, this.mouseX, this.mouseY);
     var scale = 0.5;
+    entity.name = this.debugNum++;
     entity.scale.x = scale;
     entity.scale.y = scale;
     entity.anchor.setTo(0.5, 0.5);
