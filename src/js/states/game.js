@@ -38,11 +38,6 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
     
-     // var thisPoint = new Phaser.Point(10, 10);
-     // var otherPoint = new Phaser.Point(10, 11);
-     // var angleToOther = Phaser.Point.angle(thisPoint, otherPoint);
-     // console.log(angleToOther);
-     
      // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
      // this.game.physics.p2.enableBody(polygonTest, true);
      // polygonTest.body.clearShapes();
@@ -67,13 +62,11 @@ Game.prototype = {
   },
 
   click: function (pointer) {
-    // console.log(this.grabbed);
     var bodies = this.game.physics.p2.hitTest(pointer.position);
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
-        //console.log(this.grabbed.sprite.name, this.grabbed.sprite.north, this.grabbed.sprite.east, this.grabbed.sprite.south, this.grabbed.sprite.west);
-        console.log(this.grabbed.sprite.toString());
+        // console.log(this.grabbed.sprite.toString());
     }
   },
   
@@ -98,7 +91,7 @@ Game.prototype = {
     entity.scale.x = scale;
     entity.scale.y = scale;
     entity.anchor.setTo(0.5, 0.5);
-    this.game.physics.p2.enable(entity, true);
+    this.game.physics.p2.enable(entity);
     entity.body.onBeginContact.add(entity.cubeCollide, entity);
     entity.body.damping = 0.9;
     entity.body.angularDamping = 0.9;

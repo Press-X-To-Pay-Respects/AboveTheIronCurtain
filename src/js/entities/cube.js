@@ -26,7 +26,6 @@ Cube.prototype.addConnection = function(other) {
   var offset = 2;
   var thisSide = this.relativeSide(this.body, other);
   var otherSide = this.relativeSide(other, this.body);
-  // console.log(thisSide, otherSide);
   if (this.getSide(thisSide)) {
      return;
   }
@@ -91,7 +90,6 @@ Cube.prototype.cubeCollide = function(other) {
    if (other === null || this.prototype !== other.prototype) {
       return;
    }
-   // if (this.hasRoot()) {
    if (this.myRoot) {
       if (other.sprite.myRoot && this.myRoot === other.sprite.myRoot) {
          return;
@@ -107,22 +105,6 @@ Cube.prototype.cubeCollide = function(other) {
 };
 
 Cube.prototype.hasRoot = function() {
-  /*
-  if (this.root) {
-     return true;
-  }
-  if (this.hasRootR(this.DIR.NORTH, this)) {
-      return true;
-  } else if (this.hasRootR(this.DIR.EAST, this)) {
-     return true;
-  } else if (this.hasRootR(this.DIR.SOUTH, this)) {
-      return true;
-  } else if (this.hasRootR(this.DIR.WEST, this)) {
-     return true;
-  }
-  return false;
-  */
-  // console.log('root test');
   if (this.root) {
      return true;
   }
@@ -143,7 +125,6 @@ Cube.prototype.hasRoot = function() {
 };
 
 Cube.prototype.hasRootR = function(visited, cur) {
-   // console.log(cur);
    if (cur.root) {
       if (!this.myRoot) {
          this.myRoot = cur.name;
@@ -173,61 +154,6 @@ Cube.prototype.contains = function (array, obj) {
   }  
    return false;
 };
-
-/*
-Cube.prototype.hasRootR = function(dir, obj) {
-   if (obj.root) {
-      return true;
-   }
-   switch (dir) {
-      case this.DIR.NORTH:
-      if (obj.north && this.hasRootR(this.DIR.NORTH, obj.north)) {
-         return true;
-      }
-      if (obj.east && this.hasRootR(this.DIR.EAST, obj.east)) {
-         return true;
-      }
-      if (obj.west && this.hasRootR(this.DIR.WEST, obj.west)) {
-         return true;
-      }
-      return false;
-      case this.DIR.EAST:
-      if (obj.north && this.hasRootR(this.DIR.NORTH, obj.north)) {
-         return true;
-      }
-      if (obj.east && this.hasRootR(this.DIR.EAST, obj.east)) {
-         return true;
-      }
-      if (obj.south && this.hasRootR(this.DIR.SOUTH, obj.south)) {
-         return true;
-      }
-      return false;
-      case this.DIR.SOUTH:
-      if (obj.east && this.hasRootR(this.DIR.EAST, obj.east)) {
-         return true;
-      }
-      if (obj.south && this.hasRootR(this.DIR.SOUTH, obj.south)) {
-         return true;
-      }
-      if (obj.west && this.hasRootR(this.DIR.WEST, obj.west)) {
-         return true;
-      }
-      return false;
-      case this.DIR.WEST:
-      if (obj.north && this.hasRootR(this.DIR.NORTH, obj.north)) {
-         return true;
-      }
-      if (obj.south && this.hasRootR(this.DIR.SOUTH, obj.south)) {
-         return true;
-      }
-      if (obj.west && this.hasRootR(this.DIR.WEST, obj.west)) {
-         return true;
-      }
-      return false;
-   }
-   return false;
-};
-*/
 
 Cube.prototype.getSide = function(side) {
    switch (side) {
