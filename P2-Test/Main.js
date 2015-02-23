@@ -24,6 +24,9 @@ var playerCG;
 var music;
 
 var clickDebug;
+var xRand;
+var yRand;
+var coin;
 
 function create() {
 	game.world.setBounds(0, 0, 3605, 3605);
@@ -43,9 +46,9 @@ function create() {
 	asteroids.enableBody = true;
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	
-	generateAsteroids();
-	
 	square = game.add.sprite(game.world.centerX, game.world.centerY, 'squareSheet', 0); //Add sprite
+	
+	generateAsteroids();
 	
 	//Input definitions
 	keys = game.input.keyboard.createCursorKeys();
@@ -85,38 +88,35 @@ function toggleSquare(pointer) {
 }
 
 function generateAsteroids() {
-	var xRand = 0;
-	var yRand = 0;
-	if(maxRoids > numRoids) {
-		for(;numRoids < maxRoids; numRoids++) {
-			xRand = Math.random();
-			yRand = Math.random();
-			
-			if(xRand > .5) {
-				if(yRand > .5) {
-					var asteroid = asteroids.create((Math.random() * 100) + (game.camera.x + (game.camera.width / 2)), 
-										(Math.random() * 100) + (game.camera.y + (game.camera.height / 2)), 'circle');
-				}
-				else {
-					var asteroid = asteroids.create((Math.random() * 100) + (game.camera.x + (game.camera.width / 2)), 
-										(Math.random() * 100) - (game.camera.y + (game.camera.height / 2)), 'circle');
-				}
+	for(;numRoids < maxRoids; numRoids++) {
+		coinA = game.rnd.integerInRange(0,1);
+		coinB = game.rnd.integerInRange(0,1);
+		
+		if(coinA == 1) {
+			if(coinB == 1) { //Spawn asteroid above screen
+				var asteroid = asteroids.create(square.x + game.rnd.integerInRange(-game.camera.width/2, game.camera.width/2), square.y - game.camera.height/2 - game.rnd.integerInRange(32, 300), 'circle');
 			}
-			else {
-				if(yRand > .5) {
-					var asteroid = asteroids.create((Math.random() * 100) - (game.camera.x + (game.camera.width / 2)), 
-										(Math.random() * 100) + (game.camera.y + (game.camera.height / 2)), 'circle');
-				}
-				else {
-					var asteroid = asteroids.create((Math.random() * 100) - (game.camera.x + (game.camera.width / 2)), 
-										(Math.random() * 100) - (game.camera.y + (game.camera.height / 2)), 'circle');
-				}
+			else { //Spawn asteroid below screen
+				var asteroid = asteroids.create(square.x + game.rnd.integerInRange(-game.camera.width/2, game.camera.width/2), square.y + game.camera.height/2 + game.rnd.integerInRange(32, 300), 'circle');
 			}
-			asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
-			asteroid.body.angularDamping = 0;
-			asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
-			asteroid.body.collides([asteroidCG, playerCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
 		}
+		else {
+			if(coinB == 1) { //Spawn asteroid to left of screen
+				var asteroid = asteroids.create(square.x - game.camera.width/2 - game.rnd.integerInRange(32, 300), square.y + game.rnd.integerInRange(-game.camera.height/2, game.camera.height/2), 'circle');
+			}
+			else { //Spawn asteroid to right
+				var asteroid = asteroids.create(square.x + game.camera.width/2 + game.rnd.integerInRange(32, 300), square.y + game.rnd.integerInRange(-game.camera.height/2, game.camera.height/2), 'circle');
+			}
+		}
+		
+		asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
+		asteroid.body.angularDamping = 0;
+		asteroid.body.damping = 0;
+		asteroid.body.rotation = game.rnd.realInRange(0, 2 * 3.14);
+		asteroid.body.force.x = game.rnd.integerInRange(-10, 10) * 750;
+		asteroid.body.force.y = game.rnd.integerInRange(-10, 10) * 750;
+		asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
+		asteroid.body.collides([asteroidCG, playerCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
 	}
 }
 
@@ -144,7 +144,8 @@ function update() {
 }
 
 function render() {
-	game.debug.cameraInfo(game.camera, 32, 128);
 	game.debug.spriteInfo(square, 32, 32);
-	game.debug.text(clickDebug, 32, 256);
+	game.debug.cameraInfo(game.camera, 32, 128);
+	game.debug.text(clickDebug, 32, 224);
+	game.debug.text(xRand + ', ' + yRand + '; '+ game.camera.width, 32, 256);
 }
