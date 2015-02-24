@@ -174,16 +174,16 @@ Cube.prototype.toString = function() {
    string += this.concat('name', this.name);
    string += this.concat('isRoot', this.root);
    string += this.concat('myRoot', this.myRoot);
-   string += this.concat('north', this.north != undefined);
-   string += this.concat('east', this.east != undefined);
-   string += this.concat('south', this.south != undefined);
-   string += this.concat('west', this.west != undefined);
+   string += this.concat('north', this.north !== undefined);
+   string += this.concat('east', this.east !== undefined);
+   string += this.concat('south', this.south !== undefined);
+   string += this.concat('west', this.west !== undefined);
    return string;
-}
+};
 
 Cube.prototype.concat = function(string, val) {
    return string + ': ' + val + '\n';
-}
+};
 
 module.exports = Cube;
 
