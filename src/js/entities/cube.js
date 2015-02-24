@@ -2,8 +2,8 @@
 Defines a cube module.
 */
 
-var Cube = function (game, x, y) {
-    Phaser.Sprite.call(this, game, x, y, 'testsprite');
+var Cube = function (game, x, y, sprite) {
+    Phaser.Sprite.call(this, game, x, y, sprite);
     game.add.existing(this);
     /*
     this.north = undefined;
