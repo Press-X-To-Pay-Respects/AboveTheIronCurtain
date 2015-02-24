@@ -3,8 +3,8 @@ Main testing environment.
 */
 
 var Cube = require('../entities/cube');
-
 var Utils = require('../utils');
+var CubeGroup = require('../entities/cube_group');
 
 var mouseBody; // physics body for mouse
 
@@ -37,6 +37,9 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
+    
+    this.playerCommand = this.placeCubeSpec(300, 300);
+    this.player = new CubeGroup(this, this.playerCommand);
     
      // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
      // this.game.physics.p2.enableBody(polygonTest, true);
@@ -99,6 +102,24 @@ Game.prototype = {
        entity.root = true;
        this.rootSpawned = true;
     }
+  },
+  
+  placeCubeSpec: function (x, y) {
+    var entity = new Cube(this.game, x, y);
+    var scale = 0.5;
+    entity.name = this.debugNum++;
+    entity.scale.x = scale;
+    entity.scale.y = scale;
+    entity.anchor.setTo(0.5, 0.5);
+    this.game.physics.p2.enable(entity);
+    entity.body.onBeginContact.add(entity.cubeCollide, entity);
+    entity.body.damping = 0.9;
+    entity.body.angularDamping = 0.9;
+    if (!this.rootSpawned) {
+       entity.root = true;
+       this.rootSpawned = true;
+    }
+    return entity;
   }
 };
 

@@ -5,12 +5,15 @@ Defines a cube module.
 var Cube = function (game, x, y) {
     Phaser.Sprite.call(this, game, x, y, 'testsprite');
     game.add.existing(this);
+    /*
     this.north = undefined;
     this.east = undefined;
     this.south = undefined;
     this.west = undefined;
     this.root = false;
     this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
+    */
+    this.group = undefined;
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -21,7 +24,7 @@ Cube.prototype.constructor = Cube;
  */
 Cube.prototype.update = function() {
 };
-
+/*
 Cube.prototype.addConnection = function(other) {
   var offset = 2;
   var thisSide = this.relativeSide(this.body, other);
@@ -65,7 +68,7 @@ Cube.prototype.addConnection = function(other) {
      break;
   }
 };
-
+*/
 Cube.prototype.relativeSide = function(thisBody, otherBody) {
   var thisPoint = new Phaser.Point(thisBody.x, thisBody.y);
   var otherPoint = new Phaser.Point(otherBody.x, otherBody.y);
@@ -87,6 +90,7 @@ Cube.prototype.relativeSide = function(thisBody, otherBody) {
 };
 
 Cube.prototype.cubeCollide = function(other) {
+   /*
    if (other === null || this.prototype !== other.prototype) {
       return;
    }
@@ -102,8 +106,13 @@ Cube.prototype.cubeCollide = function(other) {
    if (this.hasRoot() && !other.sprite.hasRoot()) {
       this.addConnection(other);
    }
+   */
+   if (this.group === undefined) {
+      return;
+   }
+   this.group.handleCollision(this, other.sprite);
 };
-
+/*
 Cube.prototype.hasRoot = function() {
   if (this.root) {
      return true;
@@ -168,16 +177,19 @@ Cube.prototype.getSide = function(side) {
   }
   return undefined;
 };
+*/
 
 Cube.prototype.toString = function() {
    var string = '';
    string += this.concat('name', this.name);
+   /*
    string += this.concat('isRoot', this.root);
    string += this.concat('myRoot', this.myRoot);
    string += this.concat('north', this.north !== undefined);
    string += this.concat('east', this.east !== undefined);
    string += this.concat('south', this.south !== undefined);
    string += this.concat('west', this.west !== undefined);
+   */
    return string;
 };
 
