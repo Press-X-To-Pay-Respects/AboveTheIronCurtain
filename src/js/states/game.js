@@ -2,8 +2,13 @@
 Main testing environment.
 */
 
+<<<<<<< HEAD
 var ModuleBuilder = require('../entities/ModuleBuilder');
+=======
+var Cube = require('../entities/cube');
+>>>>>>> origin/mzdev
 var Utils = require('../utils');
+var CubeGroup = require('../entities/cube_group');
 
 var mouseBody; // physics body for mouse
 
@@ -55,6 +60,9 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
     
+    this.playerCommand = this.placeCubeSpec(300, 300);
+    this.player = new CubeGroup(this, this.playerCommand);
+    
      // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
      // this.game.physics.p2.enableBody(polygonTest, true);
      // polygonTest.body.clearShapes();
@@ -101,6 +109,7 @@ Game.prototype = {
     this.mouseY = pointer.position.y;
   },
   
+<<<<<<< HEAD
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () {
 	//Attempts to create more core modules here will only return the existing core
@@ -114,6 +123,41 @@ Game.prototype = {
   },
   addSP: function () {
 	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
+=======
+  placeCube: function () {
+    var entity = new Cube(this.game, this.mouseX, this.mouseY);
+    var scale = 0.5;
+    entity.name = this.debugNum++;
+    entity.scale.x = scale;
+    entity.scale.y = scale;
+    entity.anchor.setTo(0.5, 0.5);
+    this.game.physics.p2.enable(entity);
+    entity.body.onBeginContact.add(entity.cubeCollide, entity);
+    entity.body.damping = 0.9;
+    entity.body.angularDamping = 0.9;
+    if (!this.rootSpawned) {
+       entity.root = true;
+       this.rootSpawned = true;
+    }
+  },
+  
+  placeCubeSpec: function (x, y) {
+    var entity = new Cube(this.game, x, y);
+    var scale = 0.5;
+    entity.name = this.debugNum++;
+    entity.scale.x = scale;
+    entity.scale.y = scale;
+    entity.anchor.setTo(0.5, 0.5);
+    this.game.physics.p2.enable(entity);
+    entity.body.onBeginContact.add(entity.cubeCollide, entity);
+    entity.body.damping = 0.9;
+    entity.body.angularDamping = 0.9;
+    if (!this.rootSpawned) {
+       entity.root = true;
+       this.rootSpawned = true;
+    }
+    return entity;
+>>>>>>> origin/mzdev
   }
   //END
   
