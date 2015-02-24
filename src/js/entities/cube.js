@@ -1,5 +1,5 @@
 /*
-Defines a cube module for a cubesat.
+Defines a cube module.
 */
 
 var Cube = function (game, x, y, sprite) {
