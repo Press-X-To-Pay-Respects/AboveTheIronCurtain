@@ -15,6 +15,11 @@ Preloader.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
     this.load.image('testsprite', 'assets/test2.png');
+	this.load.image('core', 'assets/core.png');
+	this.load.image('thruster', 'assets/thruster.png');
+	this.load.image('shield', 'assets/shield.png');
+	this.load.image('solarPannel', 'assets/solarPannel.png');
+	
     this.load.physics('module_physics', 'assets/module_physics.json');
   },
 

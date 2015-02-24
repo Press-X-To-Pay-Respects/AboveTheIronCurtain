@@ -2,8 +2,7 @@
 Main testing environment.
 */
 
-var Cube = require('../entities/cube');
-
+var ModuleBuilder = require('../entities/ModuleBuilder');
 var Utils = require('../utils');
 
 var mouseBody; // physics body for mouse
@@ -15,14 +14,32 @@ var Game = function () {
 module.exports = Game;
 
 Game.prototype = {
-
+	
   create: function () {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.setImpactEvents(true);
     mouseBody = new p2.Body(); // jshint ignore:line
     this.game.physics.p2.world.addBody(mouseBody);
-    this.placeKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-    this.placeKey.onDown.add(this.placeCube, this);
+    
+	//create ModuleBuilder and store it in this game state object
+	this.moduleBuilder = new ModuleBuilder(this);
+	//create and store the core module
+	this.coreModule = this.moduleBuilder.build('core', 200, 200);
+	
+	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
+	//core
+	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+    this.placeCoreKey.onDown.add(this.addCore, this);
+	//shield
+	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
+    this.placeShieldKey.onDown.add(this.addShield, this);
+	//thruster
+	this.placeThrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
+    this.placeThrusterKey.onDown.add(this.addThruster, this);
+	//solarPannel
+	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
+    this.placeSPKey.onDown.add(this.addSP, this);
+	//END
     
     this.mouseX = 0;
     this.mouseY = 0;
@@ -84,22 +101,22 @@ Game.prototype = {
     this.mouseY = pointer.position.y;
   },
   
-  placeCube: function () {
-    var entity = new Cube(this.game, this.mouseX, this.mouseY);
-    var scale = 0.5;
-    entity.name = this.debugNum++;
-    entity.scale.x = scale;
-    entity.scale.y = scale;
-    entity.anchor.setTo(0.5, 0.5);
-    this.game.physics.p2.enable(entity);
-    entity.body.onBeginContact.add(entity.cubeCollide, entity);
-    entity.body.damping = 0.9;
-    entity.body.angularDamping = 0.9;
-    if (!this.rootSpawned) {
-       entity.root = true;
-       this.rootSpawned = true;
-    }
+  //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
+  addCore: function () {
+	//Attempts to create more core modules here will only return the existing core
+	this.moduleBuilder.build('core', this.mouseX, this.mouseY);
+  },
+  addShield: function () {
+	this.moduleBuilder.build('shield', this.mouseX, this.mouseY);
+  },
+  addThruster: function () {
+	this.moduleBuilder.build('thruster', this.mouseX, this.mouseY);
+  },
+  addSP: function () {
+	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
   }
+  //END
+  
 };
 
 
