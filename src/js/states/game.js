@@ -3,9 +3,16 @@ Main testing environment.
 */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 var ModuleBuilder = require('../entities/ModuleBuilder');
 =======
 var Cube = require('../entities/cube');
+>>>>>>> origin/mzdev
+=======
+var Cube = require('../entities/cube');
+=======
+var ModuleBuilder = require('../entities/ModuleBuilder');
+>>>>>>> origin/gh-pages
 >>>>>>> origin/mzdev
 var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
@@ -110,6 +117,7 @@ Game.prototype = {
   },
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () {
 	//Attempts to create more core modules here will only return the existing core
@@ -124,6 +132,8 @@ Game.prototype = {
   addSP: function () {
 	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
 =======
+=======
+>>>>>>> origin/mzdev
   placeCube: function () {
     var entity = new Cube(this.game, this.mouseX, this.mouseY);
     var scale = 0.5;
@@ -157,6 +167,24 @@ Game.prototype = {
        this.rootSpawned = true;
     }
     return entity;
+<<<<<<< HEAD
+>>>>>>> origin/mzdev
+=======
+=======
+  //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
+  addCore: function () {
+	//Attempts to create more core modules here will only return the existing core
+	this.moduleBuilder.build('core', this.mouseX, this.mouseY);
+  },
+  addShield: function () {
+	this.moduleBuilder.build('shield', this.mouseX, this.mouseY);
+  },
+  addThruster: function () {
+	this.moduleBuilder.build('thruster', this.mouseX, this.mouseY);
+  },
+  addSP: function () {
+	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
+>>>>>>> origin/gh-pages
 >>>>>>> origin/mzdev
   }
   //END
