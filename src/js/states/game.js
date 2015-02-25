@@ -89,7 +89,6 @@ Game.prototype = {
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
-        // console.log(this.grabbed.sprite.toString());
     }
   },
   
