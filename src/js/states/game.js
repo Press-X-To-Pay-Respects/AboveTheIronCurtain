@@ -28,11 +28,13 @@ Game.prototype = {
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 200, 200);
+   this.player = new CubeGroup(this, this.coreModule.cube);
+   
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
-	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-    this.placeCoreKey.onDown.add(this.addCore, this);
+	// this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+   // this.placeCoreKey.onDown.add(this.addCore, this);
 	//shield
 	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
     this.placeShieldKey.onDown.add(this.addShield, this);
@@ -58,8 +60,8 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
     
-    this.playerCommand = this.placeCubeSpec(300, 300);
-    this.player = new CubeGroup(this, this.playerCommand);
+    // this.playerCommand = this.placeCubeSpec(300, 300);
+    // this.player = new CubeGroup(this, this.playerCommand);
     
      // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
      // this.game.physics.p2.enableBody(polygonTest, true);
@@ -136,7 +138,7 @@ Game.prototype = {
        this.rootSpawned = true;
     }
   },
-  
+  /*
   placeCubeSpec: function (x, y) {
     var entity = new Cube(this.game, x, y);
     var scale = 0.5;
@@ -154,6 +156,7 @@ Game.prototype = {
     }
     return entity;
   },
+  */
   
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () {
