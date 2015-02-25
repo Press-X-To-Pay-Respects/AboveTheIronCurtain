@@ -33,8 +33,8 @@ Game.prototype = {
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
-	// this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-   // this.placeCoreKey.onDown.add(this.addCore, this);
+	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+   this.placeCoreKey.onDown.add(this.addCore, this);
 	//shield
 	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
     this.placeShieldKey.onDown.add(this.addShield, this);
@@ -59,14 +59,6 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
-    
-    // this.playerCommand = this.placeCubeSpec(300, 300);
-    // this.player = new CubeGroup(this, this.playerCommand);
-    
-     // var polygonTest = this.game.add.sprite(60, 60, 'testsprite');
-     // this.game.physics.p2.enableBody(polygonTest, true);
-     // polygonTest.body.clearShapes();
-     // polygonTest.body.loadPolygon('module_physics', 'test2');
   },
 
   update: function () {
@@ -137,43 +129,7 @@ Game.prototype = {
        entity.root = true;
        this.rootSpawned = true;
     }
-  },
-  /*
-  placeCubeSpec: function (x, y) {
-    var entity = new Cube(this.game, x, y);
-    var scale = 0.5;
-    entity.name = this.debugNum++;
-    entity.scale.x = scale;
-    entity.scale.y = scale;
-    entity.anchor.setTo(0.5, 0.5);
-    this.game.physics.p2.enable(entity);
-    entity.body.onBeginContact.add(entity.cubeCollide, entity);
-    entity.body.damping = 0.9;
-    entity.body.angularDamping = 0.9;
-    if (!this.rootSpawned) {
-       entity.root = true;
-       this.rootSpawned = true;
-    }
-    return entity;
-  },
-  */
-  
-  //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
-  addCore: function () {
-	//Attempts to create more core modules here will only return the existing core
-	this.moduleBuilder.build('core', this.mouseX, this.mouseY);
-  },
-  addShield: function () {
-	this.moduleBuilder.build('shield', this.mouseX, this.mouseY);
-  },
-  addThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouseX, this.mouseY);
-  },
-  addSP: function () {
-	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
   }
-  //END
-  
 };
 
 

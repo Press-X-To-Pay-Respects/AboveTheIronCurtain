@@ -43,38 +43,69 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       if (originLoc.y === this.cubesHeight() - 1) {
          this.addTopRow();
       }
-      this.game.physics.p2.createLockConstraint(origin.body, other.body, [0, origin.width + this.offset]);
+      // this.game.physics.p2.createLockConstraint(origin.body, other.body, [0, origin.width + this.offset]); // S - N
+      // if (this.getCube(this.adjust(otherLoc, this.DIR.EAST))) {
+         // this.game.physics.p2.createLockConstraint(other.body, other.body, [-origin.width - this.offset, 0]);
+      // }
       break;
       case this.DIR.EAST:
       if (originLoc.x === this.cubesWidth() - 1) {
          this.addRightCol();
       }
-      this.game.physics.p2.createLockConstraint(origin.body, other.body, [-origin.width - this.offset, 0]);
+      // this.game.physics.p2.createLockConstraint(origin.body, other.body, [-origin.width - this.offset, 0]);
       break;
       case this.DIR.SOUTH:
       if (originLoc.y === 0) {
          this.addBotRow();
       }
-      this.game.physics.p2.createLockConstraint(other.body, origin.body, [0, origin.width + this.offset]);
+      // this.game.physics.p2.createLockConstraint(other.body, origin.body, [0, origin.width + this.offset]);
       break;
       case this.DIR.WEST:
       if (originLoc.x === 0) {
          this.addLeftCol();
       }
-      this.game.physics.p2.createLockConstraint(other.body, origin.body, [-origin.width - this.offset, 0]);
+      // this.game.physics.p2.createLockConstraint(other.body, origin.body, [-origin.width - this.offset, 0]);
       break;
    }
    // console.log('end');
    originLoc = this.find(origin);
    otherLoc = this.adjust(originLoc, relSide);
+   this.createConstraints(otherLoc, other);
    if (!otherLoc) {
       console.log('hande collision failed to find second other loc');
       return;
    }
+   if (!other) {
+      console.log('somehow lost other');
+      return;
+   }
    this.set(otherLoc, other);
    // console.log('add: ' + other.name + ' at ' + otherLoc.x + ', ' + otherLoc.y);
-   // this.displayCubes();
+   this.displayCubes();
    other.group = this;
+};
+
+CubeGroup.prototype.createConstraints = function(loc, me) {
+   // this.displayCubes();
+   var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
+   var myEast = this.get(this.adjust(loc, this.DIR.EAST));
+   var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
+   var myWest = this.get(this.adjust(loc, this.DIR.WEST));
+   // console.log(this.find(this.adjust(loc, this.DIR.SOUTH)));
+   // console.log(myNorth, myEast, mySouth, myWest);
+   // console.log(loc);
+   if (myNorth) {
+      this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
+   }
+   if (myEast) {
+      this.game.physics.p2.createLockConstraint(me.body, myEast.body, [-me.width - this.offset, 0]); // me - east
+   }
+   if (mySouth) {
+      this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset]); // south - me
+   }
+   if (myWest) {
+      this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0]); // west - me
+   }
 };
 
 CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
@@ -107,9 +138,17 @@ CubeGroup.prototype.find = function(cube) {
          }
       }
    }
-   console.log('could not find cube', cube.name);
-   this.displayCubes();
+   // console.log('could not find cube', cube.name);
+   // this.displayCubes();
    return undefined;
+};
+
+CubeGroup.prototype.get = function(point) {
+  if (!point || this.outOfBounds(point)) {
+      // console.log('get given bad point');
+      return;
+  }
+  return this.cubes[point.x][point.y];
 };
 
 CubeGroup.prototype.cubesWidth = function() {
@@ -165,7 +204,7 @@ CubeGroup.prototype.addLeftCol = function() {
 };
 
 CubeGroup.prototype.getCube = function(point) {
-   if (this.outOfBounds(point)) {
+   if (!point || this.outOfBounds(point)) {
       return undefined;
    }
    return this.cubes[point.x][point.y];
@@ -222,9 +261,9 @@ CubeGroup.prototype.displayCubes = function() {
       for (var col = 0; col < this.cubesHeight(); col++) {
          var cube = this.cubes[row][col];
          if (cube) {
-            string += this.cubes[row][col].name + ' ';
+            string += '# ';
          } else {
-            string += 'empty' + ' ';
+            string += '_ ';
          }
       }
       console.log('row ' + row + ': ' + string + '| ' + this.cubes[row].length);

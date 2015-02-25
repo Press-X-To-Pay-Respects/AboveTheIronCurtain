@@ -25,7 +25,7 @@ ModuleBuilder.prototype.existingReference = null;
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
 ModuleBuilder.prototype.build = function(type, x, y) {
 	//Check if core has been created
-	if(type == 'core' && this.coreExists) {
+	if(type === 'core' && this.coreExists) {
 		//if so, return existing core b/c is singleton
 		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
 		return this.core;
@@ -54,7 +54,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	//TODO: edit special module atributes based on 'type'
 	
 	//Store module if it is core
-	if(type == 'core')
+	if(type === 'core')
 	{
 		this.core = newModule;
 		this.coreExists = true;
