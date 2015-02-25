@@ -59,6 +59,10 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 		this.core = newModule;
 		this.coreExists = true;
 	}
+   // solar panel testing
+   if (type === 'solarPannel') {
+      newModule.cube.runAstar();
+   }
 	
 	//Return the module object
 	return newModule;

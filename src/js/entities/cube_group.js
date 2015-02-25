@@ -27,14 +27,13 @@ CubeGroup.prototype.add = function(cube) {
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
-   // stop if other does not exist, either is not a cube, both are in same gruop
+   // stop if other does not exist, either is not a cube, both are in same group
    if (other === null || origin.prototype !== other.prototype || origin.group === other.group) {
       return;
    }
    var relSide = this.relativeSide(origin.body, other.body);
    var originLoc = this.find(origin);
    var otherLoc = this.adjust(originLoc, relSide);
-   // console.log('hm', originLoc.x, originLoc.y);
    if (this.getCube(otherLoc)) {
       return;
    }
@@ -43,31 +42,23 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       if (originLoc.y === this.cubesHeight() - 1) {
          this.addTopRow();
       }
-      // this.game.physics.p2.createLockConstraint(origin.body, other.body, [0, origin.width + this.offset]); // S - N
-      // if (this.getCube(this.adjust(otherLoc, this.DIR.EAST))) {
-         // this.game.physics.p2.createLockConstraint(other.body, other.body, [-origin.width - this.offset, 0]);
-      // }
       break;
       case this.DIR.EAST:
       if (originLoc.x === this.cubesWidth() - 1) {
          this.addRightCol();
       }
-      // this.game.physics.p2.createLockConstraint(origin.body, other.body, [-origin.width - this.offset, 0]);
       break;
       case this.DIR.SOUTH:
       if (originLoc.y === 0) {
          this.addBotRow();
       }
-      // this.game.physics.p2.createLockConstraint(other.body, origin.body, [0, origin.width + this.offset]);
       break;
       case this.DIR.WEST:
       if (originLoc.x === 0) {
          this.addLeftCol();
       }
-      // this.game.physics.p2.createLockConstraint(other.body, origin.body, [-origin.width - this.offset, 0]);
       break;
    }
-   // console.log('end');
    originLoc = this.find(origin);
    otherLoc = this.adjust(originLoc, relSide);
    this.createConstraints(otherLoc, other);
@@ -75,25 +66,15 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       console.log('hande collision failed to find second other loc');
       return;
    }
-   if (!other) {
-      console.log('somehow lost other');
-      return;
-   }
    this.set(otherLoc, other);
-   // console.log('add: ' + other.name + ' at ' + otherLoc.x + ', ' + otherLoc.y);
-   this.displayCubes();
    other.group = this;
 };
 
 CubeGroup.prototype.createConstraints = function(loc, me) {
-   // this.displayCubes();
    var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
    var myEast = this.get(this.adjust(loc, this.DIR.EAST));
    var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
    var myWest = this.get(this.adjust(loc, this.DIR.WEST));
-   // console.log(this.find(this.adjust(loc, this.DIR.SOUTH)));
-   // console.log(myNorth, myEast, mySouth, myWest);
-   // console.log(loc);
    if (myNorth) {
       this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
    }
@@ -129,23 +110,18 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
 };
 
 CubeGroup.prototype.find = function(cube) {
-   // console.log('find', cube.name);
    for (var row = 0; row < this.cubesWidth(); row++) {
       for (var col = 0; col < this.cubesHeight(); col++) {
          if (this.cubes[row][col] === cube) {
-            // console.log('found at', row, col);
             return new Phaser.Point(row, col);
          }
       }
    }
-   // console.log('could not find cube', cube.name);
-   // this.displayCubes();
    return undefined;
 };
 
 CubeGroup.prototype.get = function(point) {
   if (!point || this.outOfBounds(point)) {
-      // console.log('get given bad point');
       return;
   }
   return this.cubes[point.x][point.y];
@@ -168,39 +144,25 @@ CubeGroup.prototype.cubesHeight = function() {
 [0,0] [1,0] ... [width,0]
 */
 CubeGroup.prototype.addTopRow = function() {
-   // console.log('add top');
-   // this.displayCubes();
    for (var row = 0; row < this.cubesWidth(); row++) {
       this.cubes[row].push(undefined);
    }
-   // console.log('end add top');
-   // this.displayCubes();
 };
 
 CubeGroup.prototype.addRightCol = function() {
-   // console.log('add right');
    var newCol = new Array(this.cubesHeight);
    this.cubes.push(newCol);
 };
 
 CubeGroup.prototype.addBotRow = function() {
-   // console.log('add bot');
-   // this.displayCubes();
    for (var row = 0; row < this.cubesWidth(); row++) {
       this.cubes[row].unshift(undefined);
    }
-   // console.log('end add bot');
-   // this.displayCubes();
 };
 
 CubeGroup.prototype.addLeftCol = function() {
-   // console.log('add left');
-   // this.displayCubes();
-   // console.log('height is ' + this.cubesHeight());
    var newCol = new Array(this.cubesHeight());
    this.cubes.unshift(newCol);
-   // console.log('end add left');
-   // this.displayCubes();
 };
 
 CubeGroup.prototype.getCube = function(point) {
