@@ -21,7 +21,7 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (this.group === undefined) {
+   if (!this.group || !other.sprite) {
       return;
    }
    this.group.handleCollision(this, other.sprite);
