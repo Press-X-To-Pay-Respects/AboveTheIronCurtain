@@ -74,9 +74,11 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    }
    this.set(otherLoc, other);
    other.group = this;
+   // this.displayCubes();
 };
 
 CubeGroup.prototype.createConstraints = function(loc, me) {
+   this.displayCubes();
    var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
    var myEast = this.get(this.adjust(loc, this.DIR.EAST));
    var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
@@ -223,19 +225,30 @@ CubeGroup.prototype.outOfBounds = function(point) {
    return false;
 };
 
+// [0,2] [1,2] [2,2]
+// [0,1] [1,1] [2,1]
+// [0,0] [1,0] [2,0]
 CubeGroup.prototype.displayCubes = function() {
-   for (var row = 0; row < this.cubesWidth(); row++) {
-      var string = '';
-      for (var col = 0; col < this.cubesHeight(); col++) {
+   console.log('================');
+   var output = 'Display Cubes\n';
+   var row = 0;
+   var col = this.cubesHeight() - 1;
+   while (col >= 0) {
+      while (row < this.cubesWidth()) {
          var cube = this.cubes[row][col];
          if (cube) {
-            string += '# ';
+            output += '# ';
          } else {
-            string += '_ ';
+            output += '_ ';
          }
+         row++;
       }
-      console.log('row ' + row + ': ' + string + '| ' + this.cubes[row].length);
+      row = 0;
+      col--;
+      output += '\n';
    }
+   console.log(output);
+   console.log('---------------');
 };
 
 CubeGroup.prototype.displayConnection = function(connection) {

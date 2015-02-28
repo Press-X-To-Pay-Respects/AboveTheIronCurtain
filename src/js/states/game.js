@@ -92,12 +92,12 @@ Game.prototype = {
   
   render: function () {
     this.game.debug.geom(this.line);
-	this.game.debug.text('mouseX: ' + this.mouseX + " mouseY: " + this.mouseY, 32, 32);
-	this.game.debug.text('input.x: ' + this.input.x + " input.y: " + this.input.y, 32, 48);
+	this.game.debug.text('mouseX: ' + this.mouseX + ' mouseY: ' + this.mouseY, 32, 32);
+	this.game.debug.text('input.x: ' + this.input.x + ' input.y: ' + this.input.y, 32, 48);
   },
 
   click: function (pointer) {
-    var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
+   var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
 	var bodies = this.game.physics.p2.hitTest(point);
     if (bodies.length)
     {
@@ -119,21 +119,19 @@ Game.prototype = {
     // p2 uses different coordinate system, so convert the pointer position to p2's coordinate system
     mouseBody.position[0] = this.game.physics.p2.pxmi(pointer.position.x);
     mouseBody.position[1] = this.game.physics.p2.pxmi(pointer.position.y);
-<<<<<<< HEAD
     this.mouseX = pointer.position.x;
     this.mouseY = pointer.position.y;
-    var bodies = this.game.physics.p2.hitTest(pointer.position);
+    var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
+	 var bodies = this.game.physics.p2.hitTest(point);
     if (bodies.length)
     {
-         var hover = bodies[0].parent;
+        var hover = bodies[0].parent;
         if (hover.sprite.module.mouseOver) {
            hover.sprite.module.mouseOver();
         }
     }
-=======
     this.mouseX = pointer.position.x + this.game.camera.x;
     this.mouseY = pointer.position.y + this.game.camera.y;
->>>>>>> origin/gh-pages
   },
   
 	scrollBG: function() {

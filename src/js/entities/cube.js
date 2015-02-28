@@ -49,22 +49,6 @@ Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
 };
 
-/*
-Cube.prototype.runAstar = function() {
-   var graph = new Astar.Graph([
-        [1,1,1,1],
-        [0,1,1,0],
-        [0,0,1,1]
-    ]);
-    var start = graph.grid[0][0];
-    var end = graph.grid[1][2];
-    var result = Astar.astar.search(graph, start, end);
-    for(var i = 0; i < result.length; i++) {
-       console.log(result[i].x, result[i].y);
-    }
-};
-*/
-
 module.exports = Cube;
 
 
