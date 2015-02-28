@@ -74,11 +74,10 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    }
    this.set(otherLoc, other);
    other.group = this;
-   // this.displayCubes();
 };
 
 CubeGroup.prototype.createConstraints = function(loc, me) {
-   this.displayCubes();
+   // this.displayCubes();
    var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
    var myEast = this.get(this.adjust(loc, this.DIR.EAST));
    var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
@@ -158,7 +157,10 @@ CubeGroup.prototype.addTopRow = function() {
 };
 
 CubeGroup.prototype.addRightCol = function() {
-   var newCol = new Array(this.cubesHeight);
+   var newCol = [];
+   for (var i = 0; i < this.cubesHeight(); i++) {
+      newCol.push(undefined);
+   }
    this.cubes.push(newCol);
 };
 
