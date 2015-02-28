@@ -31,7 +31,7 @@ function solarPanelGiveTarget(target) {
    this.cube.removeConnection();
    target.cube.removeConnection();
    // TODO: restrict by length
-   var newConnection = {start: ourGroup.find(this.cube), end: ourGroup.find(target.cube)};
+   var newConnection = {start: this.cube, end: target.cube};
    this.cube.myConnection = newConnection;
    target.cube.myConnection = newConnection;
    ourGroup.displayConnection(this.cube.myConnection);

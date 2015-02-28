@@ -74,6 +74,7 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    }
    this.set(otherLoc, other);
    other.group = this;
+   // this.displayCubes();
 };
 
 CubeGroup.prototype.createConstraints = function(loc, me) {
@@ -255,8 +256,10 @@ CubeGroup.prototype.displayCubes = function() {
 
 CubeGroup.prototype.displayConnection = function(connection) {
    var graph = new Astar.Graph(this.cubesToGraph());
-   var start = graph.grid[connection.start.x][connection.start.y];
-   var end = graph.grid[connection.end.x][connection.end.y];
+   var startPoint = this.find(connection.start);
+   var endPoint = this.find(connection.end);
+   var start = graph.grid[startPoint.x][startPoint.y];
+   var end = graph.grid[endPoint.x][endPoint.y];
    var result = Astar.astar.search(graph, start, end);
    result.unshift(start);
    var previous;
@@ -265,26 +268,63 @@ CubeGroup.prototype.displayConnection = function(connection) {
       var cur = this.get(curPoint);
       var indicator = cur.cIndicator;
       var dir;
+      var prevPoint;
+      var nextPoint;
       if (!previous) {
          indicator.animations.play('end');
-         var nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         var next = this.get(nextPoint);
-         dir = this.dirBetween(curPoint, this.find(next));
+         nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
+         dir = this.dirBetween(curPoint, nextPoint);
          indicator.rotation = this.dirToAngle(dir);
       } else if (i === result.length - 1) {
          indicator.animations.play('end');
-         // indicator.frame = 'connection_end';
-         var prevPoint = new Phaser.Point(previous.x, previous.y);
-         var prev = this.get(prevPoint);
-         dir = this.dirBetween(curPoint, this.find(prev));
+         prevPoint = new Phaser.Point(previous.x, previous.y);
+         dir = this.dirBetween(curPoint, prevPoint);
          indicator.rotation = this.dirToAngle(dir);
       } else {
          indicator.animations.play('line');
-         // indicator.frame = 'connection_end';
+         prevPoint = new Phaser.Point(previous.x, previous.y);
+         var prevDir = this.dirBetween(curPoint, prevPoint);
+         nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
+         var nextDir = this.dirBetween(curPoint, nextPoint);
+         this.manageIndicator(indicator, prevDir, nextDir);
       }
       previous = result[i];
       cur.displayIndicator();
     }
+};
+
+CubeGroup.prototype.manageIndicator = function(indicator, prevDir, nextDir) {
+  if (prevDir === this.DIR.NORTH && nextDir === this.DIR.SOUTH) { // 2
+      indicator.rotation = Math.PI;
+   } else if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.NORTH) { // 1
+      indicator.rotation = 0;
+   } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.WEST) { // 4
+      indicator.rotation = 1 / 2 * Math.PI;
+   } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.EAST) { // 3
+      indicator.rotation = 3 / 2  * Math.PI;
+   } else {
+      indicator.animations.play('right');
+      if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.EAST) { // 5
+         indicator.rotation = 0;
+      } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.SOUTH) { // 6
+         indicator.rotation = 1 / 2 * Math.PI;
+      } else if (prevDir === this.DIR.NORTH && nextDir === this.DIR.WEST) { // 7
+         indicator.rotation = Math.PI;
+      } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.NORTH) { // 8
+         indicator.rotation = 3 / 2 * Math.PI;
+      } else {
+         indicator.scale.setTo(-Math.abs(indicator.scale.x), indicator.scale.y);
+         if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.WEST) { // 9
+            indicator.rotate = 0;
+         } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.NORTH) { // 10
+            indicator.rotation = 1 / 2 * Math.PI;
+         } else if (prevDir === this.DIR.NORTH && nextDir === this.DIR.EAST) { // 11
+            indicator.rotation = Math.PI;
+         } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.SOUTH) { // 12
+            indicator.rotation = 3 / 2 * Math.PI;
+         }
+      }
+   } 
 };
 
 CubeGroup.prototype.cubesToGraph = function() {
@@ -310,10 +350,10 @@ CubeGroup.prototype.dirBetween = function(a, b) {
    var deltaX = a.x - b.x;
    var deltaY = a.y - b.y;
    if (deltaX > 0) {
-      return this.DIR.EAST;
+      return this.DIR.WEST;
    }
    if (deltaX < 0) {
-      return this.DIR.WEST;
+      return this.DIR.EAST;
    }
    if (deltaY > 0) {
       return this.DIR.SOUTH;
