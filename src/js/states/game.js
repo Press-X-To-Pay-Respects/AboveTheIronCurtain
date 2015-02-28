@@ -10,6 +10,8 @@ var CubeGroup = require('../entities/cube_group');
 
 var mouseBody; // physics body for mouse
 
+var bg, bg2;
+
 var Game = function () {
   this.testentity = null;
 };
@@ -19,7 +21,13 @@ module.exports = Game;
 Game.prototype = {
 	
   create: function () {
-    this.game.physics.startSystem(Phaser.Physics.P2JS);
+	this.game.world.setBounds(0, 0, 8000, 4000);
+	
+	//Create the two background images
+    bg = this.game.add.sprite(0, 0, 'earthNight');
+	bg2 = this.game.add.sprite(-8000, 0, 'earthNight');
+	
+	this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.setImpactEvents(true);
     mouseBody = new p2.Body(); // jshint ignore:line
     this.game.physics.p2.world.addBody(mouseBody);
@@ -27,14 +35,17 @@ Game.prototype = {
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
-	this.coreModule = this.moduleBuilder.build('core', 200, 200);
-   this.player = new CubeGroup(this, this.coreModule.cube);
-   
+	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+	this.player = new CubeGroup(this, this.coreModule.cube);
+	
+	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	//this.spaceKey.onDown.add();
+	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-   this.placeCoreKey.onDown.add(this.addCore, this);
+	this.placeCoreKey.onDown.add(this.addCore, this);
 	//shield
 	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
     this.placeShieldKey.onDown.add(this.addShield, this);
@@ -59,27 +70,34 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
+	
+	this.game.camera.setPosition(1000, 1000);
   },
 
   update: function () {
     if (this.grabbed) {
-      var angle = Math.atan2(this.grabbed.sprite.y - this.input.position.y, this.grabbed.sprite.x - this.input.position.x) + Math.PI;
-      var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, this.input.position.x, this.input.position.y);
+      var angle = Math.atan2(this.grabbed.sprite.y - (this.input.position.y + this.game.camera.y), this.grabbed.sprite.x - (this.input.position.x+ this.game.camera.x)) + Math.PI;
+      var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
       var weight = 10;
       this.grabbed.force.x = Math.cos(angle) * dist * weight;
       this.grabbed.force.y = Math.sin(angle) * dist * weight;
-      this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, this.input.position.x, this.input.position.y);
+      this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
     } else {
        this.line.setTo(0, 0, 0, 0);
     }
+	
+	this.scrollBG();
   },
   
   render: function () {
     this.game.debug.geom(this.line);
+	this.game.debug.text('mouseX: ' + this.mouseX + " mouseY: " + this.mouseY, 32, 32);
+	this.game.debug.text('input.x: ' + this.input.x + " input.y: " + this.input.y, 32, 48);
   },
 
   click: function (pointer) {
-    var bodies = this.game.physics.p2.hitTest(pointer.position);
+    var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
+	var bodies = this.game.physics.p2.hitTest(point);
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
@@ -96,12 +114,23 @@ Game.prototype = {
     // p2 uses different coordinate system, so convert the pointer position to p2's coordinate system
     mouseBody.position[0] = this.game.physics.p2.pxmi(pointer.position.x);
     mouseBody.position[1] = this.game.physics.p2.pxmi(pointer.position.y);
-    this.mouseX = pointer.position.x;
-    this.mouseY = pointer.position.y;
+    this.mouseX = pointer.position.x + this.game.camera.x;
+    this.mouseY = pointer.position.y + this.game.camera.y;
   },
   
+	scrollBG: function() {
+		bg.x += 0.5;
+		if(bg.x >= 13500) {
+			bg.x += 0;
+		}
+		bg2.x += 0.5;
+		if(bg2.x >= 13500) {
+			bg2.x = 0;
+		}
+	},
+  
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
-  addCore: function () {
+  addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
 	this.moduleBuilder.build('core', this.mouseX, this.mouseY);
   },

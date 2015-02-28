@@ -19,6 +19,7 @@ Preloader.prototype = {
 	this.load.image('thruster', 'assets/thruster.png');
 	this.load.image('shield', 'assets/shield.png');
 	this.load.image('solarPannel', 'assets/solarPannel.png');
+	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');
 	
     this.load.physics('module_physics', 'assets/module_physics.json');
   },
