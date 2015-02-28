@@ -53,6 +53,7 @@ Game.prototype = {
     this.input.onUp.add(this.release, this);
     this.input.addMoveCallback(this.move, this);
     this.grabbed = undefined;
+    this.lastClicked = undefined;
     this.line = new Phaser.Line(0, 0, 0, 0);
     
     this.rootSpawned = false;
@@ -83,6 +84,10 @@ Game.prototype = {
     if (bodies.length)
     {
         this.grabbed = bodies[0].parent;
+        if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
+           this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
+        }
+        this.lastClicked = bodies[0].parent;
     }
   },
   
@@ -98,6 +103,14 @@ Game.prototype = {
     mouseBody.position[1] = this.game.physics.p2.pxmi(pointer.position.y);
     this.mouseX = pointer.position.x;
     this.mouseY = pointer.position.y;
+    var bodies = this.game.physics.p2.hitTest(pointer.position);
+    if (bodies.length)
+    {
+         var hover = bodies[0].parent;
+        if (hover.sprite.module.mouseOver) {
+           hover.sprite.module.mouseOver();
+        }
+    }
   },
   
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses

@@ -1,3 +1,5 @@
+var Astar = require('../libs/javascript-astar/astar');
+
 /*
 Defines a cube group.
 */
@@ -12,6 +14,9 @@ var CubeGroup = function (game, root) {
    this.root.group = this;
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
+   // this.groups = this.game.add.group();
+   // this.cubeSprites = new Phaser.Group(this.game, this.groups);
+   // this.gridSprites = new Phaser.Group(this.game, this.groups);
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -23,7 +28,8 @@ CubeGroup.prototype.update = function() {
 };
 
 CubeGroup.prototype.add = function(cube) {
-  cube.group = this; 
+  cube.group = this;
+  // this.cubeSprites.add(cube);
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
@@ -230,6 +236,90 @@ CubeGroup.prototype.displayCubes = function() {
       }
       console.log('row ' + row + ': ' + string + '| ' + this.cubes[row].length);
    }
+};
+
+CubeGroup.prototype.displayConnection = function(connection) {
+   var graph = new Astar.Graph(this.cubesToGraph());
+   var start = graph.grid[connection.start.x][connection.start.y];
+   var end = graph.grid[connection.end.x][connection.end.y];
+   var result = Astar.astar.search(graph, start, end);
+   result.unshift(start);
+   var previous;
+   for(var i = 0; i < result.length; i++) {
+      var curPoint = new Phaser.Point(result[i].x, result[i].y);
+      var cur = this.get(curPoint);
+      var indicator = cur.cIndicator;
+      var dir;
+      if (!previous) {
+         indicator.animations.play('end');
+         var nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
+         var next = this.get(nextPoint);
+         dir = this.dirBetween(curPoint, this.find(next));
+         indicator.rotation = this.dirToAngle(dir);
+      } else if (i === result.length - 1) {
+         indicator.animations.play('end');
+         // indicator.frame = 'connection_end';
+         var prevPoint = new Phaser.Point(previous.x, previous.y);
+         var prev = this.get(prevPoint);
+         dir = this.dirBetween(curPoint, this.find(prev));
+         indicator.rotation = this.dirToAngle(dir);
+      } else {
+         indicator.animations.play('line');
+         // indicator.frame = 'connection_end';
+      }
+      previous = result[i];
+      cur.displayIndicator();
+    }
+};
+
+CubeGroup.prototype.cubesToGraph = function() {
+  var graph = [];
+  for (var row = 0; row < this.cubesWidth(); row++) {
+     var newCol = [];
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         if (this.cubes[row][col]) {
+            newCol.push(1);
+         } else {
+            newCol.push(0);
+         }
+      }
+      graph.push(newCol);
+   }
+   return graph;
+};
+
+// [0,0] [1,0] -> east
+// [0,0] [0,1] -> north
+// assumes neighbors
+CubeGroup.prototype.dirBetween = function(a, b) {
+   var deltaX = a.x - b.x;
+   var deltaY = a.y - b.y;
+   if (deltaX > 0) {
+      return this.DIR.EAST;
+   }
+   if (deltaX < 0) {
+      return this.DIR.WEST;
+   }
+   if (deltaY > 0) {
+      return this.DIR.SOUTH;
+   }
+   if (deltaY < 0) {
+      return this.DIR.NORTH;
+   }
+   return this.DIR.NORTH;
+};
+
+CubeGroup.prototype.dirToAngle = function(dir) {
+  switch (dir) {
+   case this.DIR.NORTH:
+   return Math.PI;
+   case this.DIR.EAST:
+   return 3 / 2 * Math.PI;
+   case this.DIR.SOUTH:
+   return 0;
+   case this.DIR.WEST:
+   return 1 / 2 * Math.PI;
+  }  
 };
 
 module.exports = CubeGroup;

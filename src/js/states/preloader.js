@@ -19,8 +19,11 @@ Preloader.prototype = {
 	this.load.image('thruster', 'assets/thruster.png');
 	this.load.image('shield', 'assets/shield.png');
 	this.load.image('solarPannel', 'assets/solarPannel.png');
-	
-    this.load.physics('module_physics', 'assets/module_physics.json');
+   // this.load.image('gridEnd', 'assets/grid_endpoint.png');
+   // this.load.image('gridLine', 'assets/grid_line.png');
+	// this.load.spritesheet('connections', 'assets/connections.png', 73, 74);
+   this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
+   // this.load.physics('module_physics', 'assets/module_physics.json');
   },
 
   create: function () {

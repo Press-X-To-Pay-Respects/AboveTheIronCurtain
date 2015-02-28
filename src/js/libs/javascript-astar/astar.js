@@ -336,8 +336,7 @@ BinaryHeap.prototype = {
         while (n > 0) {
 
             // Compute the parent element's index, and fetch it.
-            var parentN = ((n + 1) >> 1) - 1,
-                parent = this.content[parentN];
+            var parentN = ((n + 1) >> 1) - 1, parent = this.content[parentN]; // jshint ignore:line
             // Swap the elements if the parent is greater.
             if (this.scoreFunction(element) < this.scoreFunction(parent)) {
                 this.content[parentN] = element;
@@ -359,8 +358,7 @@ BinaryHeap.prototype = {
 
         while(true) {
             // Compute the indices of the child elements.
-            var child2N = (n + 1) << 1,
-                child1N = child2N - 1;
+            var child2N = (n + 1) << 1, child1N = child2N - 1; // jshint ignore:line
             // This is used to store the new position of the element, if any.
             var swap = null,
                 child1Score;

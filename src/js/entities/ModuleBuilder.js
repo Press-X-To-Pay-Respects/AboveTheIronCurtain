@@ -21,6 +21,30 @@ ModuleBuilder.prototype.constructor = ModuleBuilder;
 ModuleBuilder.prototype.exists = false;
 ModuleBuilder.prototype.existingReference = null;
 
+/** Module functions **/
+function solarPanelGiveTarget(target) {
+   if (this.cube.group !== target.cube.group || this === target) {
+      return;
+   }
+   // TODO: restrict to only powered modules
+   var ourGroup = this.cube.group;
+   this.cube.removeConnection();
+   target.cube.removeConnection();
+   // TODO: restrict by length
+   var newConnection = {start: ourGroup.find(this.cube), end: ourGroup.find(target.cube)};
+   this.cube.myConnection = newConnection;
+   target.cube.myConnection = newConnection;
+   ourGroup.displayConnection(this.cube.myConnection);
+}
+
+function solarPanelMouseOver() {
+   if (!this.cube.myConnection) {
+      return;
+   }
+   this.cube.group.displayConnection(this.cube.myConnection);
+}
+/** End module functions **/
+
 //call this function from ModuleBuilder to construct modules
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
 ModuleBuilder.prototype.build = function(type, x, y) {
@@ -36,8 +60,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	var newCube = new Cube(this.gameState.game, x, y, type);
     var scale = 0.5;
     newCube.name = this.gameState.debugNum++;
-    newCube.scale.x = scale;
-    newCube.scale.y = scale;
+    newCube.scale.setTo(scale, scale);
     newCube.anchor.setTo(0.5, 0.5);
     this.gameState.game.physics.p2.enable(newCube);
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
@@ -47,6 +70,17 @@ ModuleBuilder.prototype.build = function(type, x, y) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
     }
+
+   // var cIndicator = new Phaser.Sprite(this.game, 0, 0, 'connections', 'grid_line.png');
+   var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
+   cIndicator.anchor.setTo(0.5, 0.5);
+   cIndicator.animations.add('end', ['connection_end.png'], 60, true);
+   cIndicator.animations.add('line', ['connection_line.png'], 60, true);
+   cIndicator.animations.add('right', ['connection_right.png'], 60, true);
+   // cIndicator.animations.add('test', ['connection_end.png'], 60, true);
+   newCube.addChild(cIndicator);
+   newCube.cIndicator = cIndicator;
+   cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
 	var newModule = new Module(newCube);
@@ -61,12 +95,12 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	}
    // solar panel testing
    if (type === 'solarPannel') {
-      newModule.cube.runAstar();
+      newModule.giveTarget = solarPanelGiveTarget;
+      newModule.mouseOver = solarPanelMouseOver;
    }
 	
 	//Return the module object
 	return newModule;
 };
-
 
 module.exports = ModuleBuilder;
