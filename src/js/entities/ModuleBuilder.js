@@ -43,6 +43,10 @@ function solarPanelMouseOver() {
    }
    this.cube.group.displayConnection(this.cube.myConnection);
 }
+
+function thrusterThrust() {
+	console.log('shrek');
+}
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
@@ -66,6 +70,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
+	//newCube.body.setCollisionGroup(this.gameState.game.cubeCG);
     if (!this.gameState.rootSpawned) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
@@ -85,7 +90,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	//Create module to wrap around cube class
 	var newModule = new Module(newCube);
 		
-	//TODO: edit special module atributes based on 'type'
+	//TODO: edit special module attributes based on 'type'
 	
 	//Store module if it is core
 	if(type === 'core')
@@ -98,7 +103,11 @@ ModuleBuilder.prototype.build = function(type, x, y) {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
    }
-	
+   
+   //Thruster module listeners
+	if(type === 'thruster') {
+		newModule.thrust = thrusterThrust;
+	}
 	//Return the module object
 	return newModule;
 };
