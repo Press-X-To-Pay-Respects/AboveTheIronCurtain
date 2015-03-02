@@ -12,9 +12,9 @@ var mouseBody; // physics body for mouse
 
 var bg, bg2;
 var numRoids = 0;
-var maxRoids = 1000;
+var maxRoids = 50;
 var cubeCG, asteroidCG;
-var asteroids;
+var asteroids, asteroidList;
 
 var Game = function () {
   this.testentity = null;
@@ -49,7 +49,8 @@ Game.prototype = {
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
-	//this.generateAsteroids();
+	asteroidList = new Phaser.ArraySet();
+	this.generateAsteroids();
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.spaceKey.onDown.add(this.applyThrust, this.player);
@@ -102,7 +103,7 @@ Game.prototype = {
     
     var point = new Phaser.Point(this.mouseX, this.mouseY);
 	 var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length)
+    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
     {
         var hover = bodies[0].parent;
         if (hover.sprite.module.mouseOver) {
@@ -115,12 +116,13 @@ Game.prototype = {
   
   render: function () {
     this.game.debug.geom(this.line);
+	this.game.debug.text(maxRoids, 32, 32);
   },
 
   click: function (pointer) {
    var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
 	var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length)
+    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
     {
         this.grabbed = bodies[0].parent;
         if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
@@ -162,18 +164,18 @@ Game.prototype = {
 			var asteroid;
 			if(coinA === 1) {
 				if(coinB === 1) { //Spawn asteroid above screen
-					asteroid = asteroids.create(this.game.camera.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.game.camera.y - this.game.camera.height/2 - this.game.rnd.integerInRange(32, 300), 'asteroid');
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y - this.game.camera.height/2 - this.game.rnd.integerInRange(32, 300), 'asteroid');
 				}
 				else { //Spawn asteroid below screen
-					asteroid = asteroids.create(this.game.camera.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.game.camera.y + this.game.camera.height/2 + this.game.rnd.integerInRange(32, 300), 'asteroid');
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y + this.game.camera.height/2 + this.game.rnd.integerInRange(32, 300), 'asteroid');
 				}
 			}
 			else {
 				if(coinB === 1) { //Spawn asteroid to left of screen
-					asteroid = asteroids.create(this.game.camera.x - this.game.camera.width/2 - this.game.rnd.integerInRange(32, 300), this.game.camera.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
+					asteroid = asteroids.create(this.coreModule.cube.x - this.game.camera.width/2 - this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
 				}
 				else { //Spawn asteroid to right
-					asteroid = asteroids.create(this.game.camera.x + this.game.camera.width/2 + this.game.rnd.integerInRange(32, 300), this.game.camera.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.camera.width/2 + this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
 				}
 			}
 			
@@ -185,12 +187,13 @@ Game.prototype = {
 			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
 			asteroid.body.collides([asteroidCG, cubeCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
+			asteroidList.add(asteroid);
 		}
 	},
 
 	applyThrust: function() {
 		for(var cur = this.thrusters.first; cur !== null; cur = cur.next) {
-			cur.thrust();
+			//cur.thrust();
 			console.log('shrek 2');
 		}
 	},
