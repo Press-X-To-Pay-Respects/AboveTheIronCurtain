@@ -83,17 +83,26 @@ CubeGroup.prototype.createConstraints = function(loc, me) {
    var myEast = this.get(this.adjust(loc, this.DIR.EAST));
    var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
    var myWest = this.get(this.adjust(loc, this.DIR.WEST));
+   var constraint;
    if (myNorth) {
-      this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
+      constraint = this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
+      me.constraints.push(constraint);
+      myNorth.constraints.push(constraint);
    }
    if (myEast) {
-      this.game.physics.p2.createLockConstraint(me.body, myEast.body, [-me.width - this.offset, 0]); // me - east
+      constraint = this.game.physics.p2.createLockConstraint(me.body, myEast.body, [-me.width - this.offset, 0]); // me - east
+      me.constraints.push(constraint);
+      myEast.constraints.push(constraint);
    }
    if (mySouth) {
-      this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset]); // south - me
+      constraint = this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset]); // south - me
+      me.constraints.push(constraint);
+      mySouth.constraints.push(constraint);
    }
    if (myWest) {
-      this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0]); // west - me
+      constraint = this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0]); // west - me
+      me.constraints.push(constraint);
+      myWest.constraints.push(constraint);
    }
 };
 
@@ -185,7 +194,6 @@ CubeGroup.prototype.getCube = function(point) {
 
 CubeGroup.prototype.adjust = function(point, dir) {
   if (!point) {
-     console.log('adjust given undefined point');
      return;
   }
   var newPoint = new Phaser.Point(point.x, point.y);
@@ -294,6 +302,7 @@ CubeGroup.prototype.displayConnection = function(connection) {
 };
 
 CubeGroup.prototype.manageIndicator = function(indicator, prevDir, nextDir) {
+  indicator.scale.setTo(Math.abs(indicator.scale.x), indicator.scale.y);
   if (prevDir === this.DIR.NORTH && nextDir === this.DIR.SOUTH) { // 2
       indicator.rotation = Math.PI;
    } else if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.NORTH) { // 1
@@ -315,7 +324,7 @@ CubeGroup.prototype.manageIndicator = function(indicator, prevDir, nextDir) {
       } else {
          indicator.scale.setTo(-Math.abs(indicator.scale.x), indicator.scale.y);
          if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.WEST) { // 9
-            indicator.rotate = 0;
+            indicator.rotation = 0;
          } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.NORTH) { // 10
             indicator.rotation = 1 / 2 * Math.PI;
          } else if (prevDir === this.DIR.NORTH && nextDir === this.DIR.EAST) { // 11
@@ -375,6 +384,122 @@ CubeGroup.prototype.dirToAngle = function(dir) {
    case this.DIR.WEST:
    return 1 / 2 * Math.PI;
   }  
+};
+
+CubeGroup.prototype.destroyCube = function(cube) {
+  // console.log('destroyCube');
+  var loc = this.find(cube);
+  if (!loc) {
+     console.log('attempt to destroy cube not in group');
+     return;
+  }
+  // remove cube from group
+  this.remove(cube);
+  // destroy cube
+  cube.kill(true);
+};
+
+CubeGroup.prototype.remove = function(cube) {
+   // console.log('remove');
+   // this.displayCubes();
+   // remove cube from array
+   var row, col;
+   for (row = 0; row < this.cubesWidth(); row++) {
+      for (col = 0; col < this.cubesHeight(); col++) {
+         if (this.cubes[row][col] === cube) {
+            this.cubes[row][col] = undefined;
+            break;
+         }
+      }
+   }
+   // remove constraints from cube
+   this.removeConstraints(cube);
+   // test for exiles
+   for (row = 0; row < this.cubesWidth(); row++) {
+      for (col = 0; col < this.cubesHeight(); col++) {
+         var exile = this.cubes[row][col];
+         if (exile && this.isExile(exile)) {
+            this.remove(exile);
+         }
+      }
+   }
+};
+
+CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {
+   // console.log('removeNeighborsConstraint');
+   var neighbors = this.getNeighbors(cube);
+   for (var i = 0; i < neighbors.length; i++) {
+      var neighbor = neighbors[i];
+      for (var j = 0; j < neighbor.constraints.length; j++) {
+         if (neighbor.constraints[j] === constraint) {
+            neighbor.constraints.splice(j, 1);
+         }
+      }
+   }
+};
+
+CubeGroup.prototype.getNeighbors = function(cube) {
+   var loc = this.find(cube);
+   var north = this.get(this.adjust(loc, this.DIR.NORTH));
+   var east = this.get(this.adjust(loc, this.DIR.EAST));
+   var south = this.get(this.adjust(loc, this.DIR.SOUTH));
+   var west = this.get(this.adjust(loc, this.DIR.WEST));
+   var neighbors = [];
+   if (north) {
+      neighbors.push(north);
+   }
+   if (east) {
+      neighbors.push(east);
+   }
+   if (south) {
+      neighbors.push(south);
+   }
+   if (west) {
+      neighbors.push(west);
+   }
+   return neighbors;
+};
+
+CubeGroup.prototype.removeConstraints = function(cube) {
+   // console.log('removeConstraints');
+   while (cube.constraints.length > 0) {
+      this.removeNeighborsConstraint(cube.constraints[0], cube);
+      this.game.physics.p2.removeConstraint(cube.constraints[0]);
+      cube.constraints.splice(0, 1);
+   }
+};
+
+// only used to test Astar
+CubeGroup.prototype.testPath = function() {
+  var graph = new Astar.Graph([
+        [1,1,1,1],
+        [0,1,1,0],
+        [0,0,0,1]
+    ]);
+   var start = graph.grid[0][0];
+   var end = graph.grid[2][3];
+   var result = Astar.astar.search(graph, start, end);
+   result.unshift(start);
+   for(var i = 0; i < result.length; i++) {
+      console.log(result[i].x, result[i].y);
+    } 
+};
+
+CubeGroup.prototype.isExile = function(cube) {
+   if (cube === this.root) {
+      return;
+   }
+   var graph = new Astar.Graph(this.cubesToGraph());
+   var startPoint = this.find(this.root);
+   var endPoint = this.find(cube);
+   var start = graph.grid[startPoint.x][startPoint.y];
+   var end = graph.grid[endPoint.x][endPoint.y];
+   var result = Astar.astar.search(graph, start, end);
+   // if no path is found, the cube is an exile
+   if (result.length === 0) {
+      return true;
+   }
+   return false;
 };
 
 module.exports = CubeGroup;

@@ -6,10 +6,13 @@ Defines a cube.
 
 var Cube = function (game, x, y, sprite) {
     Phaser.Sprite.call(this, game, x, y, sprite);
-    game.add.existing(this);
+    this.game = game;
+    this.game.add.existing(this);
     this.group = undefined;
     this.module = undefined;
-    this.indicatorFade = 0.008;
+    this.indicatorFade = 0.02;
+    this.health = 3;
+    this.constraints = [];
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -47,6 +50,13 @@ Cube.prototype.removeConnection = function() {
 
 Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
+};
+
+Cube.prototype.takeDamage = function(amt) {
+   this.health -= amt;
+   if (this.health <= 0) {
+      this.group.destroyCube(this);
+   }
 };
 
 module.exports = Cube;

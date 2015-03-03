@@ -57,6 +57,10 @@ Game.prototype = {
     this.placeSPKey.onDown.add(this.addSP, this);
 	//END
     
+    // Debug controller
+    this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
+    this.debugKey.onDown.add(this.debugDestroy, this);
+    
     this.mouseX = 0;
     this.mouseY = 0;
     
@@ -172,6 +176,16 @@ Game.prototype = {
     if (!this.rootSpawned) {
        entity.root = true;
        this.rootSpawned = true;
+    }
+  },
+  
+  debugDestroy: function () {
+    var point = new Phaser.Point(this.mouseX, this.mouseY);
+	 var bodies = this.game.physics.p2.hitTest(point);
+    if (bodies.length)
+    {
+        var hover = bodies[0].parent;
+        hover.sprite.takeDamage(3);
     }
   }
 };
