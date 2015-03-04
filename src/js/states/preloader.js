@@ -9,7 +9,7 @@ module.exports = Preloader;
 Preloader.prototype = {
 
   preload: function () {
-    this.asset = this.add.sprite(320, 240, 'preloader');
+    this.asset = this.add.sprite(640, 360, 'preloader');
     this.asset.anchor.setTo(0.5, 0.5);
 
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
@@ -19,6 +19,7 @@ Preloader.prototype = {
 	this.load.image('thruster', 'assets/thruster.png');
 	this.load.image('shield', 'assets/shield.png');
 	this.load.image('solarPannel', 'assets/solarPannel.png');
+	this.load.image('asteroid', 'assets/asteroid.png');
    this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
 	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');
     this.load.physics('module_physics', 'assets/module_physics.json');

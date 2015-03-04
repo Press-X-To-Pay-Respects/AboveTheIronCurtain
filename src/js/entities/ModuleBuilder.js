@@ -1,6 +1,8 @@
 var Cube = require('./cube');
 var Module = require('./Module');
 
+var thrustAmt = 10000;
+
 //Use this to create a moduleBuilder- only need to create one instance of it
 var ModuleBuilder = function(setGameState) {
 	//Ensure that cannot create multiple instances of this class
@@ -11,6 +13,7 @@ var ModuleBuilder = function(setGameState) {
 	this.gameState = setGameState;
 	this.coreExists = false;	//records if core has been created
 	this.core = null;			//stores core when it is created
+	//var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	ModuleBuilder.prototype.exists = true;
 	ModuleBuilder.prototype.existingReference = this;
 };
@@ -43,6 +46,13 @@ function solarPanelMouseOver() {
    }
    this.cube.group.displayConnection(this.cube.myConnection);
 }
+
+function applyThrust() {
+	if(this.cube.group !== undefined) {
+		this.cube.body.thrust(thrustAmt * Math.pow(this.cube.group.numCubes, .75));
+	}
+}
+
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
@@ -66,6 +76,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
+	//newCube.body.setCollisionGroup(this.gameState.game.cubeCG);
     if (!this.gameState.rootSpawned) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
@@ -85,7 +96,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	//Create module to wrap around cube class
 	var newModule = new Module(newCube);
 		
-	//TODO: edit special module atributes based on 'type'
+	//TODO: edit special module attributes based on 'type'z
 	
 	//Store module if it is core
 	if(type === 'core')
@@ -98,7 +109,13 @@ ModuleBuilder.prototype.build = function(type, x, y) {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
    }
-	
+   
+   //Thruster module events
+	if(type === 'thruster') {
+		var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
+		this.gameState.input.keyboard.addKeyCapture([space]);
+		space.onDown.add(applyThrust, newModule);
+	}
 	//Return the module object
 	return newModule;
 };
