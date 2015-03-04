@@ -8,7 +8,6 @@ var CubeGroup = function (game, root) {
    this.game = game;
    this.root = root;
    this.cubes = [];
-   this.thrusters = new Phaser.LinkedList();
    var col = [];
    col.push(this.root);
    this.cubes.push(col);
@@ -74,10 +73,6 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       return;
    }
    this.set(otherLoc, other);
-   if(other === 'thruster') {
-		this.thrusters.add(other);
-		this.thrust = thrusterThrust;
-	}
    other.group = this;
    // this.displayCubes();
 };
@@ -380,10 +375,6 @@ CubeGroup.prototype.dirToAngle = function(dir) {
    case this.DIR.WEST:
    return 1 / 2 * Math.PI;
   }  
-};
-
-CubeGroup.prototype.thrusterThrust = function() {
-	console.log('shrek');
 };
 
 module.exports = CubeGroup;

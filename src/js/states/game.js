@@ -52,10 +52,6 @@ Game.prototype = {
 	asteroidList = new Phaser.ArraySet();
 	this.generateAsteroids();
 	
-	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	this.spaceKey.onDown.add(this.applyThrust, this.player);
-	//this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -107,10 +103,9 @@ Game.prototype = {
     {
         var hover = bodies[0].parent;
         if (hover.sprite.module.mouseOver) {
-           //hover.sprite.module.mouseOver();
+           hover.sprite.module.mouseOver();
         }
     }
-	
 	this.scrollBG();
   },
   
@@ -188,13 +183,6 @@ Game.prototype = {
 			asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
 			asteroid.body.collides([asteroidCG, cubeCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
 			asteroidList.add(asteroid);
-		}
-	},
-
-	applyThrust: function() {
-		for(var cur = this.thrusters.first; cur !== null; cur = cur.next) {
-			//cur.thrust();
-			console.log('shrek 2');
 		}
 	},
   

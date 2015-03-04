@@ -1,6 +1,8 @@
 var Cube = require('./cube');
 var Module = require('./Module');
 
+var thrustAmt = 750;
+
 //Use this to create a moduleBuilder- only need to create one instance of it
 var ModuleBuilder = function(setGameState) {
 	//Ensure that cannot create multiple instances of this class
@@ -11,6 +13,7 @@ var ModuleBuilder = function(setGameState) {
 	this.gameState = setGameState;
 	this.coreExists = false;	//records if core has been created
 	this.core = null;			//stores core when it is created
+	//var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	ModuleBuilder.prototype.exists = true;
 	ModuleBuilder.prototype.existingReference = this;
 };
@@ -44,9 +47,10 @@ function solarPanelMouseOver() {
    this.cube.group.displayConnection(this.cube.myConnection);
 }
 
-function thrusterThrust() {
-	console.log('shrek');
+function applyThrust() {
+	this.cube.body.moveForward(thrustAmt);
 }
+
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
@@ -90,7 +94,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	//Create module to wrap around cube class
 	var newModule = new Module(newCube);
 		
-	//TODO: edit special module attributes based on 'type'
+	//TODO: edit special module attributes based on 'type'z
 	
 	//Store module if it is core
 	if(type === 'core')
@@ -104,9 +108,11 @@ ModuleBuilder.prototype.build = function(type, x, y) {
       newModule.mouseOver = solarPanelMouseOver;
    }
    
-   //Thruster module listeners
+   //Thruster module events
 	if(type === 'thruster') {
-		newModule.thrust = thrusterThrust;
+		var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
+		this.gameState.input.keyboard.addKeyCapture([space]);
+		space.onDown.add(applyThrust, newModule);
 	}
 	//Return the module object
 	return newModule;
