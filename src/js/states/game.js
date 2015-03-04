@@ -55,13 +55,15 @@ Game.prototype = {
     
     // Debug controller
     this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
-    this.debugKey.onDown.add(this.debugDestroy, this);
+    this.debugKey.onDown.add(this.debug, this);
     this.rootSpawned = false;
     
     this.debugNum = 0;
     this.myRoot = undefined;
 	
 	 this.game.camera.setPosition(1000, 1000);
+    
+    this.levelData = JSON.parse(this.game.cache.getText('level_one'));
   },
 
   update: function () {
@@ -102,14 +104,9 @@ Game.prototype = {
 	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y);
   },
 
-  debugDestroy: function () {
-    var point = new Phaser.Point(this.mouseX, this.mouseY);
-	 var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length)
-    {
-        var hover = bodies[0].parent;
-        hover.sprite.takeDamage(3);
-    }
+  debug: function () {
+    var test = JSON.parse(this.game.cache.getText('level_one'));
+    console.log(test);
   }
 };
 

@@ -41,11 +41,6 @@ Cube.prototype.toString = function() {
 Cube.prototype.concat = function(string, val) {
    return string + ': ' + val + '\n';
 };
-
-Cube.prototype.removeConnection = function() {
-  
-};
-
 Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
 };
