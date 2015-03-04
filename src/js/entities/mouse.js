@@ -44,7 +44,7 @@ Mouse.prototype.update = function() {
     if (bodies.length)
     {
         var hover = bodies[0].parent;
-        if (hover.sprite.module.mouseOver) {
+        if (hover.sprite.module && hover.sprite.module.mouseOver) {
            hover.sprite.module.mouseOver();
         }
     }
