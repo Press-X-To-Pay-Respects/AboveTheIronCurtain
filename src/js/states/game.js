@@ -11,6 +11,10 @@ var CubeGroup = require('../entities/cube_group');
 var mouseBody; // physics body for mouse
 
 var bg, bg2;
+var numRoids = 0;
+var maxRoids = 50;
+var cubeCG, asteroidCG;
+var asteroids, asteroidList;
 
 var Game = function () {
   this.testentity = null;
@@ -38,9 +42,15 @@ Game.prototype = {
 	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
 	this.player = new CubeGroup(this, this.coreModule.cube);
 	
-	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	//this.spaceKey.onDown.add();
-	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
+	//Creates collision groups for the player and the asteroids
+	cubeCG = this.game.physics.p2.createCollisionGroup();
+	asteroidCG = this.game.physics.p2.createCollisionGroup();
+	
+	asteroids = this.game.add.group();
+	asteroids.enableBody = true;
+	asteroids.physicsBodyType = Phaser.Physics.P2JS;
+	asteroidList = new Phaser.ArraySet();
+	this.generateAsteroids();
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -76,7 +86,7 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
 	
-	this.game.camera.setPosition(1000, 1000);
+	this.game.camera.follow(this.coreModule.cube);
   },
 
   update: function () {
@@ -93,27 +103,25 @@ Game.prototype = {
     
     var point = new Phaser.Point(this.mouseX, this.mouseY);
 	 var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length)
+    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
     {
         var hover = bodies[0].parent;
         if (hover.sprite.module.mouseOver) {
            hover.sprite.module.mouseOver();
         }
     }
-	
 	this.scrollBG();
   },
   
   render: function () {
     this.game.debug.geom(this.line);
-	this.game.debug.text('mouseX: ' + this.mouseX + ' mouseY: ' + this.mouseY, 32, 32);
-	this.game.debug.text('input.x: ' + this.input.x + ' input.y: ' + this.input.y, 32, 48);
+	this.game.debug.text(maxRoids, 32, 32);
   },
 
   click: function (pointer) {
    var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
 	var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length)
+    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
     {
         this.grabbed = bodies[0].parent;
         if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
@@ -139,12 +147,46 @@ Game.prototype = {
   
 	scrollBG: function() {
 		bg.x += 0.5;
-		if(bg.x >= 13500) {
+		if(bg.x >= 8000) {
 			bg.x += 0;
 		}
 		bg2.x += 0.5;
-		if(bg2.x >= 13500) {
+		if(bg2.x >= 8000) {
 			bg2.x = 0;
+		}
+	},
+	
+	generateAsteroids: function() {
+		for(;numRoids < maxRoids; numRoids++) {
+			var coinA = this.game.rnd.integerInRange(0,1);
+			var coinB = this.game.rnd.integerInRange(0,1);
+			var asteroid;
+			if(coinA === 1) {
+				if(coinB === 1) { //Spawn asteroid above screen
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y - this.game.camera.height/2 - this.game.rnd.integerInRange(32, 300), 'asteroid');
+				}
+				else { //Spawn asteroid below screen
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y + this.game.camera.height/2 + this.game.rnd.integerInRange(32, 300), 'asteroid');
+				}
+			}
+			else {
+				if(coinB === 1) { //Spawn asteroid to left of screen
+					asteroid = asteroids.create(this.coreModule.cube.x - this.game.camera.width/2 - this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
+				}
+				else { //Spawn asteroid to right
+					asteroid = asteroids.create(this.coreModule.cube.x + this.game.camera.width/2 + this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
+				}
+			}
+			
+			asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
+			asteroid.body.angularDamping = 0;
+			asteroid.body.damping = 0;
+			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * 3.14);
+			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
+			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
+			asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
+			asteroid.body.collides([asteroidCG, cubeCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
+			asteroidList.add(asteroid);
 		}
 	},
   
