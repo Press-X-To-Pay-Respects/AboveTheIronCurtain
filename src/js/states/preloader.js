@@ -19,6 +19,8 @@ Preloader.prototype = {
 	this.load.image('thruster', 'assets/thruster.png');
 	this.load.image('shield', 'assets/shield.png');
 	this.load.image('solarPannel', 'assets/solarPannel.png');
+	this.load.image('hacker', 'assets/hacker.png');
+	this.load.image('hackable1', 'assets/hackable1.png');
 	
     this.load.physics('module_physics', 'assets/module_physics.json');
   },

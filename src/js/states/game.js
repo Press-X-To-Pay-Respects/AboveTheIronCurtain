@@ -2,11 +2,14 @@
 Main testing environment.
 */
 
+var Renderables = require('../functionAccess/Renderables');
 var ModuleBuilder = require('../entities/ModuleBuilder');
+var UIBuilder = require('../ui/UIBuilder');
 var Cube = require('../entities/cube');
 var ModuleBuilder = require('../entities/ModuleBuilder');
 var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
+var Hackable = require('../entities/Hackable');
 
 var mouseBody; // physics body for mouse
 
@@ -24,12 +27,21 @@ Game.prototype = {
     mouseBody = new p2.Body(); // jshint ignore:line
     this.game.physics.p2.world.addBody(mouseBody);
     
+	//create Renderables class
+	this.renderables = new Renderables();
+	//create the UIBuilder
+	this.uiBuilder = new UIBuilder(this, this.renderables);
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 200, 200);
-   this.player = new CubeGroup(this, this.coreModule.cube);
+	this.player = new CubeGroup(this, this.coreModule.cube);
    
+	this.testUI = this.uiBuilder.buildProgressBar('growing', 200, 50, 50, 100, 10);
+	this.testUI.value = 50;
+	this.testUI.onEvent = function() {
+		this.destroy();
+	};
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -44,6 +56,9 @@ Game.prototype = {
 	//solarPannel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
+	//hacker
+	this.placeHackKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+	this.placeHackKey.onDown.add(this.addHack, this);
 	//END
     
     this.mouseX = 0;
@@ -60,6 +75,8 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
     
+	this.testHack = new Hackable(this.game, 90,90, 'hackable1');
+	
     // this.playerCommand = this.placeCubeSpec(300, 300);
     // this.player = new CubeGroup(this, this.playerCommand);
     
@@ -80,10 +97,12 @@ Game.prototype = {
     } else {
        this.line.setTo(0, 0, 0, 0);
     }
+	this.testUI.addValue(0.8);
   },
   
   render: function () {
     this.game.debug.geom(this.line);
+	this.renderables.renderAll();
   },
 
   click: function (pointer) {
@@ -121,6 +140,9 @@ Game.prototype = {
   },
   addSP: function () {
 	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
+  },
+  addHack: function () {
+	this.moduleBuilder.build('hacker', this.mouseX, this.mouseY);
   },
   placeCube: function () {
     var entity = new Cube(this.game, this.mouseX, this.mouseY);

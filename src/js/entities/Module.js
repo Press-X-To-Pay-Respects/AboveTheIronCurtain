@@ -1,5 +1,6 @@
 //Don't use this function to create modules, instead use moduleBuilder()
-var Module = function(setCube) {
+var Module = function(setType, setCube) {
+	this.type = setType;
 	this.cube = setCube;
 };
 
