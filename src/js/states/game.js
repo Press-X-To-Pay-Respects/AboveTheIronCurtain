@@ -15,6 +15,7 @@ var numRoids = 0;
 var maxRoids = 50;
 var cubeCG, asteroidCG;
 var asteroids, asteroidList;
+var leftKey, rightKey;
 
 var Game = function () {
   this.testentity = null;
@@ -51,6 +52,10 @@ Game.prototype = {
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	asteroidList = new Phaser.ArraySet();
 	this.generateAsteroids();
+	
+	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+	
+	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -110,6 +115,19 @@ Game.prototype = {
            hover.sprite.module.mouseOver();
         }
     }
+	
+	if(leftKey.isDown) {
+		if(this.coreModule.cube.body.angularVelocity > -9) { 
+			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
+		}
+	}
+	
+	if(rightKey.isDown) {
+		if(this.coreModule.cube.body.angularVelocity < 9) {
+			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
+		}
+	}
+	
 	this.scrollBG();
   },
   

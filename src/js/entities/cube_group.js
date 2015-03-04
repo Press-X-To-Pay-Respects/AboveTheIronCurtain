@@ -14,6 +14,7 @@ var CubeGroup = function (game, root) {
    this.root.group = this;
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
+   this.numCubes = 1;
    // this.groups = this.game.add.group();
    // this.cubeSprites = new Phaser.Group(this.game, this.groups);
    // this.gridSprites = new Phaser.Group(this.game, this.groups);
@@ -501,6 +502,20 @@ CubeGroup.prototype.isExile = function(cube) {
       return true;
    }
    return false;
+};
+
+CubeGroup.prototype.countCubes = function() {
+	var row, col;
+	var num  = 0;
+	for (row = 0; row < this.cubesWidth(); row++) {
+		for (col = 0; col < this.cubesHeight(); col++) {
+			if (this.cubes[row][col] !== undefined) {
+				num++;
+			}
+		}
+	}
+	//console.log(num);
+	this.numCubes = num;
 };
 
 module.exports = CubeGroup;

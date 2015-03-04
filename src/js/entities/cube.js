@@ -32,6 +32,7 @@ Cube.prototype.cubeCollide = function(other) {
       return;
    }
    this.group.handleCollision(this, other.sprite);
+   this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {
@@ -56,6 +57,7 @@ Cube.prototype.takeDamage = function(amt) {
    this.health -= amt;
    if (this.health <= 0) {
       this.group.destroyCube(this);
+	  this.group.countCubes();
    }
 };
 

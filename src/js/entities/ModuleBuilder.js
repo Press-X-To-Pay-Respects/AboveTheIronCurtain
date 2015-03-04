@@ -1,7 +1,7 @@
 var Cube = require('./cube');
 var Module = require('./Module');
 
-var thrustAmt = 750;
+var thrustAmt = 10000;
 
 //Use this to create a moduleBuilder- only need to create one instance of it
 var ModuleBuilder = function(setGameState) {
@@ -48,7 +48,9 @@ function solarPanelMouseOver() {
 }
 
 function applyThrust() {
-	this.cube.body.moveForward(thrustAmt);
+	if(this.cube.group !== undefined) {
+		this.cube.body.thrust(thrustAmt * Math.pow(this.cube.group.numCubes, .75));
+	}
 }
 
 /** End module functions **/
