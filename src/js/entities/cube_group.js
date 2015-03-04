@@ -402,6 +402,9 @@ CubeGroup.prototype.destroyCube = function(cube) {
 CubeGroup.prototype.remove = function(cube) {
    // console.log('remove');
    // this.displayCubes();
+   if (this.root === cube) {
+      return;
+   }
    // remove cube from array
    var row, col;
    for (row = 0; row < this.cubesWidth(); row++) {

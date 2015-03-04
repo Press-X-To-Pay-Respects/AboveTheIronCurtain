@@ -16,6 +16,9 @@ var Mouse = function(game, input) {
    this.grabbed = undefined;
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
+   
+   this.removeThreshold = 100; // time in milliseconds
+   this.removeTime = 0; // time till threshold
 };
 
 Mouse.prototype.constructor = Mouse;
@@ -28,6 +31,11 @@ Mouse.prototype.update = function() {
       this.grabbed.force.x = Math.cos(angle) * dist * weight;
       this.grabbed.force.y = Math.sin(angle) * dist * weight;
       this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
+      this.removeTime += this.game.time.elapsed;
+      if (this.removeTime >= this.removeThreshold) {
+         this.grabbed.sprite.remove();
+         this.removeTime = 0;
+      }
     } else {
        this.line.setTo(0, 0, 0, 0);
     }
@@ -47,6 +55,7 @@ Mouse.prototype.click = function(pointer) {
    var bodies = this.game.physics.p2.hitTest(point);
    if (bodies.length)
    {
+     this.removeTime = 0;
      this.grabbed = bodies[0].parent;
      if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);

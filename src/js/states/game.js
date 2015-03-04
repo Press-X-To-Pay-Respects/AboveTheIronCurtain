@@ -3,7 +3,6 @@ Main testing environment.
 */
 
 var ModuleBuilder = require('../entities/ModuleBuilder');
-var Cube = require('../entities/cube');
 var ModuleBuilder = require('../entities/ModuleBuilder');
 var CubeGroup = require('../entities/cube_group');
 var Mouse = require('../entities/mouse');
@@ -91,34 +90,18 @@ Game.prototype = {
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
-	this.moduleBuilder.build('core', this.mouseX, this.mouseY);
+	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y);
   },
   addShield: function () {
-	this.moduleBuilder.build('shield', this.mouseX, this.mouseY);
+	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y);
   },
   addThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouseX, this.mouseY);
+	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y);
   },
   addSP: function () {
-	this.moduleBuilder.build('solarPannel', this.mouseX, this.mouseY);
+	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y);
   },
-  placeCube: function () {
-    var entity = new Cube(this.game, this.mouseX, this.mouseY);
-    var scale = 0.5;
-    entity.name = this.debugNum++;
-    entity.scale.x = scale;
-    entity.scale.y = scale;
-    entity.anchor.setTo(0.5, 0.5);
-    this.game.physics.p2.enable(entity);
-    entity.body.onBeginContact.add(entity.cubeCollide, entity);
-    entity.body.damping = 0.9;
-    entity.body.angularDamping = 0.9;
-    if (!this.rootSpawned) {
-       entity.root = true;
-       this.rootSpawned = true;
-    }
-  },
-  
+
   debugDestroy: function () {
     var point = new Phaser.Point(this.mouseX, this.mouseY);
 	 var bodies = this.game.physics.p2.hitTest(point);

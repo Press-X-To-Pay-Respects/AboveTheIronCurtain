@@ -57,6 +57,13 @@ Cube.prototype.takeDamage = function(amt) {
    }
 };
 
+Cube.prototype.remove = function() {
+   if (!this.group) {
+      return;
+   }
+   this.group.remove(this);
+};
+
 module.exports = Cube;
 
 
