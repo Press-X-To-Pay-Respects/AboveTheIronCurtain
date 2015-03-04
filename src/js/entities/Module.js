@@ -2,6 +2,7 @@
 var Module = function(setType, setCube) {
 	this.type = setType;
 	this.cube = setCube;
+   setCube.module = this;
 };
 
 Module.prototype.constructor = Module;
