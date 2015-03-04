@@ -17,7 +17,7 @@ var Mouse = function(game, input) {
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
    
-   this.removeThreshold = 100; // time in milliseconds
+   this.removeThreshold = 400; // time in milliseconds
    this.removeTime = 0; // time till threshold
 };
 

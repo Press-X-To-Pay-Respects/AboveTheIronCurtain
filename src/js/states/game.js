@@ -38,12 +38,12 @@ Game.prototype = {
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+   this.cubeWidth = this.coreModule.cube.width;
+   this.cubeBuffer = 2;
 	this.player = new CubeGroup(this, this.coreModule.cube);
 	
-<<<<<<< HEAD
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-=======
 	//Creates collision groups for the player and the asteroids
 	cubeCG = this.game.physics.p2.createCollisionGroup();
 	asteroidCG = this.game.physics.p2.createCollisionGroup();
@@ -57,7 +57,6 @@ Game.prototype = {
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
->>>>>>> origin/gh-pages
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -81,41 +80,41 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
-	
-<<<<<<< HEAD
+
 	 this.game.camera.setPosition(1000, 1000);
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
+    this.loadData();
+  },
+  
+  // this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+	// this.player = new CubeGroup(this, this.coreModule.cube);
+  
+  loadData: function() {
+      var myLevel = this.levelData['level_one'];
+      for (var key in myLevel) {
+         if (myLevel.hasOwnProperty(key)) {
+            var element = myLevel[key];
+            if (element.hasOwnProperty('blueprint')) { // enemy type
+               var enemyX = element['x_pos'];
+               var enemyY = element['y_pos'];
+               var enemyGroup = new CubeGroup(this, undefined);
+               var blueprint = element['blueprint'];
+               for (var row = 0; row < blueprint.length; row++) {
+                  for (var col = 0; col < blueprint[row].length; col++) {
+                     var type = blueprint[row][col];
+                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
+                     enemyY + col * (this.cubeWidth + this.cubeBuffer));
+                     var point = new Phaser.Point(row, col);
+                     enemyGroup.add(newModule.cube, point);
+                  }
+               }
+            }
+         }
+      }
   },
 
-  update: function () {
-   this.mouse.update();
-=======
-	this.game.camera.follow(this.coreModule.cube);
-  },
-
-  update: function () {
-    if (this.grabbed) {
-      var angle = Math.atan2(this.grabbed.sprite.y - (this.input.position.y + this.game.camera.y), this.grabbed.sprite.x - (this.input.position.x+ this.game.camera.x)) + Math.PI;
-      var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
-      var weight = 10;
-      this.grabbed.force.x = Math.cos(angle) * dist * weight;
-      this.grabbed.force.y = Math.sin(angle) * dist * weight;
-      this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
-    } else {
-       this.line.setTo(0, 0, 0, 0);
-    }
-    
-    var point = new Phaser.Point(this.mouseX, this.mouseY);
-	 var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
-    {
-        var hover = bodies[0].parent;
-        if (hover.sprite.module.mouseOver) {
-           hover.sprite.module.mouseOver();
-        }
-    }
-	
+  update: function () {    
 	if(leftKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity > -9) { 
 			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
@@ -127,50 +126,19 @@ Game.prototype = {
 			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
-	
->>>>>>> origin/gh-pages
+   this.mouse.update();
 	this.scrollBG();
+   this.game.camera.follow(this.coreModule.cube);
   },
   
   render: function () {
-<<<<<<< HEAD
    // this.game.debug.geom(this.line);
    this.mouse.render();
 	this.game.debug.text('mouseX: ' + this.mouseX + ' mouseY: ' + this.mouseY, 32, 32);
 	this.game.debug.text('input.x: ' + this.input.x + ' input.y: ' + this.input.y, 32, 48);
+   // this.game.debug.geom(this.line);
+   this.game.debug.text(maxRoids, 32, 32);
   },
-=======
-    this.game.debug.geom(this.line);
-	this.game.debug.text(maxRoids, 32, 32);
-  },
-
-  click: function (pointer) {
-   var point = new Phaser.Point(pointer.x + this.game.camera.x, pointer.y + this.game.camera.y);
-	var bodies = this.game.physics.p2.hitTest(point);
-    if (bodies.length && bodies[0].parent.sprite.key !== 'asteroid')
-    {
-        this.grabbed = bodies[0].parent;
-        if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
-           this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
-        }
-        this.lastClicked = bodies[0].parent;
-    }
-  },
-  
-  release: function () {
-     if (this.grabbed) {
-        this.grabbed = undefined;
-     }
-  },
-  
-  move: function (pointer) {
-    // p2 uses different coordinate system, so convert the pointer position to p2's coordinate system
-    mouseBody.position[0] = this.game.physics.p2.pxmi(pointer.position.x);
-    mouseBody.position[1] = this.game.physics.p2.pxmi(pointer.position.y);
-    this.mouseX = pointer.position.x + this.game.camera.x;
-    this.mouseY = pointer.position.y + this.game.camera.y;
-  },
->>>>>>> origin/gh-pages
   
 	scrollBG: function() {
 		bg.x += 0.5;

@@ -11,7 +11,7 @@ var ModuleBuilder = function(setGameState) {
 	}
 		
 	this.gameState = setGameState;
-	this.coreExists = false;	//records if core has been created
+	// this.coreExists = false;	//records if core has been created
 	this.core = null;			//stores core when it is created
 	//var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	ModuleBuilder.prototype.exists = true;
@@ -31,8 +31,8 @@ function solarPanelGiveTarget(target) {
    }
    // TODO: restrict to only powered modules
    var ourGroup = this.cube.group;
-   this.cube.removeConnection();
-   target.cube.removeConnection();
+   // this.cube.removeConnection();
+   // target.cube.removeConnection();
    // TODO: restrict by length
    var newConnection = {start: this.cube, end: target.cube};
    this.cube.myConnection = newConnection;
@@ -41,7 +41,7 @@ function solarPanelGiveTarget(target) {
 }
 
 function solarPanelMouseOver() {
-   if (!this.cube.myConnection) {
+   if (!this.cube.myConnection || !this.cube.group) {
       return;
    }
    this.cube.group.displayConnection(this.cube.myConnection);
@@ -49,7 +49,7 @@ function solarPanelMouseOver() {
 
 function applyThrust() {
 	if(this.cube.group !== undefined) {
-		this.cube.body.thrust(thrustAmt * Math.pow(this.cube.group.numCubes, .75));
+		this.cube.body.thrust(thrustAmt * Math.pow(this.cube.group.numCubes, 0.75));
 	}
 }
 
@@ -59,11 +59,13 @@ function applyThrust() {
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
 ModuleBuilder.prototype.build = function(type, x, y) {
 	//Check if core has been created
+   /*
 	if(type === 'core' && this.coreExists) {
 		//if so, return existing core b/c is singleton
 		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
 		return this.core;
 	}
+   */
 	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name

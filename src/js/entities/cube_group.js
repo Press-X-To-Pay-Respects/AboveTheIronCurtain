@@ -11,7 +11,9 @@ var CubeGroup = function (game, root) {
    var col = [];
    col.push(this.root);
    this.cubes.push(col);
-   this.root.group = this;
+   if (this.root) {
+      this.root.group = this;
+   }
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
    this.numCubes = 1;
@@ -28,9 +30,14 @@ CubeGroup.prototype.constructor = CubeGroup;
 CubeGroup.prototype.update = function() {
 };
 
-CubeGroup.prototype.add = function(cube) {
+CubeGroup.prototype.add = function(cube, point) {
+  if (!this.root && cube.module.type === 'core') {
+     this.root = cube;
+  }
   cube.group = this;
-  // this.cubeSprites.add(cube);
+  this.set(cube, point);
+  this.createConstraints(cube, point);
+  // this.displayCubes();
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
@@ -41,49 +48,18 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    var relSide = this.relativeSide(origin.body, other.body);
    var originLoc = this.find(origin);
    var otherLoc = this.adjust(originLoc, relSide);
-   if (this.getCube(otherLoc)) {
-      return;
-   }
-   switch (relSide) {
-      case this.DIR.NORTH:
-      if (originLoc.y === this.cubesHeight() - 1) {
-         this.addTopRow();
-      }
-      break;
-      case this.DIR.EAST:
-      if (originLoc.x === this.cubesWidth() - 1) {
-         this.addRightCol();
-      }
-      break;
-      case this.DIR.SOUTH:
-      if (originLoc.y === 0) {
-         this.addBotRow();
-      }
-      break;
-      case this.DIR.WEST:
-      if (originLoc.x === 0) {
-         this.addLeftCol();
-      }
-      break;
-   }
-   originLoc = this.find(origin);
-   otherLoc = this.adjust(originLoc, relSide);
-   this.createConstraints(otherLoc, other);
-   if (!otherLoc) {
-      console.log('hande collision failed to find second other loc');
-      return;
-   }
-   this.set(otherLoc, other);
-   other.group = this;
+   this.set(other, otherLoc);
+   otherLoc = this.find(other); // update position since set can shift grid
+   this.createConstraints(other, otherLoc);
    // this.displayCubes();
 };
 
-CubeGroup.prototype.createConstraints = function(loc, me) {
+CubeGroup.prototype.createConstraints = function(me, point) {
    // this.displayCubes();
-   var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
-   var myEast = this.get(this.adjust(loc, this.DIR.EAST));
-   var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
-   var myWest = this.get(this.adjust(loc, this.DIR.WEST));
+   var myNorth = this.get(this.adjust(point, this.DIR.NORTH));
+   var myEast = this.get(this.adjust(point, this.DIR.EAST));
+   var mySouth = this.get(this.adjust(point, this.DIR.SOUTH));
+   var myWest = this.get(this.adjust(point, this.DIR.WEST));
    var constraint;
    if (myNorth) {
       constraint = this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
@@ -215,15 +191,26 @@ CubeGroup.prototype.adjust = function(point, dir) {
    return newPoint;
 };
 
-CubeGroup.prototype.set = function(point, cube) {
+CubeGroup.prototype.set = function(cube, point) {
    if (!point) {
       console.log('set given undefined point');
       return;
    }
-   if (this.outOfBounds(point)) {
-      return;
+   if (point.x < 0) {
+      this.addLeftCol();
+      point.x = 0;
+   } else if (point.x >= this.cubesWidth()) {
+      this.addRightCol();
+      point.x = this.cubesWidth() - 1;
+   } else if (point.y < 0) {
+      this.addBotRow();
+      point.y = 0;
+   } else if (point.y >= this.cubesHeight()) {
+      this.addTopRow();
+      point.y = this.cubesHeight() - 1;
    }
    this.cubes[point.x][point.y] = cube;
+   cube.group = this;
 };
 
 CubeGroup.prototype.outOfBounds = function(point) {
@@ -402,7 +389,6 @@ CubeGroup.prototype.destroyCube = function(cube) {
 
 CubeGroup.prototype.remove = function(cube) {
    // console.log('remove');
-   // this.displayCubes();
    if (this.root === cube) {
       return;
    }
@@ -428,6 +414,7 @@ CubeGroup.prototype.remove = function(cube) {
          }
       }
    }
+   this.displayCubes();
 };
 
 CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {

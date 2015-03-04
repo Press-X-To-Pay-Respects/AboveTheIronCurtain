@@ -1,12 +1,12 @@
 {
     "level_one": {
 		"enemy_one": {
-         "x_pos": 200,
-         "y_pos": 200,
+         "x_pos": 1300,
+         "y_pos": 1300,
 			"blueprint": [
-         [1, 1, 1],
-         [1, 0, 1],
-         [1, 1, 1]
+         ["shield", "shield", "shield"],
+         ["shield", "core", "shield"],
+         ["shield", "shield", "shield"]
          ]
         }
     }
