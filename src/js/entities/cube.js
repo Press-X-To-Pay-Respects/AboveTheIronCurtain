@@ -2,8 +2,6 @@
 Defines a cube.
 */
 
-// var Astar = require('../libs/javascript-astar/astar');
-
 var Cube = function (game, x, y, sprite) {
     Phaser.Sprite.call(this, game, x, y, sprite);
     this.game = game;
