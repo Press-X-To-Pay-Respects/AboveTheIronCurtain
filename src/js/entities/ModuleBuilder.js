@@ -56,7 +56,7 @@ function applyThrust() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPannel'
+//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
 ModuleBuilder.prototype.build = function(type, x, y) {
 	//Check if core has been created
    /*
@@ -107,7 +107,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 		this.coreExists = true;
 	}
    // solar panel testing
-   if (type === 'solarPannel') {
+   if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
    }

@@ -15,15 +15,15 @@ Preloader.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
     this.load.image('testsprite', 'assets/test2.png');
-	this.load.image('core', 'assets/core.png');
-	this.load.image('thruster', 'assets/thruster.png');
+	this.load.spritesheet('core', 'assets/coreSheet.png', 64, 64);
+	this.load.spritesheet('thruster', 'assets/thrusterSheet.png', 64, 64);
 	this.load.image('shield', 'assets/shield.png');
-	this.load.image('solarPannel', 'assets/solarPannel.png');
+	this.load.image('solarPanel', 'assets/solarPanel.png');
 	this.load.image('asteroid', 'assets/asteroid.png');
-   this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
+	this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
 	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');
     this.load.physics('module_physics', 'assets/module_physics.json');
-   this.load.text('level_one', 'assets/level_one.json');
+	this.load.text('level_one', 'assets/level_one.json');
   },
 
   create: function () {
