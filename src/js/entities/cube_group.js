@@ -17,9 +17,6 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
    this.numCubes = 1;
-   // this.groups = this.game.add.group();
-   // this.cubeSprites = new Phaser.Group(this.game, this.groups);
-   // this.gridSprites = new Phaser.Group(this.game, this.groups);
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -42,7 +39,7 @@ CubeGroup.prototype.add = function(cube, point) {
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype || origin.group === other.group) {
+   if (other === null || origin.prototype !== other.prototype || other.group) {
       return;
    }
    var relSide = this.relativeSide(origin.body, other.body);
@@ -50,7 +47,12 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    var otherLoc = this.adjust(originLoc, relSide);
    this.set(other, otherLoc);
    otherLoc = this.find(other); // update position since set can shift grid
+   if (!otherLoc) {
+      // console.log('handle collision failed to find position for good applicant');
+      return;
+   }
    this.createConstraints(other, otherLoc);
+   // console.log(other.body.collidesWith);
    // this.displayCubes();
 };
 
@@ -91,7 +93,7 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
      angleToOther = 2 * Math.PI + angleToOther;
   }
   angleToOther = (angleToOther + 3/2 * Math.PI) % (2 * Math.PI); // rotate 90 d clockwise
-  var diffAngle = angleToOther - thisBody.rotation;
+  var diffAngle = Math.abs(Math.abs(angleToOther) - Math.abs(thisBody.rotation));
    if (diffAngle < 1 / 4 * Math.PI || diffAngle > 7 / 4 * Math.PI) { // north
      return this.DIR.NORTH;
   } else if (diffAngle >= 1 / 4 * Math.PI && diffAngle < 3 / 4 * Math.PI) { // east
@@ -129,14 +131,6 @@ CubeGroup.prototype.cubesHeight = function() {
    return this.cubes[0].length;
 };
 
-/*
-[0,height] ...  [width, height]
-.                 
-.               .
-.               .
-[0,1] [1,1] ... .
-[0,0] [1,0] ... [width,0]
-*/
 CubeGroup.prototype.addTopRow = function() {
    for (var row = 0; row < this.cubesWidth(); row++) {
       this.cubes[row].push(undefined);
@@ -209,6 +203,10 @@ CubeGroup.prototype.set = function(cube, point) {
       this.addTopRow();
       point.y = this.cubesHeight() - 1;
    }
+   if (this.get(point)) {
+      // console.log('tried to set to filled position');
+      return;
+   }
    this.cubes[point.x][point.y] = cube;
    cube.group = this;
 };
@@ -224,9 +222,6 @@ CubeGroup.prototype.outOfBounds = function(point) {
    return false;
 };
 
-// [0,2] [1,2] [2,2]
-// [0,1] [1,1] [2,1]
-// [0,0] [1,0] [2,0]
 CubeGroup.prototype.displayCubes = function() {
    console.log('================');
    var output = 'Display Cubes\n';
@@ -340,9 +335,6 @@ CubeGroup.prototype.cubesToGraph = function() {
    return graph;
 };
 
-// [0,0] [1,0] -> east
-// [0,0] [0,1] -> north
-// assumes neighbors
 CubeGroup.prototype.dirBetween = function(a, b) {
    var deltaX = a.x - b.x;
    var deltaY = a.y - b.y;
@@ -414,7 +406,7 @@ CubeGroup.prototype.remove = function(cube) {
          }
       }
    }
-   this.displayCubes();
+   // this.displayCubes();
 };
 
 CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {

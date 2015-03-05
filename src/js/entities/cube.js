@@ -23,6 +23,9 @@ Cube.prototype.update = function() {
    if (this.cIndicator && this.cIndicator.alpha > 0) {
       this.cIndicator.alpha -= this.indicatorFade;
    }
+   if (this.module.update) {
+      this.module.update();
+   }
 };
 
 Cube.prototype.cubeCollide = function(other) {

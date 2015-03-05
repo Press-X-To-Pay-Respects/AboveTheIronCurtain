@@ -87,9 +87,6 @@ Game.prototype = {
     this.loadData();
   },
   
-  // this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
-	// this.player = new CubeGroup(this, this.coreModule.cube);
-  
   loadData: function() {
       var myLevel = this.levelData['level_one'];
       for (var key in myLevel) {
@@ -132,11 +129,9 @@ Game.prototype = {
   },
   
   render: function () {
-   // this.game.debug.geom(this.line);
    this.mouse.render();
 	this.game.debug.text('mouseX: ' + this.mouseX + ' mouseY: ' + this.mouseY, 32, 32);
 	this.game.debug.text('input.x: ' + this.input.x + ' input.y: ' + this.input.y, 32, 48);
-   // this.game.debug.geom(this.line);
    this.game.debug.text(maxRoids, 32, 32);
   },
   

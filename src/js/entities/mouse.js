@@ -57,6 +57,9 @@ Mouse.prototype.click = function(pointer) {
    {
      this.removeTime = 0;
      this.grabbed = bodies[0].parent;
+     if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
+        this.grabbed.sprite.module.mouseDown();
+     }
      if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
      }

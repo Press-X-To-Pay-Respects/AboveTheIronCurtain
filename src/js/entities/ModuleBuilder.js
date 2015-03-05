@@ -1,16 +1,17 @@
 var Cube = require('./cube');
 var Module = require('./Module');
 
-var thrustAmt = 10000;
+var thrustAmt = 5000;
 
 //Use this to create a moduleBuilder- only need to create one instance of it
-var ModuleBuilder = function(setGameState) {
+var ModuleBuilder = function(setGameState, setColGroup) {
 	//Ensure that cannot create multiple instances of this class
 	if(ModuleBuilder.prototype.exists) {
 		return ModuleBuilder.prototype.existingReference;
 	}
 		
 	this.gameState = setGameState;
+   this.colGroup = setColGroup;
 	// this.coreExists = false;	//records if core has been created
 	this.core = null;			//stores core when it is created
 	//var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -26,14 +27,10 @@ ModuleBuilder.prototype.existingReference = null;
 
 /** Module functions **/
 function solarPanelGiveTarget(target) {
-   if (this.cube.group !== target.cube.group || this === target) {
+   if (this.cube.group && target.cube.group && this.cube.group !== target.cube.group || this === target) {
       return;
    }
-   // TODO: restrict to only powered modules
    var ourGroup = this.cube.group;
-   // this.cube.removeConnection();
-   // target.cube.removeConnection();
-   // TODO: restrict by length
    var newConnection = {start: this.cube, end: target.cube};
    this.cube.myConnection = newConnection;
    target.cube.myConnection = newConnection;
@@ -47,10 +44,19 @@ function solarPanelMouseOver() {
    this.cube.group.displayConnection(this.cube.myConnection);
 }
 
-function applyThrust() {
-	if(this.cube.group !== undefined) {
-		this.cube.body.thrust(thrustAmt * Math.pow(this.cube.group.numCubes, 0.75));
-	}
+function beginThrust() {
+   this.thrust = true;
+}
+
+function endThrust() {
+   this.thrust = false;
+}
+
+function thrusterUpdate() {
+   if (this.thrust) {
+      this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
+      this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
+   }
 }
 
 /** End module functions **/
@@ -78,19 +84,16 @@ ModuleBuilder.prototype.build = function(type, x, y) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
-	//newCube.body.setCollisionGroup(this.gameState.game.cubeCG);
     if (!this.gameState.rootSpawned) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
     }
 
-   // var cIndicator = new Phaser.Sprite(this.game, 0, 0, 'connections', 'grid_line.png');
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);
    cIndicator.animations.add('end', ['connection_end.png'], 60, true);
    cIndicator.animations.add('line', ['connection_line.png'], 60, true);
    cIndicator.animations.add('right', ['connection_right.png'], 60, true);
-   // cIndicator.animations.add('test', ['connection_end.png'], 60, true);
    newCube.addChild(cIndicator);
    newCube.cIndicator = cIndicator;
    cIndicator.alpha = 0;
@@ -116,10 +119,28 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	if(type === 'thruster') {
 		var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
 		this.gameState.input.keyboard.addKeyCapture([space]);
-		space.onDown.add(applyThrust, newModule);
+		// space.onDown.add(applyThrust, newModule);
+      space.onDown.add(beginThrust, newModule);
+      space.onUp.add(endThrust, newModule);
+      newModule.update = thrusterUpdate;
 	}
 	//Return the module object
 	return newModule;
 };
 
 module.exports = ModuleBuilder;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
