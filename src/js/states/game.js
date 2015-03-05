@@ -12,7 +12,7 @@ var numRoids = 0;
 var maxRoids = 50;
 var cubeCG, asteroidCG;
 var asteroids, asteroidList;
-var leftKey, rightKey;
+var leftKey, rightKey, cwKey, ccwKey;
 
 var Game = function () {
   this.testentity = null;
@@ -55,8 +55,9 @@ Game.prototype = {
 	this.generateAsteroids();
 	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
-	
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+	ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
+	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -123,6 +124,19 @@ Game.prototype = {
 			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
+	
+	if(ccwKey.isDown) {
+		if(this.mouse.grabbed !== undefined && this.mouse.grabbed.sprite.group === undefined) {
+			this.mouse.grabbed.angularForce += -5;
+		}
+	}
+	
+	if(cwKey.isDown) {
+		if(this.mouse.grabbed !== undefined && this.mouse.grabbed.sprite.group === undefined) {
+			this.mouse.grabbed.angularForce += 5;
+		}
+	}
+	
    this.mouse.update();
 	this.scrollBG();
    this.game.camera.follow(this.coreModule.cube);
@@ -136,11 +150,11 @@ Game.prototype = {
   },
   
 	scrollBG: function() {
-		bg.x += 0.5;
+		bg.x += 0.125;
 		if(bg.x >= 8000) {
 			bg.x += 0;
 		}
-		bg2.x += 0.5;
+		bg2.x += 0.125;
 		if(bg2.x >= 8000) {
 			bg2.x = 0;
 		}
