@@ -18,7 +18,7 @@ Preloader.prototype = {
 	this.load.spritesheet('core', 'assets/coreSheet.png', 64, 64);
 	this.load.spritesheet('thruster', 'assets/thrusterSheet.png', 64, 64);
 	this.load.image('shield', 'assets/shield.png');
-	this.load.image('solarPannel', 'assets/solarPannel.png');
+	this.load.image('solarPanel', 'assets/solarPanel.png');
 	this.load.image('asteroid', 'assets/asteroid.png');
    this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
 	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');

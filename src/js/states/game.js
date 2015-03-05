@@ -69,7 +69,7 @@ Game.prototype = {
 	//thruster
 	this.placeThrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
     this.placeThrusterKey.onDown.add(this.addThruster, this);
-	//solarPannel
+	//solarPanel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
 	//END
@@ -206,7 +206,7 @@ Game.prototype = {
 	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y);
   },
   addSP: function () {
-	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y);
   },
 
   debug: function () {
