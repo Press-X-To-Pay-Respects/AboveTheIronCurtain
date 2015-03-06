@@ -44,6 +44,7 @@ Game.prototype = {
    var playerGroup = new CubeGroup(this, this.coreModule.cube);
    this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
+   this.player.isPlayer = true;
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
@@ -100,19 +101,23 @@ Game.prototype = {
                var enemyX = element['x_pos'];
                var enemyY = element['y_pos'];
                var enemyGroup = new CubeGroup(this, undefined);
+               this.updateDependents.push(enemyGroup);
                var blueprint = element['blueprint'];
+               // var practical = [];
                for (var row = 0; row < blueprint.length; row++) {
+                  // var newCol = [];
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
-                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer, false),
-                     enemyY + col * (this.cubeWidth + this.cubeBuffer));
+                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
+                     enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+                     // newCol.push(newModule.cube);
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
-                     // TODO: give different types here
-                     enemyGroup.giveAI('ram', this.player);
-                     this.updateDependents.push(enemyGroup);
                   }
+                  // practical.push(newCol);
                }
+               // TODO: give different types here
+               enemyGroup.giveAI('ram', this.player);
             }
          }
       }

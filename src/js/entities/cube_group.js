@@ -18,6 +18,14 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
    this.numCubes = 1;
+   /*
+   this.spawning = false;
+   this.spawnGrid = [];
+   this.spawnDelay = 100;
+   this.curSpawnDelay = 0;
+   this.spawnRow = 0;
+   this.spawnCol = 0;
+   */
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -26,6 +34,23 @@ CubeGroup.prototype.constructor = CubeGroup;
  * Automatically called by World.update
  */
 CubeGroup.prototype.update = function() {
+   /*
+   if (this.spawning) {
+      if (this.spawnRow >= this.spawnGrid.length) {
+         this.spawning = false;
+      } else {
+         if (this.spawnCol >= this.spawnGrid[this.spawnRow].length) {
+            this.spawnRow++;
+            this.spawnCol = 0;
+         }
+         if (this.curSpawnDelay > 0) {
+            
+         }
+      }
+   } else if (this.AI) {
+      this.AI.update();
+   }
+   */
    if (this.AI) {
       this.AI.update();
    }
@@ -61,16 +86,25 @@ CubeGroup.prototype.add = function(cube, point) {
   // this.displayCubes();
 };
 
+/*
+CubeGroup.prototype.addOverTime = function(grid) {
+   this.spawning = true;
+   this.spawnGrid = grid;
+   this.spawnRow = 0;
+   this.spawnCol = 0;
+};
+*/
+
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
    if (other === null || origin.prototype !== other.prototype) {
       return;
    }
    if (other.group && other.group !== this && origin.ramDelay <= 0) {
-      console.log(origin.name, 'ramming damage!');
+      // console.log(origin.name, 'ramming damage!');
       other.takeDamage(1);
       origin.resetRamDelay();
-   } else if (!other.group) {
+   } else if (!other.group && this.isPlayer) {
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       var otherLoc = this.adjust(originLoc, relSide);
@@ -290,6 +324,10 @@ CubeGroup.prototype.displayConnection = function(connection) {
    var graph = new Astar.Graph(this.cubesToGraph());
    var startPoint = this.find(connection.start);
    var endPoint = this.find(connection.end);
+   if (!startPoint || !endPoint) {
+      console.log('displayConnection failed to get points');
+      return;
+   }
    var start = graph.grid[startPoint.x][startPoint.y];
    var end = graph.grid[endPoint.x][endPoint.y];
    var result = Astar.astar.search(graph, start, end);

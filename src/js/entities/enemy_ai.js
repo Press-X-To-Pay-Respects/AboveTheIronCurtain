@@ -7,16 +7,22 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.playerGroup = playerGroup;
    this.player = this.playerGroup.root;
    this.ramDist = 500;
-   this.bootupTime = 40000;
+   this.bootupTime = 5000;
    this.rotationForce = 50;
    this.facingAllowance = Math.PI / 20;
    this.thrustersFiring = false;
+   switch (this.type) {
+      case 'ram':
+      this.allocateToThrusters();
+      break;
+   }
 };
 
 EnemyAI.prototype.constructor = EnemyAI;
 
 EnemyAI.prototype.update = function() {
    if (this.bootupTime > 0) {
+      // console.log(this.bootupTime);
       this.bootupTime -= this.game.time.elapsed;
       return;
    }
@@ -47,11 +53,39 @@ EnemyAI.prototype.ramUpdate = function() {
          // this.game.events.thrustersFire.dispatch(this.group);
          this.group.call('beginThrust');
          this.thrustersFiring = true;
+         this.allocateToThrusters();
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
          // this.game.events.thrustersHalt.dispatch(this.group);
          this.group.call('endThrust');
          this.thrustersFiring = false;
       }
+   }
+};
+
+EnemyAI.prototype.allocateToThrusters = function() {
+   var panels = [];
+   var thrusters = [];
+   for (var row = 0; row < this.group.cubesWidth(); row++) {
+      for (var col = 0; col < this.group.cubesHeight(); col++) {
+         var cube = this.group.cubes[row][col];
+         if (cube && cube.module) {
+            if (cube.module.type === 'solarPanel' && !cube.myConnection) {
+               panels.push(cube.module);
+            } else if (cube.module.type === 'thruster' && !cube.myConnection) {
+               thrusters.push(cube.module);
+            }
+         }
+      }
+   }
+   var i = 0;
+   while (i < thrusters.length && i < panels.length) {
+      var tarPanel = panels[i];
+      var tarThruster = thrusters[i];
+      var newConnection = {start: tarPanel.cube, end: tarThruster.cube};
+      tarPanel.cube.myConnection = newConnection;
+      tarThruster.cube.myConnection = newConnection;
+      this.group.displayConnection(tarPanel.cube.myConnection);
+      i++;
    }
 };
 

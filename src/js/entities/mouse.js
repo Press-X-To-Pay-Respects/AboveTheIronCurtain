@@ -61,7 +61,8 @@ Mouse.prototype.click = function(pointer) {
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
         this.grabbed.sprite.module.mouseDown();
      }
-     if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
+     if (this.lastClicked && this.lastClicked.sprite && this.lastClicked.sprite.module &&
+     this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
      }
      this.lastClicked = bodies[0].parent;
