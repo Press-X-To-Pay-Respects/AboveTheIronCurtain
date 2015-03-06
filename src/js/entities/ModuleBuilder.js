@@ -63,8 +63,13 @@ function thrusterUpdate() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
+<<<<<<< HEAD
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
+=======
+//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
+ModuleBuilder.prototype.build = function(type, x, y) {
+>>>>>>> origin/gh-pages
 	//Check if core has been created
    /*
 	if(type === 'core' && this.coreExists) {
@@ -111,7 +116,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 		this.coreExists = true;
 	}
    // solar panel testing
-   if (type === 'solarPannel') {
+   if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
    }
