@@ -4,9 +4,9 @@
          "x_pos": 1300,
          "y_pos": 1300,
 			"blueprint": [
-         ["shield", "shield", "shield"],
-         ["shield", "core", "shield"],
-         ["shield", "shield", "shield"]
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
          ]
         }
     }

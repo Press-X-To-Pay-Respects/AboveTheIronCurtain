@@ -57,10 +57,12 @@ Mouse.prototype.click = function(pointer) {
    {
      this.removeTime = 0;
      this.grabbed = bodies[0].parent;
+     // console.log(this.grabbed.sprite.name);
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
         this.grabbed.sprite.module.mouseDown();
      }
-     if (this.lastClicked && this.lastClicked.sprite.module.giveTarget) {
+     if (this.lastClicked && this.lastClicked.sprite && this.lastClicked.sprite.module &&
+     this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
      }
      this.lastClicked = bodies[0].parent;

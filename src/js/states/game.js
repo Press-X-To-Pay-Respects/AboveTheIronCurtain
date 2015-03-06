@@ -3,7 +3,6 @@ Main testing environment.
 */
 
 var ModuleBuilder = require('../entities/ModuleBuilder');
-var ModuleBuilder = require('../entities/ModuleBuilder');
 var CubeGroup = require('../entities/cube_group');
 var Mouse = require('../entities/mouse');
 
@@ -12,7 +11,7 @@ var numRoids = 0;
 var maxRoids = 50;
 var cubeCG, asteroidCG;
 var asteroids, asteroidList;
-var leftKey, rightKey;
+var leftKey, rightKey, cwKey, ccwKey;
 
 var Game = function () {
   this.testentity = null;
@@ -33,14 +32,19 @@ Game.prototype = {
    this.game.physics.p2.setImpactEvents(true);
     
    this.mouse = new Mouse(this.game, this.input);
-    
+   
+   this.updateDependents = [];
+   
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
-	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+	this.coreModule = this.moduleBuilder.build('core', 1500, 1500, true);
    this.cubeWidth = this.coreModule.cube.width;
    this.cubeBuffer = 2;
-	this.player = new CubeGroup(this, this.coreModule.cube);
+   var playerGroup = new CubeGroup(this, this.coreModule.cube);
+   this.updateDependents.push(playerGroup);
+	this.player = playerGroup;
+   this.player.isPlayer = true;
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
@@ -55,8 +59,9 @@ Game.prototype = {
 	this.generateAsteroids();
 	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
-	
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+	ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
+	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -68,7 +73,7 @@ Game.prototype = {
 	//thruster
 	this.placeThrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
     this.placeThrusterKey.onDown.add(this.addThruster, this);
-	//solarPannel
+	//solarPanel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
 	//END
@@ -96,16 +101,23 @@ Game.prototype = {
                var enemyX = element['x_pos'];
                var enemyY = element['y_pos'];
                var enemyGroup = new CubeGroup(this, undefined);
+               this.updateDependents.push(enemyGroup);
                var blueprint = element['blueprint'];
+               // var practical = [];
                for (var row = 0; row < blueprint.length; row++) {
+                  // var newCol = [];
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
-                     enemyY + col * (this.cubeWidth + this.cubeBuffer));
+                     enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+                     // newCol.push(newModule.cube);
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }
+                  // practical.push(newCol);
                }
+               // TODO: give different types here
+               enemyGroup.giveAI('ram', this.player);
             }
          }
       }
@@ -123,9 +135,28 @@ Game.prototype = {
 			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
+	
+	if(ccwKey.isDown) {
+		if(this.mouse.grabbed !== undefined && this.mouse.grabbed.sprite.group === undefined) {
+			this.mouse.grabbed.angularForce += -5;
+		}
+	}
+	
+	if(cwKey.isDown) {
+		if(this.mouse.grabbed !== undefined && this.mouse.grabbed.sprite.group === undefined) {
+			this.mouse.grabbed.angularForce += 5;
+		}
+	}
+	
    this.mouse.update();
 	this.scrollBG();
    this.game.camera.follow(this.coreModule.cube);
+   
+   for (var i = 0; i < this.updateDependents.length; i++) {
+      if (this.updateDependents[i].update) {
+         this.updateDependents[i].update();
+      }
+   }
   },
   
   render: function () {
@@ -136,11 +167,11 @@ Game.prototype = {
   },
   
 	scrollBG: function() {
-		bg.x += 0.5;
+		bg.x += 0.125;
 		if(bg.x >= 8000) {
 			bg.x += 0;
 		}
-		bg2.x += 0.5;
+		bg2.x += 0.125;
 		if(bg2.x >= 8000) {
 			bg2.x = 0;
 		}
@@ -183,16 +214,16 @@ Game.prototype = {
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
-	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
   },
   addShield: function () {
-	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
   },
   addThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
   },
   addSP: function () {
-	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
   },
 
   debug: function () {

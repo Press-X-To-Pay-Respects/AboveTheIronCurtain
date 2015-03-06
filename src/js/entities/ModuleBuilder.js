@@ -44,6 +44,12 @@ function solarPanelMouseOver() {
    this.cube.group.displayConnection(this.cube.myConnection);
 }
 
+function solarPanelOnRemove() {
+   console.log('remove');
+   this.cube.myConnection.end.myConnection = undefined;
+   this.cube.myConnection = undefined;
+}
+
 function beginThrust() {
    this.thrust = true;
 }
@@ -53,7 +59,8 @@ function endThrust() {
 }
 
 function thrusterUpdate() {
-   if (this.thrust) {
+   // console.log(this.thrust);
+   if (this.thrust && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
    }
@@ -62,17 +69,8 @@ function thrusterUpdate() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
-ModuleBuilder.prototype.build = function(type, x, y) {
-	//Check if core has been created
-   /*
-	if(type === 'core' && this.coreExists) {
-		//if so, return existing core b/c is singleton
-		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
-		return this.core;
-	}
-   */
-	
+//TYPES: 'core' 'shield' 'thruster' 'solarPannel'
+ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
 	var newCube = new Cube(this.gameState.game, x, y, type);
@@ -99,7 +97,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(newCube);
+	var newModule = new Module(newCube, type);
 		
 	//TODO: edit special module attributes based on 'type'z
 	
@@ -113,15 +111,22 @@ ModuleBuilder.prototype.build = function(type, x, y) {
    if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
+      newModule.onRemove = solarPanelOnRemove;
    }
    
    //Thruster module events
 	if(type === 'thruster') {
-		var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
-		this.gameState.input.keyboard.addKeyCapture([space]);
-		// space.onDown.add(applyThrust, newModule);
-      space.onDown.add(beginThrust, newModule);
-      space.onUp.add(endThrust, newModule);
+      if (forPlayer) {
+         var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
+         this.gameState.input.keyboard.addKeyCapture([space]);
+         // space.onDown.add(applyThrust, newModule);
+         space.onDown.add(beginThrust, newModule);
+         space.onUp.add(endThrust, newModule);
+      } else {
+         // newModule.thrust = false;
+         newModule.beginThrust = beginThrust;
+         newModule.endThrust = endThrust;
+      }
       newModule.update = thrusterUpdate;
 	}
 	//Return the module object
