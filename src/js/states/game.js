@@ -218,11 +218,7 @@ Game.prototype = {
 	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
   },
   addSP: function () {
-<<<<<<< HEAD
-	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y, true);
-=======
-	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y);
->>>>>>> origin/gh-pages
+	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
   },
 
   debug: function () {

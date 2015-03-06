@@ -430,7 +430,7 @@ CubeGroup.prototype.remove = function(cube) {
    for (row = 0; row < this.cubesWidth(); row++) {
       for (col = 0; col < this.cubesHeight(); col++) {
          if (this.cubes[row][col] === cube) {
-            this.cubes[row][col].group = undefined;
+            // this.cubes[row][col].group = undefined;
             this.cubes[row][col] = undefined;
             break;
          }
@@ -438,6 +438,10 @@ CubeGroup.prototype.remove = function(cube) {
    }
    // remove constraints from cube
    this.removeConstraints(cube);
+   cube.group = undefined;
+   if (cube.module && cube.module.hasOwnProperty('onRemove')) {
+      cube.module.onRemove();
+   }
    // test for exiles
    for (row = 0; row < this.cubesWidth(); row++) {
       for (col = 0; col < this.cubesHeight(); col++) {

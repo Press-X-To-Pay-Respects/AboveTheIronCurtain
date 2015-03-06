@@ -44,6 +44,12 @@ function solarPanelMouseOver() {
    this.cube.group.displayConnection(this.cube.myConnection);
 }
 
+function solarPanelOnRemove() {
+   console.log('remove');
+   this.cube.myConnection.end.myConnection = undefined;
+   this.cube.myConnection = undefined;
+}
+
 function beginThrust() {
    this.thrust = true;
 }
@@ -54,7 +60,7 @@ function endThrust() {
 
 function thrusterUpdate() {
    // console.log(this.thrust);
-   if (this.thrust) {
+   if (this.thrust && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
    }
@@ -63,22 +69,8 @@ function thrusterUpdate() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-<<<<<<< HEAD
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
-=======
-//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
-ModuleBuilder.prototype.build = function(type, x, y) {
->>>>>>> origin/gh-pages
-	//Check if core has been created
-   /*
-	if(type === 'core' && this.coreExists) {
-		//if so, return existing core b/c is singleton
-		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
-		return this.core;
-	}
-   */
-	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
 	var newCube = new Cube(this.gameState.game, x, y, type);
@@ -119,6 +111,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
    if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
+      newModule.onRemove = solarPanelOnRemove;
    }
    
    //Thruster module events
