@@ -60,8 +60,8 @@ gulp.task('compile', ['clean'], function () {
     return bundler
       .bundle()
       .pipe(source('main.min.js'))
-      .pipe(jshint('.jshintrc'))
-      .pipe(jshint.reporter('default'))
+//      .pipe(jshint('.jshintrc'))
+//      .pipe(jshint.reporter('default'))
       .pipe(gulpif(!watching, streamify(uglify({outSourceMaps: false}))))
       .pipe(gulp.dest(paths.dist))
       .on('error', gutil.log);
