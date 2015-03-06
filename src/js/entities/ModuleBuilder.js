@@ -46,16 +46,20 @@ function solarPanelMouseOver() {
 
 function solarPanelOnRemove() {
    console.log('remove');
-   this.cube.myConnection.end.myConnection = undefined;
-   this.cube.myConnection = undefined;
+   if(this.cube.myConnection !== undefined) {
+	this.cube.myConnection.end.myConnection = undefined;
+	this.cube.myConnection = undefined;
+   }
 }
 
 function beginThrust() {
    this.thrust = true;
+   this.cube.frame = 1;
 }
 
 function endThrust() {
    this.thrust = false;
+   this.cube.frame = 0;
 }
 
 function thrusterUpdate() {
@@ -63,13 +67,19 @@ function thrusterUpdate() {
    if (this.thrust && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
+	  if(this.cube.frame === 1) {
+		this.cube.frame = 2;
+	  }
+	  else {
+		this.cube.frame = 1;
+	  }
    }
 }
 
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPannel'
+//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
@@ -80,6 +90,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.anchor.setTo(0.5, 0.5);
     this.gameState.game.physics.p2.enable(newCube);
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
+	//newCube.body.collideWorldBounds = false;
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
     if (!this.gameState.rootSpawned) {
@@ -104,6 +115,8 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Store module if it is core
 	if(type === 'core')
 	{
+		newModule.cube.animations.add('core', [0,1,2], 20, true);
+		newModule.cube.animations.play('core');
 		this.core = newModule;
 		this.coreExists = true;
 	}

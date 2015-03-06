@@ -38,11 +38,11 @@ Cube.prototype.resetRamDelay = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !other || !other.sprite) {
+   if (!this.group || !other || !other.sprite || other.sprite.key === 'asteroid') {
       return;
    }
-   this.group.handleCollision(this, other.sprite);
-   this.group.countCubes();
+	this.group.handleCollision(this, other.sprite);
+	this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {
