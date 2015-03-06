@@ -5,6 +5,7 @@ Main testing environment.
 var ModuleBuilder = require('../entities/ModuleBuilder');
 var CubeGroup = require('../entities/cube_group');
 var Mouse = require('../entities/mouse');
+var Juicy = require('../plugins/Juicy'); // jshint ignore:line
 
 var bg, bg2;
 var numRoids = 0;
@@ -90,6 +91,9 @@ Game.prototype = {
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
+    
+    this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
+    this.game.camera.follow(this.coreModule.cube);
   },
   
   loadData: function() {
@@ -150,7 +154,6 @@ Game.prototype = {
 	
    this.mouse.update();
 	this.scrollBG();
-   this.game.camera.follow(this.coreModule.cube);
    
    for (var i = 0; i < this.updateDependents.length; i++) {
       if (this.updateDependents[i].update) {
@@ -227,8 +230,7 @@ Game.prototype = {
   },
 
   debug: function () {
-    var test = JSON.parse(this.game.cache.getText('level_one'));
-    console.log(test);
+    this.juicy.shake();
   }
 };
 

@@ -7,7 +7,6 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.playerGroup = playerGroup;
    this.player = this.playerGroup.root;
    this.ramDist = 500;
-   this.bootupTime = 5000;
    this.rotationForce = 50;
    this.facingAllowance = Math.PI / 20;
    this.thrustersFiring = false;
@@ -21,11 +20,6 @@ var EnemyAI = function(game, group, type, playerGroup) {
 EnemyAI.prototype.constructor = EnemyAI;
 
 EnemyAI.prototype.update = function() {
-   if (this.bootupTime > 0) {
-      // console.log(this.bootupTime);
-      this.bootupTime -= this.game.time.elapsed;
-      return;
-   }
    switch (this.type) {
       case 'ram':
       this.ramUpdate();
@@ -50,12 +44,10 @@ EnemyAI.prototype.ramUpdate = function() {
          root.body.angularForce = -this.rotationForce;
       }
       if (Math.abs(diffAngle) <= this.facingAllowance && !this.thrustersFiring) {
-         // this.game.events.thrustersFire.dispatch(this.group);
          this.group.call('beginThrust');
          this.thrustersFiring = true;
          this.allocateToThrusters();
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
-         // this.game.events.thrustersHalt.dispatch(this.group);
          this.group.call('endThrust');
          this.thrustersFiring = false;
       }
@@ -97,12 +89,6 @@ EnemyAI.prototype.angleTo = function(from, to) {
   angleToOther = (angleToOther + 3/2 * Math.PI) % (2 * Math.PI); // rotate 90 d clockwise
   return angleToOther;
 };
-
-/*
-EnemyAI.prototype.lerp = function(a, b, f) {
-    return a + f * (b - a);
-};
-*/
 
 module.exports = EnemyAI;
 
