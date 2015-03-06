@@ -33,14 +33,18 @@ Game.prototype = {
    this.game.physics.p2.setImpactEvents(true);
     
    this.mouse = new Mouse(this.game, this.input);
-    
+   
+   this.updateDependents = [];
+   
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
    this.cubeWidth = this.coreModule.cube.width;
    this.cubeBuffer = 2;
-	this.player = new CubeGroup(this, this.coreModule.cube);
+   var playerGroup = new CubeGroup(this, this.coreModule.cube);
+   this.updateDependents.push(playerGroup);
+	this.player = playerGroup;
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
@@ -104,6 +108,9 @@ Game.prototype = {
                      enemyY + col * (this.cubeWidth + this.cubeBuffer));
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
+                     // TODO: give different types here
+                     enemyGroup.giveAI('ram', this.player);
+                     this.updateDependents.push(enemyGroup);
                   }
                }
             }
@@ -126,6 +133,12 @@ Game.prototype = {
    this.mouse.update();
 	this.scrollBG();
    this.game.camera.follow(this.coreModule.cube);
+   
+   for (var i = 0; i < this.updateDependents.length; i++) {
+      if (this.updateDependents[i].update) {
+         this.updateDependents[i].update();
+      }
+   }
   },
   
   render: function () {

@@ -1,4 +1,5 @@
 var Astar = require('../libs/javascript-astar/astar');
+var EnemyAI = require('./enemy_ai');
 
 /*
 Defines a cube group.
@@ -25,6 +26,13 @@ CubeGroup.prototype.constructor = CubeGroup;
  * Automatically called by World.update
  */
 CubeGroup.prototype.update = function() {
+   if (this.AI) {
+      this.AI.update();
+   }
+};
+
+CubeGroup.prototype.giveAI = function(type, player) {
+   this.AI = new EnemyAI(this.game, this, type, player);
 };
 
 CubeGroup.prototype.add = function(cube, point) {
@@ -103,6 +111,17 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   } else if (diffAngle >= 5 / 4 * Math.PI && diffAngle < 7 / 4 * Math.PI) { // west
      return this.DIR.WEST;
   }
+};
+
+CubeGroup.prototype.setRotation = function(rotation) {
+   /*
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         this.cubes[row][col].body.rotation = rotation;
+      }
+   }
+   */
+   this.root.body.rotation = rotation;
 };
 
 CubeGroup.prototype.find = function(cube) {

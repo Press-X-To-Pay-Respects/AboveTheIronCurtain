@@ -99,7 +99,7 @@ ModuleBuilder.prototype.build = function(type, x, y) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(newCube);
+	var newModule = new Module(newCube, type);
 		
 	//TODO: edit special module attributes based on 'type'z
 	
