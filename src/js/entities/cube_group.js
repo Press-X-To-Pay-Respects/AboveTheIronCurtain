@@ -31,6 +31,22 @@ CubeGroup.prototype.update = function() {
    }
 };
 
+CubeGroup.prototype.call = function(fun) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.hasOwnProperty(fun)) {
+            // if cubes need functions called
+         } else if (cube && cube.module && cube.module.hasOwnProperty(fun)) {
+            var fn = cube.module[fun];
+            if (typeof fn === 'function') {
+               fn.call(cube.module);
+            }
+         }
+      }
+   }
+};
+
 CubeGroup.prototype.giveAI = function(type, player) {
    this.AI = new EnemyAI(this.game, this, type, player);
 };
@@ -47,21 +63,27 @@ CubeGroup.prototype.add = function(cube, point) {
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype || other.group) {
+   if (other === null || origin.prototype !== other.prototype) {
       return;
    }
-   var relSide = this.relativeSide(origin.body, other.body);
-   var originLoc = this.find(origin);
-   var otherLoc = this.adjust(originLoc, relSide);
-   this.set(other, otherLoc);
-   otherLoc = this.find(other); // update position since set can shift grid
-   if (!otherLoc) {
-      // console.log('handle collision failed to find position for good applicant');
-      return;
+   if (other.group && other.group !== this && origin.ramDelay <= 0) {
+      console.log(origin.name, 'ramming damage!');
+      other.takeDamage(1);
+      origin.resetRamDelay();
+   } else if (!other.group) {
+      var relSide = this.relativeSide(origin.body, other.body);
+      var originLoc = this.find(origin);
+      var otherLoc = this.adjust(originLoc, relSide);
+      this.set(other, otherLoc);
+      otherLoc = this.find(other); // update position since set can shift grid
+      if (!otherLoc) {
+         // console.log('handle collision failed to find position for good applicant');
+         return;
+      }
+      this.createConstraints(other, otherLoc);
+      // console.log(other.body.collidesWith);
+      // this.displayCubes();
    }
-   this.createConstraints(other, otherLoc);
-   // console.log(other.body.collidesWith);
-   // this.displayCubes();
 };
 
 CubeGroup.prototype.createConstraints = function(me, point) {
@@ -113,16 +135,16 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   }
 };
 
+/*
 CubeGroup.prototype.setRotation = function(rotation) {
-   /*
    for (var row = 0; row < this.cubesWidth(); row++) {
       for (var col = 0; col < this.cubesHeight(); col++) {
          this.cubes[row][col].body.rotation = rotation;
       }
    }
-   */
    this.root.body.rotation = rotation;
 };
+*/
 
 CubeGroup.prototype.find = function(cube) {
    for (var row = 0; row < this.cubesWidth(); row++) {

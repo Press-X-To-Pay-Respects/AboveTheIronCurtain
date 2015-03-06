@@ -3,7 +3,6 @@ Main testing environment.
 */
 
 var ModuleBuilder = require('../entities/ModuleBuilder');
-var ModuleBuilder = require('../entities/ModuleBuilder');
 var CubeGroup = require('../entities/cube_group');
 var Mouse = require('../entities/mouse');
 
@@ -39,7 +38,7 @@ Game.prototype = {
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
-	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+	this.coreModule = this.moduleBuilder.build('core', 1500, 1500, true);
    this.cubeWidth = this.coreModule.cube.width;
    this.cubeBuffer = 2;
    var playerGroup = new CubeGroup(this, this.coreModule.cube);
@@ -104,7 +103,7 @@ Game.prototype = {
                for (var row = 0; row < blueprint.length; row++) {
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
-                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
+                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer, false),
                      enemyY + col * (this.cubeWidth + this.cubeBuffer));
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
@@ -196,16 +195,16 @@ Game.prototype = {
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
-	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
   },
   addShield: function () {
-	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
   },
   addThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
   },
   addSP: function () {
-	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y);
+	this.moduleBuilder.build('solarPannel', this.mouse.x, this.mouse.y, true);
   },
 
   debug: function () {

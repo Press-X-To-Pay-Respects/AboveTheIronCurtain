@@ -9,6 +9,8 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.ramDist = 500;
    this.bootupTime = 40000;
    this.rotationForce = 50;
+   this.facingAllowance = Math.PI / 20;
+   this.thrustersFiring = false;
 };
 
 EnemyAI.prototype.constructor = EnemyAI;
@@ -40,6 +42,15 @@ EnemyAI.prototype.ramUpdate = function() {
          root.body.angularForce = this.rotationForce;
       } else {
          root.body.angularForce = -this.rotationForce;
+      }
+      if (Math.abs(diffAngle) <= this.facingAllowance && !this.thrustersFiring) {
+         // this.game.events.thrustersFire.dispatch(this.group);
+         this.group.call('beginThrust');
+         this.thrustersFiring = true;
+      } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
+         // this.game.events.thrustersHalt.dispatch(this.group);
+         this.group.call('endThrust');
+         this.thrustersFiring = false;
       }
    }
 };

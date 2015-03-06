@@ -57,6 +57,7 @@ Mouse.prototype.click = function(pointer) {
    {
      this.removeTime = 0;
      this.grabbed = bodies[0].parent;
+     console.log(this.grabbed.sprite.name);
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
         this.grabbed.sprite.module.mouseDown();
      }

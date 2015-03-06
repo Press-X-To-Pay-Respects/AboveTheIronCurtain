@@ -53,6 +53,7 @@ function endThrust() {
 }
 
 function thrusterUpdate() {
+   // console.log(this.thrust);
    if (this.thrust) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
@@ -63,7 +64,7 @@ function thrusterUpdate() {
 
 //call this function from ModuleBuilder to construct modules
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel'
-ModuleBuilder.prototype.build = function(type, x, y) {
+ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Check if core has been created
    /*
 	if(type === 'core' && this.coreExists) {
@@ -117,11 +118,17 @@ ModuleBuilder.prototype.build = function(type, x, y) {
    
    //Thruster module events
 	if(type === 'thruster') {
-		var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
-		this.gameState.input.keyboard.addKeyCapture([space]);
-		// space.onDown.add(applyThrust, newModule);
-      space.onDown.add(beginThrust, newModule);
-      space.onUp.add(endThrust, newModule);
+      if (forPlayer) {
+         var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
+         this.gameState.input.keyboard.addKeyCapture([space]);
+         // space.onDown.add(applyThrust, newModule);
+         space.onDown.add(beginThrust, newModule);
+         space.onUp.add(endThrust, newModule);
+      } else {
+         // newModule.thrust = false;
+         newModule.beginThrust = beginThrust;
+         newModule.endThrust = endThrust;
+      }
       newModule.update = thrusterUpdate;
 	}
 	//Return the module object
