@@ -24,7 +24,7 @@ BinaryParticle.prototype.update = function() {
 	}
 	//Normalize delta vector
 	delta = [delta[0]/dist, delta[1]/dist];
-	//Update position using speed
+	//Update position
 	this.x = this.x + this.speed*delta[0];
 	this.y = this.y + this.speed*delta[1];
 };

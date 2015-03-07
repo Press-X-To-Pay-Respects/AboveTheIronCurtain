@@ -2,8 +2,6 @@
 Defines a cube.
 */
 
-// var Astar = require('../libs/javascript-astar/astar');
-
 var Cube = function (game, x, y, sprite) {
     Phaser.Sprite.call(this, game, x, y, sprite);
 	 this.tag = 'module';	//tag is used to detect object type during collision checking
@@ -14,6 +12,8 @@ var Cube = function (game, x, y, sprite) {
     this.indicatorFade = 0.02;
     this.health = 3;
     this.constraints = [];
+   this.ramCooldown = 500;
+   this.ramDelay = 0;
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -26,14 +26,24 @@ Cube.prototype.update = function() {
    if (this.cIndicator && this.cIndicator.alpha > 0) {
       this.cIndicator.alpha -= this.indicatorFade;
    }
+   if (this.module.update) {
+      this.module.update();
+   }
+   if (this.ramDelay > 0) {
+      this.ramDelay -= this.game.time.elapsed;
+   }
+};
+
+Cube.prototype.resetRamDelay = function() {
+  this.ramDelay = this.ramCooldown; 
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !other || !other.sprite) {
+   if (!this.group || !other || !other.sprite || other.sprite.key === 'asteroid') {
       return;
    }
-
-   this.group.handleCollision(this, other.sprite);
+	this.group.handleCollision(this, other.sprite);
+	this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {
@@ -45,11 +55,6 @@ Cube.prototype.toString = function() {
 Cube.prototype.concat = function(string, val) {
    return string + ': ' + val + '\n';
 };
-
-Cube.prototype.removeConnection = function() {
-  
-};
-
 Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
 };
@@ -58,7 +63,15 @@ Cube.prototype.takeDamage = function(amt) {
    this.health -= amt;
    if (this.health <= 0) {
       this.group.destroyCube(this);
+	  // this.group.countCubes();
    }
+};
+
+Cube.prototype.remove = function() {
+   if (!this.group) {
+      return;
+   }
+   this.group.remove(this);
 };
 
 module.exports = Cube;

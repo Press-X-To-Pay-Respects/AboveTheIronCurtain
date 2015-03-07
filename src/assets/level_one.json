@@ -1,0 +1,13 @@
+{
+    "level_one": {
+		"enemy_one": {
+         "x_pos": 1300,
+         "y_pos": 1300,
+			"blueprint": [
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
+         ]
+        }
+    }
+}

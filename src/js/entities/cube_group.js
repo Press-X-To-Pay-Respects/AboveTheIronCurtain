@@ -1,4 +1,5 @@
 var Astar = require('../libs/javascript-astar/astar');
+var EnemyAI = require('./enemy_ai');
 
 /*
 Defines a cube group.
@@ -11,13 +12,22 @@ var CubeGroup = function (game, root) {
    var col = [];
    col.push(this.root);
    this.cubes.push(col);
-   this.root.group = this;
+   if (this.root) {
+      this.root.group = this;
+   }
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
 	this.hackerModules = [];	//list of hacker modules in this group
-   // this.groups = this.game.add.group();
-   // this.cubeSprites = new Phaser.Group(this.game, this.groups);
-   // this.gridSprites = new Phaser.Group(this.game, this.groups);
+
+   this.numCubes = 1;
+   /*
+   this.spawning = false;
+   this.spawnGrid = [];
+   this.spawnDelay = 100;
+   this.curSpawnDelay = 0;
+   this.spawnRow = 0;
+   this.spawnCol = 0;
+   */
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -26,77 +36,109 @@ CubeGroup.prototype.constructor = CubeGroup;
  * Automatically called by World.update
  */
 CubeGroup.prototype.update = function() {
+   /*
+   if (this.spawning) {
+      if (this.spawnRow >= this.spawnGrid.length) {
+         this.spawning = false;
+      } else {
+         if (this.spawnCol >= this.spawnGrid[this.spawnRow].length) {
+            this.spawnRow++;
+            this.spawnCol = 0;
+         }
+         if (this.curSpawnDelay > 0) {
+            
+         }
+      }
+   } else if (this.AI) {
+      this.AI.update();
+   }
+   */
+   if (this.AI) {
+      this.AI.update();
+   }
 };
 
-CubeGroup.prototype.add = function(cube) {
-  cube.group = this;
-  // this.cubeSprites.add(cube);
+CubeGroup.prototype.call = function(fun) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.hasOwnProperty(fun)) {
+            // if cubes need functions called
+         } else if (cube && cube.module && cube.module.hasOwnProperty(fun)) {
+            var fn = cube.module[fun];
+            if (typeof fn === 'function') {
+               fn.call(cube.module);
+            }
+         }
+      }
+   }
 };
+
+CubeGroup.prototype.giveAI = function(type, player) {
+   this.AI = new EnemyAI(this.game, this, type, player);
+};
+
+CubeGroup.prototype.add = function(cube, point) {
+  if (!this.root && cube.module.type === 'core') {
+     this.root = cube;
+  }
+  cube.group = this;
+  this.set(cube, point);
+  this.createConstraints(cube, point);
+  // this.displayCubes();
+};
+
+/*
+CubeGroup.prototype.addOverTime = function(grid) {
+   this.spawning = true;
+   this.spawnGrid = grid;
+   this.spawnRow = 0;
+   this.spawnCol = 0;
+};
+*/
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype || origin.group === other.group || other.tag != 'module') {
-      return;
-   }
-    
-	//Check if one of these two is a hacker module, if so add it to the other's hackerModules list
-   if(!origin.group) {
-		if(origin.module.type == 'hacker') {
-			other.group.hackerModules.push(origin.module);
-		}
+	if (other === null || origin.prototype !== other.prototype || origin.group === other.group || other.tag != 'module') {
+		return;
 	}
-   if(!other.group) {
-		if(other.module.type == 'hacker') {
-			origin.group.hackerModules.push(other.module);
+   if (other.group && other.group !== this && origin.ramDelay <= 0) {
+      // console.log(origin.name, 'ramming damage!');
+      other.takeDamage(1);
+      origin.resetRamDelay();
+   } else if (!other.group && this.isPlayer) {		
+		//Check if one of these two is a hacker module, if so add it to the other's hackerModules list
+	   if(!origin.group) {
+			if(origin.module.type == 'hacker') {
+				other.group.hackerModules.push(origin.module);
+			}
 		}
-	}
-	
-   var relSide = this.relativeSide(origin.body, other.body);
-   var originLoc = this.find(origin);
-   var otherLoc = this.adjust(originLoc, relSide);
-   if (this.getCube(otherLoc)) {
-      return;
+		if(!other.group) {
+			if(other.module.type == 'hacker') {
+				origin.group.hackerModules.push(other.module);
+			}
+		}
+		var relSide = this.relativeSide(origin.body, other.body);
+		var originLoc = this.find(origin);
+		var otherLoc = this.adjust(originLoc, relSide);
+		this.set(other, otherLoc);
+		otherLoc = this.find(other); // update position since set can shift grid
+		if (!otherLoc) {
+			// console.log('handle collision failed to find position for good applicant');
+			return;
+      }
+      this.createConstraints(other, otherLoc);
+      // console.log(other.body.collidesWith);
+      // this.displayCubes();
    }
-   switch (relSide) {
-      case this.DIR.NORTH:
-      if (originLoc.y === this.cubesHeight() - 1) {
-         this.addTopRow();
-      }
-      break;
-      case this.DIR.EAST:
-      if (originLoc.x === this.cubesWidth() - 1) {
-         this.addRightCol();
-      }
-      break;
-      case this.DIR.SOUTH:
-      if (originLoc.y === 0) {
-         this.addBotRow();
-      }
-      break;
-      case this.DIR.WEST:
-      if (originLoc.x === 0) {
-         this.addLeftCol();
-      }
-      break;
-   }
-   originLoc = this.find(origin);
-   otherLoc = this.adjust(originLoc, relSide);
-   this.createConstraints(otherLoc, other);
-   if (!otherLoc) {
-      console.log('hande collision failed to find second other loc');
-      return;
-   }
-   this.set(otherLoc, other);
-   other.group = this;
-   // this.displayCubes();
 };
 
-CubeGroup.prototype.createConstraints = function(loc, me) {
+CubeGroup.prototype.createConstraints = function(me, point) {
    // this.displayCubes();
-   var myNorth = this.get(this.adjust(loc, this.DIR.NORTH));
-   var myEast = this.get(this.adjust(loc, this.DIR.EAST));
-   var mySouth = this.get(this.adjust(loc, this.DIR.SOUTH));
-   var myWest = this.get(this.adjust(loc, this.DIR.WEST));
+   var myNorth = this.get(this.adjust(point, this.DIR.NORTH));
+   var myEast = this.get(this.adjust(point, this.DIR.EAST));
+   var mySouth = this.get(this.adjust(point, this.DIR.SOUTH));
+   var myWest = this.get(this.adjust(point, this.DIR.WEST));
    var constraint;
    if (myNorth) {
       constraint = this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset]); // me - north
@@ -128,7 +170,7 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
      angleToOther = 2 * Math.PI + angleToOther;
   }
   angleToOther = (angleToOther + 3/2 * Math.PI) % (2 * Math.PI); // rotate 90 d clockwise
-  var diffAngle = angleToOther - thisBody.rotation;
+  var diffAngle = Math.abs(Math.abs(angleToOther) - Math.abs(thisBody.rotation));
    if (diffAngle < 1 / 4 * Math.PI || diffAngle > 7 / 4 * Math.PI) { // north
      return this.DIR.NORTH;
   } else if (diffAngle >= 1 / 4 * Math.PI && diffAngle < 3 / 4 * Math.PI) { // east
@@ -139,6 +181,17 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
      return this.DIR.WEST;
   }
 };
+
+/*
+CubeGroup.prototype.setRotation = function(rotation) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         this.cubes[row][col].body.rotation = rotation;
+      }
+   }
+   this.root.body.rotation = rotation;
+};
+*/
 
 CubeGroup.prototype.find = function(cube) {
    for (var row = 0; row < this.cubesWidth(); row++) {
@@ -166,14 +219,6 @@ CubeGroup.prototype.cubesHeight = function() {
    return this.cubes[0].length;
 };
 
-/*
-[0,height] ...  [width, height]
-.                 
-.               .
-.               .
-[0,1] [1,1] ... .
-[0,0] [1,0] ... [width,0]
-*/
 CubeGroup.prototype.addTopRow = function() {
    for (var row = 0; row < this.cubesWidth(); row++) {
       this.cubes[row].push(undefined);
@@ -228,15 +273,30 @@ CubeGroup.prototype.adjust = function(point, dir) {
    return newPoint;
 };
 
-CubeGroup.prototype.set = function(point, cube) {
+CubeGroup.prototype.set = function(cube, point) {
    if (!point) {
       console.log('set given undefined point');
       return;
    }
-   if (this.outOfBounds(point)) {
+   if (point.x < 0) {
+      this.addLeftCol();
+      point.x = 0;
+   } else if (point.x >= this.cubesWidth()) {
+      this.addRightCol();
+      point.x = this.cubesWidth() - 1;
+   } else if (point.y < 0) {
+      this.addBotRow();
+      point.y = 0;
+   } else if (point.y >= this.cubesHeight()) {
+      this.addTopRow();
+      point.y = this.cubesHeight() - 1;
+   }
+   if (this.get(point)) {
+      // console.log('tried to set to filled position');
       return;
    }
    this.cubes[point.x][point.y] = cube;
+   cube.group = this;
 };
 
 CubeGroup.prototype.outOfBounds = function(point) {
@@ -250,9 +310,6 @@ CubeGroup.prototype.outOfBounds = function(point) {
    return false;
 };
 
-// [0,2] [1,2] [2,2]
-// [0,1] [1,1] [2,1]
-// [0,0] [1,0] [2,0]
 CubeGroup.prototype.displayCubes = function() {
    console.log('================');
    var output = 'Display Cubes\n';
@@ -280,6 +337,10 @@ CubeGroup.prototype.displayConnection = function(connection) {
    var graph = new Astar.Graph(this.cubesToGraph());
    var startPoint = this.find(connection.start);
    var endPoint = this.find(connection.end);
+   if (!startPoint || !endPoint) {
+      console.log('displayConnection failed to get points');
+      return;
+   }
    var start = graph.grid[startPoint.x][startPoint.y];
    var end = graph.grid[endPoint.x][endPoint.y];
    var result = Astar.astar.search(graph, start, end);
@@ -366,9 +427,6 @@ CubeGroup.prototype.cubesToGraph = function() {
    return graph;
 };
 
-// [0,0] [1,0] -> east
-// [0,0] [0,1] -> north
-// assumes neighbors
 CubeGroup.prototype.dirBetween = function(a, b) {
    var deltaX = a.x - b.x;
    var deltaY = a.y - b.y;
@@ -415,13 +473,15 @@ CubeGroup.prototype.destroyCube = function(cube) {
 
 CubeGroup.prototype.remove = function(cube) {
    // console.log('remove');
-   // this.displayCubes();
+   if (this.root === cube) {
+      return;
+   }
    // remove cube from array
    var row, col;
    for (row = 0; row < this.cubesWidth(); row++) {
       for (col = 0; col < this.cubesHeight(); col++) {
          if (this.cubes[row][col] === cube) {
-            this.cubes[row][col].group = undefined;
+            // this.cubes[row][col].group = undefined;
             this.cubes[row][col] = undefined;
             break;
          }
@@ -429,6 +489,10 @@ CubeGroup.prototype.remove = function(cube) {
    }
    // remove constraints from cube
    this.removeConstraints(cube);
+   cube.group = undefined;
+   if (cube.module && cube.module.hasOwnProperty('onRemove')) {
+      cube.module.onRemove();
+   }
    // test for exiles
    for (row = 0; row < this.cubesWidth(); row++) {
       for (col = 0; col < this.cubesHeight(); col++) {
@@ -438,6 +502,7 @@ CubeGroup.prototype.remove = function(cube) {
          }
       }
    }
+   // this.displayCubes();
 };
 
 CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {
@@ -515,6 +580,20 @@ CubeGroup.prototype.isExile = function(cube) {
       return true;
    }
    return false;
+};
+
+CubeGroup.prototype.countCubes = function() {
+	var row, col;
+	var num  = 0;
+	for (row = 0; row < this.cubesWidth(); row++) {
+		for (col = 0; col < this.cubesHeight(); col++) {
+			if (this.cubes[row][col] !== undefined) {
+				num++;
+			}
+		}
+	}
+	//console.log(num);
+	this.numCubes = num;
 };
 
 module.exports = CubeGroup;
