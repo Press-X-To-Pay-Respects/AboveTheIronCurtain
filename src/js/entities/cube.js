@@ -11,8 +11,8 @@ var Cube = function (game, x, y, sprite) {
     this.indicatorFade = 0.02;
     this.health = 3;
     this.constraints = [];
-   this.ramCooldown = 500;
-   this.ramDelay = 0;
+   // this.ramCooldown = 500;
+   // this.ramDelay = 0;
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -28,14 +28,14 @@ Cube.prototype.update = function() {
    if (this.module.update) {
       this.module.update();
    }
-   if (this.ramDelay > 0) {
-      this.ramDelay -= this.game.time.elapsed;
-   }
+   // if (this.ramDelay > 0) {
+      // this.ramDelay -= this.game.time.elapsed;
+   // }
 };
 
-Cube.prototype.resetRamDelay = function() {
-  this.ramDelay = this.ramCooldown; 
-};
+// Cube.prototype.resetRamDelay = function() {
+  // this.ramDelay = this.ramCooldown; 
+// };
 
 Cube.prototype.cubeCollide = function(other) {
    if (!this.group || !other || !other.sprite) {

@@ -31,8 +31,6 @@ Game.prototype = {
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
-    
-   this.mouse = new Mouse(this.game, this.input);
    
    this.updateDependents = [];
    
@@ -46,6 +44,8 @@ Game.prototype = {
    this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
    this.player.isPlayer = true;
+   
+   this.mouse = new Mouse(this.game, this.input, playerGroup);
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);

@@ -28,6 +28,7 @@ EnemyAI.prototype.update = function() {
 };
 
 EnemyAI.prototype.ramUpdate = function() {
+   return;
    if (!this.group.root) {
       return;
    }
