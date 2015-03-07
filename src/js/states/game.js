@@ -10,9 +10,9 @@ var Juicy = require('../plugins/Juicy'); // jshint ignore:line
 var bg, bg2;
 var numRoids = 0;
 var maxRoids = 50;
-var cubeCG, asteroidCG;
 var asteroids, asteroidList;
 var leftKey, rightKey, cwKey, ccwKey;
+var asteroidCG, cubeCG;
 
 var Game = function () {
   this.testentity = null;
@@ -31,6 +31,14 @@ Game.prototype = {
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
+<<<<<<< HEAD
+=======
+    
+	cubeCG = this.game.physics.p2.createCollisionGroup();
+	asteroidCG = this.game.physics.p2.createCollisionGroup();
+	
+   this.mouse = new Mouse(this.game, this.input);
+>>>>>>> origin/gh-pages
    
    this.updateDependents = [];
    
@@ -38,20 +46,23 @@ Game.prototype = {
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 1500, 1500, true);
-   this.cubeWidth = this.coreModule.cube.width;
-   this.cubeBuffer = 2;
-   var playerGroup = new CubeGroup(this, this.coreModule.cube);
-   this.updateDependents.push(playerGroup);
+	this.cubeWidth = this.coreModule.cube.width;
+	this.coreModule.cube.body.setCollisionGroup(cubeCG);
+	this.coreModule.cube.body.collides([cubeCG, asteroidCG]);
+	this.cubeBuffer = 2;
+	var playerGroup = new CubeGroup(this, this.coreModule.cube);
+	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
+<<<<<<< HEAD
    this.player.isPlayer = true;
    
    this.mouse = new Mouse(this.game, this.input, playerGroup);
+=======
+	this.player.isPlayer = true;
+>>>>>>> origin/gh-pages
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-	//Creates collision groups for the player and the asteroids
-	cubeCG = this.game.physics.p2.createCollisionGroup();
-	asteroidCG = this.game.physics.p2.createCollisionGroup();
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -77,6 +88,9 @@ Game.prototype = {
 	//solarPanel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
+	//gun
+	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+    this.placeGunKey.onDown.add(this.addGun, this);
 	//END
     
     // Debug controller
@@ -114,6 +128,8 @@ Game.prototype = {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+					 newModule.cube.body.setCollisionGroup(cubeCG);
+					 newModule.cube.body.collides([cubeCG, asteroidCG]);
                      // newCol.push(newModule.cube);
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
@@ -152,21 +168,18 @@ Game.prototype = {
 		}
 	}
 	
-   this.mouse.update();
+	this.mouse.update();
 	this.scrollBG();
    
-   for (var i = 0; i < this.updateDependents.length; i++) {
-      if (this.updateDependents[i].update) {
-         this.updateDependents[i].update();
-      }
-   }
+	for (var i = 0; i < this.updateDependents.length; i++) {
+		if (this.updateDependents[i].update) {
+			this.updateDependents[i].update();
+		}
+	}
   },
   
   render: function () {
-   this.mouse.render();
-	this.game.debug.text('mouseX: ' + this.mouseX + ' mouseY: ' + this.mouseY, 32, 32);
-	this.game.debug.text('input.x: ' + this.input.x + ' input.y: ' + this.input.y, 32, 48);
-   this.game.debug.text(maxRoids, 32, 32);
+	this.mouse.render();
   },
   
 	scrollBG: function() {
@@ -208,25 +221,47 @@ Game.prototype = {
 			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * 3.14);
 			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-			asteroid.body.setCollisionGroup(asteroidCG); //Set each asteroid to use the asteroid collision group
-			asteroid.body.collides([asteroidCG, cubeCG]); //Sets what the asteroids will collide with. Can be an array or just a single collision group
+			asteroid.body.setCollisionGroup(asteroidCG);
+			asteroid.body.collides([asteroidCG, cubeCG]);
+			asteroid.body.collideWorldBounds = false;
+			asteroid.autoCull = true;
+			asteroid.checkWorldBounds = true;
+			asteroid.events.onOutOfBounds.add(this.resetAsteroid, asteroid);
 			asteroidList.add(asteroid);
 		}
 	},
-  
+	
+	resetAsteroid: function() { //Needs to be updated once collision groups are working
+		//this.obj.x = 10;
+		//this.obj.y = 10;
+	},
+	
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
-	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+	var newModule = this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
   addShield: function () {
-	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+	var newModule = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
   addThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+	var newModule = this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
   addSP: function () {
-	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+	var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
+  },
+  addGun: function () {
+	var newModule = this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
 
   debug: function () {

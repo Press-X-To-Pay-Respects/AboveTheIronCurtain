@@ -36,7 +36,7 @@ Mouse.prototype.update = function() {
       }
       this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
       this.removeTime += this.game.time.elapsed;
-      if (this.removeTime >= this.removeThreshold) {
+      if (this.removeTime >= this.removeThreshold && this.grabbed.sprite.key !== 'asteroid') {
          this.grabbed.sprite.remove();
          this.removeTime = 0;
       }
