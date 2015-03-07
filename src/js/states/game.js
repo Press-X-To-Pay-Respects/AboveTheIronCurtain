@@ -31,14 +31,11 @@ Game.prototype = {
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
-<<<<<<< HEAD
-=======
-    
+
 	cubeCG = this.game.physics.p2.createCollisionGroup();
 	asteroidCG = this.game.physics.p2.createCollisionGroup();
 	
    this.mouse = new Mouse(this.game, this.input);
->>>>>>> origin/gh-pages
    
    this.updateDependents = [];
    
@@ -53,14 +50,11 @@ Game.prototype = {
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
-<<<<<<< HEAD
    this.player.isPlayer = true;
    
    this.mouse = new Mouse(this.game, this.input, playerGroup);
-=======
 	this.player.isPlayer = true;
->>>>>>> origin/gh-pages
-	
+   
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
 	

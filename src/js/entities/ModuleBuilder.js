@@ -45,19 +45,11 @@ function solarPanelMouseOver() {
 }
 
 function solarPanelOnRemove() {
-<<<<<<< HEAD
    if (!this.cube.myConnection || !this.cube.myConnection.end) {
       console.log('solarPanelOnRemove() had an error');
    }
    this.cube.myConnection.end.myConnection = undefined;
    this.cube.myConnection = undefined;
-=======
-   console.log('remove');
-   if(this.cube.myConnection !== undefined) {
-	this.cube.myConnection.end.myConnection = undefined;
-	this.cube.myConnection = undefined;
-   }
->>>>>>> origin/gh-pages
 }
 
 function beginThrust() {
