@@ -10,6 +10,7 @@ var ModuleBuilder = require('../entities/ModuleBuilder');
 var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
 var Hackable = require('../entities/Hackable');
+var Emitter = require('../effects/Emitter');
 
 var mouseBody; // physics body for mouse
 
@@ -35,22 +36,22 @@ Game.prototype = {
     mouseBody = new p2.Body(); // jshint ignore:line
     this.game.physics.p2.world.addBody(mouseBody);
     
+	
 	//create Renderables class
 	this.renderables = new Renderables();
 	//create the UIBuilder
 	this.uiBuilder = new UIBuilder(this, this.renderables);
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
-	//create and store the core module
-
-	this.coreModule = this.moduleBuilder.build('core', 1500, 1500);
+	//create and store the core module and player group (a.k.a. the player's cubesat)
+	this.coreModule = this.moduleBuilder.build('core', 1700, 1200);
 	this.player = new CubeGroup(this, this.coreModule.cube);
-   
-	this.testUI = this.uiBuilder.buildProgressBar('growing', 200, 50, 50, 100, 10);
-	this.testUI.value = 50;
-	this.testUI.onEvent = function() {
-		this.destroy();
-	};
+   //Create the emitter for the binary particle effects/Emitter
+	this.BinaryEmitter = new Emitter(this);
+	
+	//test hackable object
+	this.testHack = new Hackable(this, 1500,1200, 'hackable1', 400);
+	
 	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	//this.spaceKey.onDown.add();
@@ -94,7 +95,6 @@ Game.prototype = {
     this.debugNum = 0;
     this.myRoot = undefined;
     
-	this.testHack = new Hackable(this.game, 90,90, 'hackable1');
 	this.game.camera.setPosition(1000, 1000);
   },
 
@@ -110,14 +110,12 @@ Game.prototype = {
        this.line.setTo(0, 0, 0, 0);
     }
 
-	this.testUI.addValue(0.8);
-    
     var point = new Phaser.Point(this.mouseX, this.mouseY);
 	 var bodies = this.game.physics.p2.hitTest(point);
     if (bodies.length)
     {
         var hover = bodies[0].parent;
-        if (hover.sprite.module.mouseOver) {
+        if (hover.sprite.module && hover.sprite.module.mouseOver) {
            hover.sprite.module.mouseOver();
         }
     }

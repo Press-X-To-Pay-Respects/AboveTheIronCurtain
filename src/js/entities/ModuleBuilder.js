@@ -46,7 +46,7 @@ function solarPanelMouseOver() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPannel'
+//TYPES: 'core' 'shield' 'thruster' 'solarPannel' 'hacker'
 ModuleBuilder.prototype.build = function(type, x, y) {
 	//Check if core has been created
 	if(type === 'core' && this.coreExists) {
@@ -86,6 +86,10 @@ ModuleBuilder.prototype.build = function(type, x, y) {
 	var newModule = new Module(type, newCube);
 		
 	//TODO: edit special module atributes based on 'type'
+	if(type === 'hacker') {
+		newModule.cycle = 6;
+		newModule.count = 0;
+	}
 	
 	//Store module if it is core
 	if(type === 'core')

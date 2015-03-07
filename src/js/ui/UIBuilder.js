@@ -24,7 +24,7 @@ UIBuilder.prototype.existingReference = null;
 //		 x,y: sets location
 //		 DON'T FORGET to overwrite the onEvent() function for the progress bar after creating it
 //			-onEvent() is automatically called when bar fills/shrinks past limit (depending on bar type)
-UIBuilder.prototype.buildProgressBar = function(type, maxValue, x, y, width, height) {
+UIBuilder.prototype.buildProgressBar = function(type, x, y, width, height, maxValue) {
 	//create and format new prog bar
 	var graphics = this.gameState.game.add.graphics(0,0);
 	var newProgBar = new ProgressBar(type, maxValue, graphics, this.renderables);

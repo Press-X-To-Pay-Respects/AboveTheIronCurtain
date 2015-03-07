@@ -6,6 +6,7 @@ Defines a cube.
 
 var Cube = function (game, x, y, sprite) {
     Phaser.Sprite.call(this, game, x, y, sprite);
+	 this.tag = 'module';	//tag is used to detect object type during collision checking
     this.game = game;
     this.game.add.existing(this);
     this.group = undefined;
@@ -31,6 +32,7 @@ Cube.prototype.cubeCollide = function(other) {
    if (!this.group || !other || !other.sprite) {
       return;
    }
+
    this.group.handleCollision(this, other.sprite);
 };
 

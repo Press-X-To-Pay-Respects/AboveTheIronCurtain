@@ -70,7 +70,6 @@ ProgressBar.prototype.setSize = function(setWidth, setHeight) {
 
 //Renders progressBar
 ProgressBar.prototype.render = function() {
-	console.log('rendered');
 	this.graphics.clear();
 	//Draw background of bar
 	this.graphics.lineStyle(2, 0xAAAAAA, 1);

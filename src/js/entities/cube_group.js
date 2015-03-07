@@ -14,6 +14,7 @@ var CubeGroup = function (game, root) {
    this.root.group = this;
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
+	this.hackerModules = [];	//list of hacker modules in this group
    // this.groups = this.game.add.group();
    // this.cubeSprites = new Phaser.Group(this.game, this.groups);
    // this.gridSprites = new Phaser.Group(this.game, this.groups);
@@ -34,9 +35,22 @@ CubeGroup.prototype.add = function(cube) {
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype || origin.group === other.group) {
+   if (other === null || origin.prototype !== other.prototype || origin.group === other.group || other.tag != 'module') {
       return;
    }
+    
+	//Check if one of these two is a hacker module, if so add it to the other's hackerModules list
+   if(!origin.group) {
+		if(origin.module.type == 'hacker') {
+			other.group.hackerModules.push(origin.module);
+		}
+	}
+   if(!other.group) {
+		if(other.module.type == 'hacker') {
+			origin.group.hackerModules.push(other.module);
+		}
+	}
+	
    var relSide = this.relativeSide(origin.body, other.body);
    var originLoc = this.find(origin);
    var otherLoc = this.adjust(originLoc, relSide);
