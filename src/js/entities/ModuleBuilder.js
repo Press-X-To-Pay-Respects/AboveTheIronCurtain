@@ -79,7 +79,7 @@ function thrusterUpdate() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPanel'
+//TYPES: 'core' 'shield' 'thruster' 'solarPanel' 'gun'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name

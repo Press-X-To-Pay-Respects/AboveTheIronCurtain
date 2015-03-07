@@ -79,6 +79,9 @@ Game.prototype = {
 	//solarPanel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
+	//gun
+	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+    this.placeGunKey.onDown.add(this.addGun, this);
 	//END
     
     // Debug controller
@@ -243,6 +246,11 @@ Game.prototype = {
   },
   addSP: function () {
 	var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
+  },
+  addGun: function () {
+	var newModule = this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
 	newModule.cube.body.setCollisionGroup(cubeCG);
 	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
