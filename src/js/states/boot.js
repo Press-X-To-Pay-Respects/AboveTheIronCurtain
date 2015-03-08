@@ -12,7 +12,8 @@ Boot.prototype = {
     this.game.input.maxPointers = 1;
 
     if (this.game.device.desktop) {
-      this.game.stage.scale.pageAlignHorizontally = true;
+      //this.game.stage.scale.pageAlignHorizontally = true;
+      this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     } else {
       this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
       this.game.scale.minWidth =  480;

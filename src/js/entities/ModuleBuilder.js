@@ -45,25 +45,28 @@ function solarPanelMouseOver() {
 }
 
 function solarPanelOnRemove() {
-   console.log('remove');
-   if(this.cube.myConnection !== undefined) {
-	this.cube.myConnection.end.myConnection = undefined;
-	this.cube.myConnection = undefined;
+   if (!this.cube.myConnection || !this.cube.myConnection.end) {
+      console.log('solarPanelOnRemove() had an error');
    }
+   this.cube.myConnection.end.myConnection = undefined;
+   this.cube.myConnection = undefined;
 }
 
-function beginThrust() {
-   this.thrust = true;
+
+function beginAct() {
+   this.act = true;
 }
 
-function endThrust() {
-   this.thrust = false;
+function endAct() {
+   this.act = false;
    this.cube.frame = 0;
 }
 
 function thrusterUpdate() {
-   // console.log(this.thrust);
-   if (this.thrust && this.cube.myConnection) {
+   if (this.haltTime && this.haltTime > 0) {
+      this.haltTime -= this.cube.game.time.elapsed;
+      this.cube.frame = 0;
+   } else if (this.act && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
 	  if(this.cube.frame === 1) {
@@ -73,6 +76,10 @@ function thrusterUpdate() {
 		this.cube.frame = 1;
 	  }
    }
+}
+
+function thrusterHalt() {
+   this.haltTime = 1500;
 }
 
 /** End module functions **/
@@ -131,14 +138,15 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
          var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
          this.gameState.input.keyboard.addKeyCapture([space]);
          // space.onDown.add(applyThrust, newModule);
-         space.onDown.add(beginThrust, newModule);
-         space.onUp.add(endThrust, newModule);
+         space.onDown.add(beginAct, newModule);
+         space.onUp.add(endAct, newModule);
       } else {
          // newModule.thrust = false;
-         newModule.beginThrust = beginThrust;
-         newModule.endThrust = endThrust;
+         newModule.beginAct = beginAct;
+         newModule.endAct = endAct;
       }
       newModule.update = thrusterUpdate;
+      newModule.thrusterHalt = thrusterHalt;
 	}
 	//Return the module object
 	return newModule;

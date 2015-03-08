@@ -1,6 +1,6 @@
 var Utils = require('../utils.js');
 
-var Mouse = function(game, input) {
+var Mouse = function(game, input, playerGroup) {
    this.game = game;
    this.input = input;
 	this.body = new p2.Body(); // jshint ignore:line
@@ -19,6 +19,8 @@ var Mouse = function(game, input) {
    
    this.removeThreshold = 400; // time in milliseconds
    this.removeTime = 0; // time till threshold
+   
+   this.playerGroup = playerGroup;
 };
 
 Mouse.prototype.constructor = Mouse;
@@ -28,8 +30,10 @@ Mouse.prototype.update = function() {
       var angle = Math.atan2(this.grabbed.sprite.y - (this.input.position.y + this.game.camera.y), this.grabbed.sprite.x - (this.input.position.x+ this.game.camera.x)) + Math.PI;
       var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
       var weight = 10;
-      this.grabbed.force.x = Math.cos(angle) * dist * weight;
-      this.grabbed.force.y = Math.sin(angle) * dist * weight;
+      if (!this.grabbed.sprite.group) {
+         this.grabbed.force.x = Math.cos(angle) * dist * weight;
+         this.grabbed.force.y = Math.sin(angle) * dist * weight;
+      }
       this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
       this.removeTime += this.game.time.elapsed;
       if (this.removeTime >= this.removeThreshold && this.grabbed.sprite.key !== 'asteroid') {
@@ -55,8 +59,15 @@ Mouse.prototype.click = function(pointer) {
    var bodies = this.game.physics.p2.hitTest(point);
    if (bodies.length)
    {
+     var temp = bodies[0].parent;
+     if (temp.sprite && temp.sprite.module && temp.sprite.module.type === 'core') {
+        return;
+     }
+     if (temp.sprite && temp.sprite.group && temp.sprite.group !== this.playerGroup) {
+        return;
+     }
      this.removeTime = 0;
-     this.grabbed = bodies[0].parent;
+     this.grabbed = temp;
      // console.log(this.grabbed.sprite.name);
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
         this.grabbed.sprite.module.mouseDown();
@@ -65,7 +76,7 @@ Mouse.prototype.click = function(pointer) {
      this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
      }
-     this.lastClicked = bodies[0].parent;
+     this.lastClicked = temp;
    }
 };
   

@@ -18,14 +18,8 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
    this.numCubes = 1;
-   /*
-   this.spawning = false;
-   this.spawnGrid = [];
-   this.spawnDelay = 100;
-   this.curSpawnDelay = 0;
-   this.spawnRow = 0;
-   this.spawnCol = 0;
-   */
+   this.bounceBackForce = 30;
+   this.minRamVel = 300;
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -34,23 +28,6 @@ CubeGroup.prototype.constructor = CubeGroup;
  * Automatically called by World.update
  */
 CubeGroup.prototype.update = function() {
-   /*
-   if (this.spawning) {
-      if (this.spawnRow >= this.spawnGrid.length) {
-         this.spawning = false;
-      } else {
-         if (this.spawnCol >= this.spawnGrid[this.spawnRow].length) {
-            this.spawnRow++;
-            this.spawnCol = 0;
-         }
-         if (this.curSpawnDelay > 0) {
-            
-         }
-      }
-   } else if (this.AI) {
-      this.AI.update();
-   }
-   */
    if (this.AI) {
       this.AI.update();
    }
@@ -86,24 +63,17 @@ CubeGroup.prototype.add = function(cube, point) {
   // this.displayCubes();
 };
 
-/*
-CubeGroup.prototype.addOverTime = function(grid) {
-   this.spawning = true;
-   this.spawnGrid = grid;
-   this.spawnRow = 0;
-   this.spawnCol = 0;
-};
-*/
-
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
    if (other === null || origin.prototype !== other.prototype) {
       return;
    }
-   if (other.group && other.group !== this && origin.ramDelay <= 0) {
-      // console.log(origin.name, 'ramming damage!');
-      other.takeDamage(1);
-      origin.resetRamDelay();
+   // if (other.group && other.group !== this && origin.ramDelay <= 0) {
+   var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
+   if (other.group && other.group !== this && sumVel >= this.minRamVel) {
+      console.log('collision');
+      other.takeDamage(3);
+      this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
@@ -111,12 +81,9 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       this.set(other, otherLoc);
       otherLoc = this.find(other); // update position since set can shift grid
       if (!otherLoc) {
-         // console.log('handle collision failed to find position for good applicant');
          return;
       }
       this.createConstraints(other, otherLoc);
-      // console.log(other.body.collidesWith);
-      // this.displayCubes();
    }
 };
 
@@ -152,11 +119,7 @@ CubeGroup.prototype.createConstraints = function(me, point) {
 CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   var thisPoint = new Phaser.Point(thisBody.x, thisBody.y);
   var otherPoint = new Phaser.Point(otherBody.x, otherBody.y);
-  var angleToOther = Phaser.Point.angle(thisPoint, otherPoint);
-  if (angleToOther < 0) { // fix dumb part of Phaser.Point.angle()
-     angleToOther = 2 * Math.PI + angleToOther;
-  }
-  angleToOther = (angleToOther + 3/2 * Math.PI) % (2 * Math.PI); // rotate 90 d clockwise
+  var angleToOther = this.angleBetweenPoints(thisPoint, otherPoint);
   var diffAngle = Math.abs(Math.abs(angleToOther) - Math.abs(thisBody.rotation));
    if (diffAngle < 1 / 4 * Math.PI || diffAngle > 7 / 4 * Math.PI) { // north
      return this.DIR.NORTH;
@@ -169,16 +132,14 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   }
 };
 
-/*
-CubeGroup.prototype.setRotation = function(rotation) {
-   for (var row = 0; row < this.cubesWidth(); row++) {
-      for (var col = 0; col < this.cubesHeight(); col++) {
-         this.cubes[row][col].body.rotation = rotation;
-      }
-   }
-   this.root.body.rotation = rotation;
+CubeGroup.prototype.angleBetweenPoints = function(thisPoint, otherPoint) {
+  var angleToOther = Phaser.Point.angle(thisPoint, otherPoint);
+  if (angleToOther < 0) { // fix dumb part of Phaser.Point.angle()
+     angleToOther = 2 * Math.PI + angleToOther;
+  }
+  angleToOther = (angleToOther + 3/2 * Math.PI) % (2 * Math.PI); // rotate 90 d clockwise
+   return angleToOther;
 };
-*/
 
 CubeGroup.prototype.find = function(cube) {
    for (var row = 0; row < this.cubesWidth(); row++) {
