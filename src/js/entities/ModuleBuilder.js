@@ -53,9 +53,9 @@ function solarPanelOnRemove() {
    this.cube.myConnection = undefined;
 }
 
+
 function beginAct() {
    this.act = true;
-   this.cube.frame = 1;
 }
 
 function endAct() {
@@ -86,18 +86,24 @@ function thrusterHalt() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPanel' 'gun'
+//TYPES: 'core' 'shield' 'thruster' 'solarPannel' 'hacker'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
+	//Check if core has been created
+	if(type === 'core' && this.coreExists) {
+		//if so, return existing core b/c is singleton
+		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
+		return this.core;
+	}
+	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
-	var newCube = new Cube(this.gameState.game, x, y, type);
+	var newCube = new Cube(this.gameState, x, y, type);
     var scale = 0.5;
     newCube.name = this.gameState.debugNum++;
     newCube.scale.setTo(scale, scale);
     newCube.anchor.setTo(0.5, 0.5);
     this.gameState.game.physics.p2.enable(newCube);
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
-	newCube.body.collideWorldBounds = false;
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
     if (!this.gameState.rootSpawned) {
@@ -115,9 +121,13 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(newCube, type);
+	var newModule = new Module(type, newCube);
 		
-	//TODO: edit special module attributes based on 'type'z
+	//TODO: edit special module atributes based on 'type'
+	if(type === 'hacker') {
+		newModule.cycle = 6;
+		newModule.count = 0;
+	}
 	
 	//Store module if it is core
 	if(type === 'core')
@@ -139,7 +149,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       if (forPlayer) {
          var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
          this.gameState.input.keyboard.addKeyCapture([space]);
-         // space.onDown.add(applyThrust, newModule);
          space.onDown.add(beginAct, newModule);
          space.onUp.add(endAct, newModule);
       } else {

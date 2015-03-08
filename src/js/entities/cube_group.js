@@ -17,6 +17,8 @@ var CubeGroup = function (game, root) {
    }
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
+	this.hackerModules = [];	//list of hacker modules in this group
+
    this.numCubes = 1;
    this.bounceBackForce = 30;
    this.minRamVel = 300;
@@ -65,6 +67,7 @@ CubeGroup.prototype.add = function(cube, point) {
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
    // stop if other does not exist, either is not a cube, both are in same group
+<<<<<<< HEAD
    if (other === null || origin.prototype !== other.prototype) {
       return;
    }
@@ -84,6 +87,38 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       }
       this.createConstraints(other, otherLoc);
    }
+=======
+	if (other === null || origin.prototype !== other.prototype || origin.group === other.group || other.tag !== 'module') {
+		return;
+	}
+   if (other.group && other.group !== this && origin.ramDelay <= 0) {
+      // console.log(origin.name, 'ramming damage!');
+      other.takeDamage(1);
+      origin.resetRamDelay();
+   } else if (!other.group && this.isPlayer) {		
+		//Check if one of these two is a hacker module, if so add it to the other's hackerModules list
+	   if(!origin.group) {
+			if(origin.module.type === 'hacker') {
+				other.group.hackerModules.push(origin.module);
+			}
+		}
+		if(!other.group) {
+			if(other.module.type === 'hacker') {
+				origin.group.hackerModules.push(other.module);
+			}
+		}
+		var relSide = this.relativeSide(origin.body, other.body);
+		var originLoc = this.find(origin);
+		var otherLoc = this.adjust(originLoc, relSide);
+		this.set(other, otherLoc);
+		otherLoc = this.find(other); // update position since set can shift grid
+		if (!otherLoc) {
+			// console.log('handle collision failed to find position for good applicant');
+			return;
+		}
+		this.createConstraints(other, otherLoc);
+	}
+>>>>>>> origin/gh-pages
 };
 
 CubeGroup.prototype.createConstraints = function(me, point) {
