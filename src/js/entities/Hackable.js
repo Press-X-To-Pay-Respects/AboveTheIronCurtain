@@ -11,6 +11,7 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
 	this.isHacked = false;
 	//add hackBar
 	this.hackBar = gameState.uiBuilder.buildProgressBar('growing', 1500, 1200, 100, 10,  200);
+	this.hackBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x2020CC);
 	this.hackBar.hackable = this;
 	this.hackBar.onEvent = function() {
 		this.hackable.frame = 1;

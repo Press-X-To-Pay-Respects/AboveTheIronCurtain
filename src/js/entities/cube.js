@@ -2,18 +2,29 @@
 Defines a cube.
 */
 
-var Cube = function (game, x, y, sprite) {
-    Phaser.Sprite.call(this, game, x, y, sprite);
+var Cube = function (gameState, x, y, sprite) {
+    Phaser.Sprite.call(this, gameState.game, x, y, sprite);
 	 this.tag = 'module';	//tag is used to detect object type during collision checking
-    this.game = game;
+    this.game = gameState.game;
     this.game.add.existing(this);
     this.group = undefined;
     this.module = undefined;
     this.indicatorFade = 0.02;
-    this.health = 3;
-    this.constraints = [];
-   this.ramCooldown = 500;
-   this.ramDelay = 0;
+    this.healthBar = gameState.uiBuilder.buildProgressBar('shrinking', 0, 0, 20, 4, 3);
+	this.healthBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x20CC20);
+	this.healthBar.cube = this;
+	//set update function of health bar
+	this.healthBar.update = function() {
+		this.setLocation(this.cube.x, this.cube.y+10);
+	};
+	//onEvent called when cube runs out of health
+	this.healthBar.onEvent = function() {
+		this.dying = true;
+		this.life = 50;
+		// this.group.countCubes();
+		this.destroy();
+	};
+	this.constraints = [];
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -29,13 +40,13 @@ Cube.prototype.update = function() {
    if (this.module.update) {
       this.module.update();
    }
-   if (this.ramDelay > 0) {
-      this.ramDelay -= this.game.time.elapsed;
+   if (this.dying) {
+      this.life -= this.game.time.elapsed;
+      if (this.life < 0) {
+         this.dying = false;
+         this.group.destroyCube(this);
+      }
    }
-};
-
-Cube.prototype.resetRamDelay = function() {
-  this.ramDelay = this.ramCooldown; 
 };
 
 Cube.prototype.cubeCollide = function(other) {
@@ -60,11 +71,7 @@ Cube.prototype.displayIndicator = function() {
 };
 
 Cube.prototype.takeDamage = function(amt) {
-   this.health -= amt;
-   if (this.health <= 0) {
-      this.group.destroyCube(this);
-	  // this.group.countCubes();
-   }
+   this.healthBar.addValue(-amt);
 };
 
 Cube.prototype.remove = function() {

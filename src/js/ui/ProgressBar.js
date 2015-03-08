@@ -3,6 +3,14 @@
 var ProgressBar = function(setType, setMaxValue, setGraphics, setRenderables) {
 	this.type = setType; //Two types, "growing" (starts at 0, triggers event when full) 
 						 //and "shrinking" (starts full, triggers at 0)
+	this.bgBorderSize = 2;			//default size of background border
+	this.bgBorderColor = 0xAAAAAA;	//default color of background border
+	this.bgColor = 0x888888;		//default color of background
+	this.paddingHoriz = 5;			//default sum of padding on left and right side inner value bar
+	this.paddingVert = 5;			//default sum (i.e. half on each side) of vertical padding of inner value bar
+	this.valueBorderSize = 1;		//default size of value border
+	this.valueBorderColor = 0x8888FF; //default color of value border
+	this.valueColor = 0x000099;		//default color of inner value bar
 	this.x = null;
 	this.y = null;
 	this.width = null;
@@ -15,7 +23,7 @@ var ProgressBar = function(setType, setMaxValue, setGraphics, setRenderables) {
 	
 	//switch(this.type) {
 	//case 'growing' : 
-	if(setType == 'growing') {
+	if(setType === 'growing') {
 		this.value = 0;
 		//tryTrigger is called automatically when you add/subtract value, and will trigger the onEvent() function
 		this.tryTrigger = function() {
@@ -25,7 +33,7 @@ var ProgressBar = function(setType, setMaxValue, setGraphics, setRenderables) {
 		};
 		//break;
 	}
-	else if(setType == 'shrinking') {
+	else if(setType === 'shrinking') {
 	//case 'shrinking' :
 		this.value = this.maxValue;
 		this.tryTrigger = function() {
@@ -68,20 +76,36 @@ ProgressBar.prototype.setSize = function(setWidth, setHeight) {
 	this.height = setHeight;
 };
 
+ProgressBar.prototype.setStyle = function(bgBorderSize, bgBorderColor, bgColor, paddingHoriz, paddingVert, valueBorderSize, valueBorderColor, valueColor) {
+	this.bgBorderSize = bgBorderSize;
+	this.bgBorderColor = bgBorderColor;
+	this.bgColor = bgColor;
+	this.paddingHoriz = paddingHoriz;
+	this.paddingVert = paddingVert;
+	this.valueBorderSize = valueBorderSize;
+	this.valueBorderColor = valueBorderColor;
+	this.valueColor = valueColor;
+};
+
+//update for progress bar, called just before drawing progress bar
+//Overwrite this function if desired
+ProgressBar.prototype.update = function() {};
+
 //Renders progressBar
 ProgressBar.prototype.render = function() {
+	this.update();
 	this.graphics.clear();
 	//Draw background of bar
-	this.graphics.lineStyle(2, 0xAAAAAA, 1);
-	this.graphics.beginFill(0x888888);
+	this.graphics.lineStyle(this.bgBorderSize, this.bgBorderColor, 1); //sets border color and size
+	this.graphics.beginFill(this.bgColor); //sets color of background fill
 	this.graphics.drawRect(this.x-this.width/2, this.y-this.height/2, this.width, this.height);
 	this.graphics.endFill();
 	//Draw value of bar
 	var percentage = this.value / this.maxValue;
-	var barWidth = this.width - 5;
-	var barHeight = this.height - 5;
-	this.graphics.lineStyle(1, 0x8888FF, 1);
-	this.graphics.beginFill(0x000099);
+	var barWidth = this.width - this.paddingHoriz;
+	var barHeight = this.height - this.paddingVert;
+	this.graphics.lineStyle(this.valueBorderSize, this.valueBorderColor, 1);
+	this.graphics.beginFill(this.valueColor);
 	this.graphics.drawRect(this.x-(barWidth/2), this.y-(barHeight/2), barWidth*percentage, barHeight);
 	this.graphics.endFill();
 };
