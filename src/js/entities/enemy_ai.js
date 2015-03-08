@@ -7,10 +7,10 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.playerGroup = playerGroup;
    this.player = this.playerGroup.root;
    this.ramDist = 500;
+   this.shootDist = 500;
    this.rotationForce = 50;
    this.facingAllowance = Math.PI / 15;
-   this.thrustersFiring = false;
-   this.gunsFiring = false;
+   this.acting = false;
    switch (this.type) {
       case 'ram':
       this.allocateTo('thruster');
@@ -23,14 +23,14 @@ EnemyAI.prototype.constructor = EnemyAI;
 EnemyAI.prototype.update = function() {
    switch (this.type) {
       case 'ram':
-      this.ramUpdate();
+      this.customUpdate('thruster', this.ramDist);
       break;
       case 'shoot':
-      this.shootUpdate();
+      this.customUpdate('gun', this.shootDist);
    }
 };
 
-EnemyAI.prototype.ramUpdate = function() {
+EnemyAI.prototype.customUpdate = function(type, threshold) {
    if (!this.group.root) {
       return;
    }
@@ -38,7 +38,7 @@ EnemyAI.prototype.ramUpdate = function() {
    var myPos = new Phaser.Point(root.x, root.y);
    var playerPos = new Phaser.Point(this.player.x, this.player.y);
    var dist = Utils.distance(myPos.x, myPos.y, playerPos.x, playerPos.y);
-   if (dist <= this.ramDist) {
+   if (dist <= threshold) {
       var angleTo = this.angleTo(myPos, playerPos);
       var diffAngle = angleTo - root.body.rotation;
       if (diffAngle > 0) {
@@ -46,40 +46,13 @@ EnemyAI.prototype.ramUpdate = function() {
       } else {
          root.body.angularForce = -this.rotationForce;
       }
-      if (Math.abs(diffAngle) <= this.facingAllowance && !this.thrustersFiring) {
+      if (Math.abs(diffAngle) <= this.facingAllowance && !this.acting) {
          this.group.call('beginAct');
-         this.thrustersFiring = true;
-         this.allocateTo('thruster');
-      } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
+         this.acting = true;
+         this.allocateTo(type);
+      } else if (Math.abs(diffAngle) > this.facingAllowance && this.acting){
          this.group.call('endAct');
-         this.thrustersFiring = false;
-      }
-   }
-};
-
-EnemyAI.prototype.shootUpdate = function() {
-   if (!this.group.root) {
-      return;
-   }
-   var root = this.group.root;
-   var myPos = new Phaser.Point(root.x, root.y);
-   var playerPos = new Phaser.Point(this.player.x, this.player.y);
-   var dist = Utils.distance(myPos.x, myPos.y, playerPos.x, playerPos.y);
-   if (dist <= this.ramDist) {
-      var angleTo = this.angleTo(myPos, playerPos);
-      var diffAngle = angleTo - root.body.rotation;
-      if (diffAngle > 0) {
-         root.body.angularForce = this.rotationForce;
-      } else {
-         root.body.angularForce = -this.rotationForce;
-      }
-      if (Math.abs(diffAngle) <= this.facingAllowance && !this.gunsFiring) {
-         this.group.call('beginAct');
-         this.gunsFiring = true;
-         this.allocateTo('gun');
-      } else if (Math.abs(diffAngle) > this.facingAllowance && this.gunsFiring){
-         this.group.call('endAct');
-         this.gunsFiring = false;
+         this.acting = false;
       }
    }
 };

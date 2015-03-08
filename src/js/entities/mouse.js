@@ -60,22 +60,21 @@ Mouse.prototype.click = function(pointer) {
    if (bodies.length)
    {
      var temp = bodies[0].parent;
-     if (temp.sprite && temp.sprite.module && temp.sprite.module.type === 'core') {
-        return;
-     }
-     if (temp.sprite && temp.sprite.group && temp.sprite.group !== this.playerGroup) {
-        return;
-     }
-     this.removeTime = 0;
      this.grabbed = temp;
-     // console.log(this.grabbed.sprite.name);
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
-        this.grabbed.sprite.module.mouseDown();
+       this.grabbed.sprite.module.mouseDown();
      }
      if (this.lastClicked && this.lastClicked.sprite && this.lastClicked.sprite.module &&
      this.lastClicked.sprite.module.giveTarget) {
         this.lastClicked.sprite.module.giveTarget(this.grabbed.sprite.module);
      }
+     if (temp.sprite && temp.sprite.module && temp.sprite.module.type === 'core') {
+        this.grabbed = undefined;
+     }
+     if (temp.sprite && temp.sprite.group && temp.sprite.group !== this.playerGroup) {
+        this.grabbed = undefined;
+     }
+     this.removeTime = 0;
      this.lastClicked = temp;
    }
 };

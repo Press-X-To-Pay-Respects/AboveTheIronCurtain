@@ -27,7 +27,7 @@ ModuleBuilder.prototype.existingReference = null;
 
 /** Module functions **/
 function solarPanelGiveTarget(target) {
-   if (this.cube.group && target.cube.group && this.cube.group !== target.cube.group || this === target) {
+if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group) {
       return;
    }
    var ourGroup = this.cube.group;
@@ -47,6 +47,7 @@ function solarPanelMouseOver() {
 function solarPanelOnRemove() {
    if (!this.cube.myConnection || !this.cube.myConnection.end) {
       console.log('solarPanelOnRemove() had an error');
+      return;
    }
    this.cube.myConnection.end.myConnection = undefined;
    this.cube.myConnection = undefined;
