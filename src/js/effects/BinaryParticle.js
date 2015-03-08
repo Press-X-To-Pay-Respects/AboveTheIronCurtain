@@ -7,7 +7,6 @@ var BinaryParticle = function(game, targetObj, x, y, tarOffsetX, tarOffsetY) {
 	this.speed = 3.6;
 	this.tarOffsetX = tarOffsetX;
 	this.tarOffsetY = tarOffsetY;
-	console.log('ran');
 };
 
 BinaryParticle.prototype = Object.create(Phaser.Text.prototype);
