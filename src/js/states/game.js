@@ -75,7 +75,6 @@ Game.prototype = {
 
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -122,7 +121,7 @@ Game.prototype = {
     this.myRoot = undefined;
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    //this.loadData();
+    this.loadData();
     
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
@@ -139,22 +138,17 @@ Game.prototype = {
                var enemyGroup = new CubeGroup(this, undefined);
                this.updateDependents.push(enemyGroup);
                var blueprint = element['blueprint'];
-               // var practical = [];
                for (var row = 0; row < blueprint.length; row++) {
-                  // var newCol = [];
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
-					 newModule.cube.body.setCollisionGroup(cubeCG);
-					 newModule.cube.body.collides([cubeCG, asteroidCG]);
-                     // newCol.push(newModule.cube);
+                     newModule.cube.body.setCollisionGroup(cubeCG);
+                     newModule.cube.body.collides([cubeCG, asteroidCG]);
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }
-                  // practical.push(newCol);
                }
-               // TODO: give different types here
                enemyGroup.giveAI('ram', this.player);
             }
          }
