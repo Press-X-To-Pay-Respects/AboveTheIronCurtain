@@ -12,7 +12,6 @@ var Hackable = require('../entities/Hackable');
 var Emitter = require('../effects/Emitter');
 var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
-var Juicy = require('../plugins/Juicy'); // jshint ignore:line
 
 var bg, bg2;
 var numRoids = 0;
@@ -38,7 +37,7 @@ Game.prototype = {
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
-    
+
 	cubeCG = this.game.physics.p2.createCollisionGroup();
 	asteroidCG = this.game.physics.p2.createCollisionGroup();
 	
@@ -61,6 +60,9 @@ Game.prototype = {
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
+   this.player.isPlayer = true;
+   
+   this.mouse = new Mouse(this.game, this.input, playerGroup);
 	this.player.isPlayer = true;
 
 	//Create the emitter for the binary particle effects
@@ -69,7 +71,6 @@ Game.prototype = {
 	//test hackable object
 	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
 
-	
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
 
