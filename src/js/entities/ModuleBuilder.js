@@ -52,9 +52,9 @@ function solarPanelOnRemove() {
    this.cube.myConnection = undefined;
 }
 
+
 function beginAct() {
    this.act = true;
-   this.cube.frame = 1;
 }
 
 function endAct() {
@@ -103,7 +103,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.anchor.setTo(0.5, 0.5);
     this.gameState.game.physics.p2.enable(newCube);
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
-	newCube.body.collideWorldBounds = false;
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
     if (!this.gameState.rootSpawned) {
@@ -149,7 +148,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       if (forPlayer) {
          var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
          this.gameState.input.keyboard.addKeyCapture([space]);
-         // space.onDown.add(applyThrust, newModule);
          space.onDown.add(beginAct, newModule);
          space.onUp.add(endAct, newModule);
       } else {

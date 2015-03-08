@@ -26,8 +26,9 @@ Preloader.prototype = {
 	this.load.image('asteroid', 'assets/asteroid.png');
     this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
 	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');
+	this.load.image('warning', 'assets/warning.png');
     this.load.physics('module_physics', 'assets/module_physics.json');
-    this.load.text('level_one', 'assets/level_one.json');
+	this.load.text('level_one', 'assets/level_one.json');
   },
 
   create: function () {

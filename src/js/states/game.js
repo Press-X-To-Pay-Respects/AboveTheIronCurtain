@@ -15,10 +15,12 @@ var Mouse = require('../entities/mouse');
 
 var bg, bg2;
 var numRoids = 0;
-var maxRoids = 50;
+var maxRoids = 100;
 var asteroids, asteroidList;
 var leftKey, rightKey, cwKey, ccwKey;
 var asteroidCG, cubeCG;
+var warning;
+var timer;
 
 var Game = function () {
   this.testentity = null;
@@ -60,9 +62,9 @@ Game.prototype = {
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
-   this.player.isPlayer = true;
+	this.player.isPlayer = true;
    
-   this.mouse = new Mouse(this.game, this.input, playerGroup);
+	this.mouse = new Mouse(this.game, this.input, playerGroup);
 	this.player.isPlayer = true;
 
 	//Create the emitter for the binary particle effects
@@ -80,6 +82,10 @@ Game.prototype = {
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	asteroidList = new Phaser.ArraySet();
 	this.generateAsteroids();
+	
+	timer = this.game.time.create(false);
+	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
+	warning.kill();
 	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -114,8 +120,6 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
-
-	 this.game.camera.setPosition(1000, 1000);
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     //this.loadData();
@@ -190,6 +194,27 @@ Game.prototype = {
 			this.updateDependents[i].update();
 		}
 	}
+	
+	if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
+	this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
+	this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
+	this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+		if(timer.length === 0) {
+			warning.revive();
+			timer.loop(Phaser.Timer.SECOND * 10, this.resetPlayer, this);
+			timer.start();
+		}
+	}
+	else {
+		if(warning.alive === true) {
+			warning.kill();
+		}
+		if(timer.length > 0) {
+			timer.stop(true);
+		}
+	}
+	warning.x = this.game.camera.x;
+	warning.y = this.game.camera.y;
   },
   
   render: function () {
@@ -210,30 +235,21 @@ Game.prototype = {
 	
 	generateAsteroids: function() {
 		for(;numRoids < maxRoids; numRoids++) {
-			var coinA = this.game.rnd.integerInRange(0,1);
-			var coinB = this.game.rnd.integerInRange(0,1);
-			var asteroid;
-			if(coinA === 1) {
-				if(coinB === 1) { //Spawn asteroid above screen
-					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y - this.game.camera.height/2 - this.game.rnd.integerInRange(32, 300), 'asteroid');
-				}
-				else { //Spawn asteroid below screen
-					asteroid = asteroids.create(this.coreModule.cube.x + this.game.rnd.integerInRange(-this.game.camera.width/2, this.game.camera.width/2), this.coreModule.cube.y + this.game.camera.height/2 + this.game.rnd.integerInRange(32, 300), 'asteroid');
-				}
+			var randX = this.game.rnd.integerInRange(0, this.game.world.width);
+			var randY = this.game.rnd.integerInRange(0, this.game.world.height);
+			
+			while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
+			randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
+				randX = this.game.rnd.integerInRange(0, this.game.world.width);
+				randY = this.game.rnd.integerInRange(0, this.game.world.height);
 			}
-			else {
-				if(coinB === 1) { //Spawn asteroid to left of screen
-					asteroid = asteroids.create(this.coreModule.cube.x - this.game.camera.width/2 - this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
-				}
-				else { //Spawn asteroid to right
-					asteroid = asteroids.create(this.coreModule.cube.x + this.game.camera.width/2 + this.game.rnd.integerInRange(32, 300), this.coreModule.cube.y + this.game.rnd.integerInRange(-this.game.camera.height/2, this.game.camera.height/2), 'asteroid');
-				}
-			}
+			
+			var asteroid = asteroids.create(randX, randY, 'asteroid');
 			
 			asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
 			asteroid.body.angularDamping = 0;
-			asteroid.body.damping = 0;
-			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * 3.14);
+			asteroid.body.damping = this.game.rnd.realInRange(0, 0.5) * this.game.rnd.integerInRange(0, 1);
+			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
 			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.setCollisionGroup(asteroidCG);
@@ -241,14 +257,40 @@ Game.prototype = {
 			asteroid.body.collideWorldBounds = false;
 			asteroid.autoCull = true;
 			asteroid.checkWorldBounds = true;
-			asteroid.events.onOutOfBounds.add(this.resetAsteroid, asteroid);
+			asteroid.events.onOutOfBounds.add(this.resetAsteroid, {roid: asteroid, coreModule: this.coreModule, player: this.player, game: this.game});
 			asteroidList.add(asteroid);
 		}
 	},
 	
-	resetAsteroid: function() { //Needs to be updated once collision groups are working
-		//this.obj.x = 10;
-		//this.obj.y = 10;
+	resetAsteroid: function() {
+		var randX = this.game.rnd.integerInRange(0, this.game.world.width);
+		var randY = this.game.rnd.integerInRange(0, this.game.world.height);
+			
+		while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
+			randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
+				randX = this.game.rnd.integerInRange(0, this.game.world.width);
+				randY = this.game.rnd.integerInRange(0, this.game.world.height);
+		}
+		this.roid.x = randX;
+		this.roid.y = randY;
+		this.roid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
+		this.roid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
+		this.roid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
+	},
+	
+	resetPlayer: function() {
+		if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000) {
+			this.coreModule.cube.body.moveLeft(this.player.numCubes * 750);
+		}
+		if(this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+			this.coreModule.cube.body.moveRight(this.player.numCubes * 750);
+		}
+		if(this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000) {
+			this.coreModule.cube.body.moveUp(this.player.numCubes * 750);
+		}
+		else if(this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+			this.coreModule.cube.body.moveDown(this.player.numCubes * 750);
+		}
 	},
 	
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
