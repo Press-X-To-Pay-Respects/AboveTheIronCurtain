@@ -12,7 +12,6 @@ var Hackable = require('../entities/Hackable');
 var Emitter = require('../effects/Emitter');
 var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
-var Juicy = require('../plugins/Juicy'); // jshint ignore:line
 
 var bg, bg2;
 var numRoids = 0;

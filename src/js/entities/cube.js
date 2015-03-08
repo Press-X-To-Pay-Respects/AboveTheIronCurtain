@@ -71,16 +71,7 @@ Cube.prototype.displayIndicator = function() {
 };
 
 Cube.prototype.takeDamage = function(amt) {
-<<<<<<< HEAD
    this.healthBar.addValue(-amt);
-=======
-   this.health -= amt;
-   if (this.health <= 0) {
-      this.dying = true;
-      this.life = 800;
-	  // this.group.countCubes();
-   }
->>>>>>> parent of c683242... imported Juicy w/o browserify
 };
 
 Cube.prototype.remove = function() {

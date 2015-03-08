@@ -9,14 +9,8 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.ramDist = 500;
    this.shootDist = 500;
    this.rotationForce = 50;
-<<<<<<< HEAD
    this.facingAllowance = Math.PI / 15;
    this.acting = false;
-=======
-   this.facingAllowance = Math.PI / 20;
-   this.thrustersFiring = false;
-   this.gunsFiring = false;
->>>>>>> parent of c683242... imported Juicy w/o browserify
    switch (this.type) {
       case 'ram':
       this.allocateTo('thruster');

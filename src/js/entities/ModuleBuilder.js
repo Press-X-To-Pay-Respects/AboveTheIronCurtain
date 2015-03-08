@@ -55,23 +55,18 @@ function solarPanelOnRemove() {
 
 
 function beginAct() {
-   console.log('begin');
    this.act = true;
-<<<<<<< HEAD
-=======
-   // this.cube.frame = 1;
->>>>>>> parent of c683242... imported Juicy w/o browserify
 }
 
 function endAct() {
    this.act = false;
-   // this.cube.frame = 0;
+   this.cube.frame = 0;
 }
 
 function thrusterUpdate() {
    if (this.haltTime && this.haltTime > 0) {
-      console.log(this.haltTime);
       this.haltTime -= this.cube.game.time.elapsed;
+      this.cube.frame = 0;
    } else if (this.act && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
@@ -85,7 +80,7 @@ function thrusterUpdate() {
 }
 
 function thrusterHalt() {
-   this.haltTime = 2500;
+   this.haltTime = 1500;
 }
 
 /** End module functions **/
