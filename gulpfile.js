@@ -23,8 +23,12 @@ paths = {
   assets: 'src/assets/**/*',
   css:    'src/css/*.css',
   libs:   [
+<<<<<<< HEAD
     './src/bower_components/phaser-official/build/phaser.js',
    './src/js/plugins/Juicy.js'
+=======
+    './src/bower_components/phaser-official/build/phaser.js'
+>>>>>>> parent of c683242... imported Juicy w/o browserify
   ],
   js:     ['src/js/*.js', 'src/js/**/*.js'],
   entry: './src/js/main.js',
