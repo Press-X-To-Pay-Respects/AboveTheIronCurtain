@@ -13,6 +13,8 @@ var maxRoids = 50;
 var asteroids, asteroidList;
 var leftKey, rightKey, cwKey, ccwKey;
 var asteroidCG, cubeCG;
+var warning;
+var timer;
 
 var Game = function () {
   this.testentity = null;
@@ -61,6 +63,10 @@ Game.prototype = {
 	asteroidList = new Phaser.ArraySet();
 	this.generateAsteroids();
 	
+	timer = this.game.time.create(false);
+	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
+	warning.kill();
+	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
 	ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
@@ -91,8 +97,6 @@ Game.prototype = {
     
     this.debugNum = 0;
     this.myRoot = undefined;
-
-	 this.game.camera.setPosition(1000, 1000);
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
@@ -167,6 +171,27 @@ Game.prototype = {
 			this.updateDependents[i].update();
 		}
 	}
+	
+	if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
+	this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
+	this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
+	this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+		if(timer.length === 0) {
+			warning.revive();
+			timer.loop(Phaser.Timer.SECOND * 10, this.resetPlayer, this);
+			timer.start();
+		}
+	}
+	else {
+		if(warning.alive === true) {
+			warning.kill();
+		}
+		if(timer.length > 0) {
+			timer.stop(true);
+		}
+	}
+	warning.x = this.game.camera.x;
+	warning.y = this.game.camera.y;
   },
   
   render: function () {
@@ -225,6 +250,21 @@ Game.prototype = {
 	resetAsteroid: function() { //Needs to be updated once collision groups are working
 		//this.obj.x = 10;
 		//this.obj.y = 10;
+	},
+	
+	resetPlayer: function() {
+		if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000) {
+			this.coreModule.cube.body.moveLeft(this.player.numCubes * 750);
+		}
+		if(this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+			this.coreModule.cube.body.moveRight(this.player.numCubes * 750);
+		}
+		if(this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000) {
+			this.coreModule.cube.body.moveUp(this.player.numCubes * 750);
+		}
+		else if(this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+			this.coreModule.cube.body.moveDown(this.player.numCubes * 750);
+		}
 	},
 	
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses

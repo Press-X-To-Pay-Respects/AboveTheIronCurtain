@@ -54,7 +54,6 @@ function solarPanelOnRemove() {
 
 function beginThrust() {
    this.thrust = true;
-   this.cube.frame = 1;
 }
 
 function endThrust() {
@@ -90,7 +89,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.anchor.setTo(0.5, 0.5);
     this.gameState.game.physics.p2.enable(newCube);
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
-	newCube.body.collideWorldBounds = false;
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
     if (!this.gameState.rootSpawned) {
