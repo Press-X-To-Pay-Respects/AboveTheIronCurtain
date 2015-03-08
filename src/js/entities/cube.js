@@ -60,7 +60,7 @@ Cube.prototype.takeDamage = function(amt) {
    this.health -= amt;
    if (this.health <= 0) {
       this.dying = true;
-      this.life = 800;
+      this.life = 50;
 	  // this.group.countCubes();
    }
 };

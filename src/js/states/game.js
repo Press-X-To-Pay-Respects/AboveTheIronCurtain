@@ -5,7 +5,6 @@ Main testing environment.
 var ModuleBuilder = require('../entities/ModuleBuilder');
 var CubeGroup = require('../entities/cube_group');
 var Mouse = require('../entities/mouse');
-var Juicy = require('../plugins/Juicy'); // jshint ignore:line
 
 var bg, bg2;
 var numRoids = 0;

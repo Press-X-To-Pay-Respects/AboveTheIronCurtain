@@ -8,7 +8,7 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.player = this.playerGroup.root;
    this.ramDist = 500;
    this.rotationForce = 50;
-   this.facingAllowance = Math.PI / 20;
+   this.facingAllowance = Math.PI / 15;
    this.thrustersFiring = false;
    this.gunsFiring = false;
    switch (this.type) {
