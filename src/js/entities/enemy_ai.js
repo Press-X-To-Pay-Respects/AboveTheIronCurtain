@@ -10,9 +10,10 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.rotationForce = 50;
    this.facingAllowance = Math.PI / 20;
    this.thrustersFiring = false;
+   this.gunsFiring = false;
    switch (this.type) {
       case 'ram':
-      this.allocateToThrusters();
+      this.allocateTo('thruster');
       break;
    }
 };
@@ -24,11 +25,12 @@ EnemyAI.prototype.update = function() {
       case 'ram':
       this.ramUpdate();
       break;
+      case 'shoot':
+      this.shootUpdate();
    }
 };
 
 EnemyAI.prototype.ramUpdate = function() {
-   return;
    if (!this.group.root) {
       return;
    }
@@ -47,7 +49,7 @@ EnemyAI.prototype.ramUpdate = function() {
       if (Math.abs(diffAngle) <= this.facingAllowance && !this.thrustersFiring) {
          this.group.call('beginThrust');
          this.thrustersFiring = true;
-         this.allocateToThrusters();
+         this.allocateTo('thruster');
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
          this.group.call('endThrust');
          this.thrustersFiring = false;
@@ -55,28 +57,55 @@ EnemyAI.prototype.ramUpdate = function() {
    }
 };
 
-EnemyAI.prototype.allocateToThrusters = function() {
+EnemyAI.prototype.shootUpdate = function() {
+   if (!this.group.root) {
+      return;
+   }
+   var root = this.group.root;
+   var myPos = new Phaser.Point(root.x, root.y);
+   var playerPos = new Phaser.Point(this.player.x, this.player.y);
+   var dist = Utils.distance(myPos.x, myPos.y, playerPos.x, playerPos.y);
+   if (dist <= this.ramDist) {
+      var angleTo = this.angleTo(myPos, playerPos);
+      var diffAngle = angleTo - root.body.rotation;
+      if (diffAngle > 0) {
+         root.body.angularForce = this.rotationForce;
+      } else {
+         root.body.angularForce = -this.rotationForce;
+      }
+      if (Math.abs(diffAngle) <= this.facingAllowance && !this.gunsFiring) {
+         this.group.call('beginFiring');
+         this.gunsFiring = true;
+         this.allocateTo('gun');
+      } else if (Math.abs(diffAngle) > this.facingAllowance && this.gunsFiring){
+         this.group.call('endFiring');
+         this.gunsFiring = false;
+      }
+   }
+};
+
+EnemyAI.prototype.allocateTo = function(type) {
    var panels = [];
-   var thrusters = [];
+   var types = [];
    for (var row = 0; row < this.group.cubesWidth(); row++) {
       for (var col = 0; col < this.group.cubesHeight(); col++) {
          var cube = this.group.cubes[row][col];
          if (cube && cube.module) {
             if (cube.module.type === 'solarPanel' && !cube.myConnection) {
                panels.push(cube.module);
-            } else if (cube.module.type === 'thruster' && !cube.myConnection) {
-               thrusters.push(cube.module);
+            } else if (cube.module.type === type && !cube.myConnection) {
+               types.push(cube.module);
             }
          }
       }
    }
    var i = 0;
-   while (i < thrusters.length && i < panels.length) {
+   while (i < types.length && i < panels.length) {
       var tarPanel = panels[i];
-      var tarThruster = thrusters[i];
-      var newConnection = {start: tarPanel.cube, end: tarThruster.cube};
+      var tarType = types[i];
+      var newConnection = {start: tarPanel.cube, end: tarType.cube};
       tarPanel.cube.myConnection = newConnection;
-      tarThruster.cube.myConnection = newConnection;
+      tarType.cube.myConnection = newConnection;
       this.group.displayConnection(tarPanel.cube.myConnection);
       i++;
    }

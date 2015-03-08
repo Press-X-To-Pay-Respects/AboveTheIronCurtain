@@ -64,7 +64,10 @@ function endThrust() {
 
 function thrusterUpdate() {
    // console.log(this.thrust);
-   if (this.thrust && this.cube.myConnection) {
+   if (this.haltTime && this.haltTime > 0) {
+      console.log(this.haltTime);
+      this.haltTime -= this.cube.game.time.elapsed;
+   } else if (this.thrust && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
 	  if(this.cube.frame === 1) {
@@ -74,6 +77,10 @@ function thrusterUpdate() {
 		this.cube.frame = 1;
 	  }
    }
+}
+
+function thrusterHalt() {
+   this.haltTime = 2500;
 }
 
 /** End module functions **/
@@ -141,6 +148,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
          newModule.endThrust = endThrust;
       }
       newModule.update = thrusterUpdate;
+      newModule.thrusterHalt = thrusterHalt;
 	}
 	//Return the module object
 	return newModule;

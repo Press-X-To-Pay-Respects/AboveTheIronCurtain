@@ -28,14 +28,15 @@ Cube.prototype.update = function() {
    if (this.module.update) {
       this.module.update();
    }
-   // if (this.ramDelay > 0) {
-      // this.ramDelay -= this.game.time.elapsed;
-   // }
+   if (this.dying) {
+      this.life -= this.game.time.elapsed;
+      console.log(this.life);
+      if (this.life < 0) {
+         this.dying = false;
+         this.group.destroyCube(this);
+      }
+   }
 };
-
-// Cube.prototype.resetRamDelay = function() {
-  // this.ramDelay = this.ramCooldown; 
-// };
 
 Cube.prototype.cubeCollide = function(other) {
    if (!this.group || !other || !other.sprite || other.sprite.key === 'asteroid') {
@@ -61,7 +62,8 @@ Cube.prototype.displayIndicator = function() {
 Cube.prototype.takeDamage = function(amt) {
    this.health -= amt;
    if (this.health <= 0) {
-      this.group.destroyCube(this);
+      this.dying = true;
+      this.life = 800;
 	  // this.group.countCubes();
    }
 };

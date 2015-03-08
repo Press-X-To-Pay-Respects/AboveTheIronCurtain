@@ -11,7 +11,6 @@ Boot.prototype = {
   create: function () {
     this.game.input.maxPointers = 1;
 
-    /*
     if (this.game.device.desktop) {
       //this.game.stage.scale.pageAlignHorizontally = true;
       this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
@@ -25,14 +24,6 @@ Boot.prototype = {
       this.game.scale.pageAlignHorizontally = true;
       this.game.scale.setScreenSize(true);
     }
-    */
-    var width = 800;
-    var height = 800;
-    this.game.width = width;
-    this.game.height = height;
-    // this.game.stage.bounds.width = width;
-    // this.game.stage.bounds.height = height;
-    // this.game.renderer.resize(width, height);
 
     this.game.state.start('Preloader');
   }
