@@ -115,7 +115,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Create module to wrap around cube class
 	var newModule = new Module(newCube, type);
 		
-	//TODO: edit special module attributes based on 'type'z
+	//TODO: edit special module attributes based on 'type'
 	
 	//Store module if it is core
 	if(type === 'core')
@@ -137,7 +137,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       if (forPlayer) {
          var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
          this.gameState.input.keyboard.addKeyCapture([space]);
-         // space.onDown.add(applyThrust, newModule);
          space.onDown.add(beginAct, newModule);
          space.onUp.add(endAct, newModule);
       } else {
