@@ -11,8 +11,6 @@ var Cube = function (game, x, y, sprite) {
     this.indicatorFade = 0.02;
     this.health = 3;
     this.constraints = [];
-   // this.ramCooldown = 500;
-   // this.ramDelay = 0;
 };
 
 Cube.prototype = Object.create(Phaser.Sprite.prototype);
@@ -30,7 +28,6 @@ Cube.prototype.update = function() {
    }
    if (this.dying) {
       this.life -= this.game.time.elapsed;
-      console.log(this.life);
       if (this.life < 0) {
          this.dying = false;
          this.group.destroyCube(this);

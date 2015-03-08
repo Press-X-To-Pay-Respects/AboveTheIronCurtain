@@ -47,11 +47,11 @@ EnemyAI.prototype.ramUpdate = function() {
          root.body.angularForce = -this.rotationForce;
       }
       if (Math.abs(diffAngle) <= this.facingAllowance && !this.thrustersFiring) {
-         this.group.call('beginThrust');
+         this.group.call('beginAct');
          this.thrustersFiring = true;
          this.allocateTo('thruster');
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.thrustersFiring){
-         this.group.call('endThrust');
+         this.group.call('endAct');
          this.thrustersFiring = false;
       }
    }
@@ -74,11 +74,11 @@ EnemyAI.prototype.shootUpdate = function() {
          root.body.angularForce = -this.rotationForce;
       }
       if (Math.abs(diffAngle) <= this.facingAllowance && !this.gunsFiring) {
-         this.group.call('beginFiring');
+         this.group.call('beginAct');
          this.gunsFiring = true;
          this.allocateTo('gun');
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.gunsFiring){
-         this.group.call('endFiring');
+         this.group.call('endAct');
          this.gunsFiring = false;
       }
    }

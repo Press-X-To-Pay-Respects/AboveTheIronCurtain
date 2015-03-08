@@ -52,22 +52,22 @@ function solarPanelOnRemove() {
    this.cube.myConnection = undefined;
 }
 
-function beginThrust() {
-   this.thrust = true;
-   this.cube.frame = 1;
+function beginAct() {
+   console.log('begin');
+   this.act = true;
+   // this.cube.frame = 1;
 }
 
-function endThrust() {
-   this.thrust = false;
-   this.cube.frame = 0;
+function endAct() {
+   this.act = false;
+   // this.cube.frame = 0;
 }
 
 function thrusterUpdate() {
-   // console.log(this.thrust);
    if (this.haltTime && this.haltTime > 0) {
       console.log(this.haltTime);
       this.haltTime -= this.cube.game.time.elapsed;
-   } else if (this.thrust && this.cube.myConnection) {
+   } else if (this.act && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
 	  if(this.cube.frame === 1) {
@@ -140,12 +140,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
          var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
          this.gameState.input.keyboard.addKeyCapture([space]);
          // space.onDown.add(applyThrust, newModule);
-         space.onDown.add(beginThrust, newModule);
-         space.onUp.add(endThrust, newModule);
+         space.onDown.add(beginAct, newModule);
+         space.onUp.add(endAct, newModule);
       } else {
          // newModule.thrust = false;
-         newModule.beginThrust = beginThrust;
-         newModule.endThrust = endThrust;
+         newModule.beginAct = beginAct;
+         newModule.endAct = endAct;
       }
       newModule.update = thrusterUpdate;
       newModule.thrusterHalt = thrusterHalt;
