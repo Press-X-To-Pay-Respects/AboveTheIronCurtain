@@ -21,6 +21,7 @@ Preloader.prototype = {
 	this.load.image('shield', 'assets/shield.png');
 	this.load.image('solarPanel', 'assets/solarPanel.png');
 	this.load.image('asteroid', 'assets/asteroid.png');
+	this.load.spritesheet('shopButton', 'assets/shopButtonSheet.png', 32, 32);
 	this.load.atlasJSONHash('connections', 'assets/connections.png', 'assets/connections.json');
 	this.load.image('earthNight', 'assets/bg_earthNightSmall.jpg');
 	this.load.image('warning', 'assets/warning.png');

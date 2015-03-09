@@ -103,8 +103,10 @@ Game.prototype = {
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
     
+	this.game.camera.follow(this.coreModule.cube);
+	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
+	
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
-    this.game.camera.follow(this.coreModule.cube);
   },
   
   loadData: function() {
@@ -138,6 +140,10 @@ Game.prototype = {
             }
          }
       }
+  },
+  
+  openShopMenu: function() {
+  
   },
 
   update: function () {    
@@ -194,6 +200,8 @@ Game.prototype = {
 	}
 	warning.x = this.game.camera.x;
 	warning.y = this.game.camera.y;
+	this.shopButton.x = this.game.camera.x + 1232;
+	this.shopButton.y = this.game.camera.y + 16;
   },
   
   render: function () {
