@@ -27,7 +27,7 @@ ModuleBuilder.prototype.existingReference = null;
 
 /** Module functions **/
 function solarPanelGiveTarget(target) {
-   if (this.cube.group && target.cube.group && this.cube.group !== target.cube.group || this === target) {
+if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group) {
       return;
    }
    var ourGroup = this.cube.group;
@@ -47,6 +47,7 @@ function solarPanelMouseOver() {
 function solarPanelOnRemove() {
    if (!this.cube.myConnection || !this.cube.myConnection.end) {
       console.log('solarPanelOnRemove() had an error');
+      return;
    }
    this.cube.myConnection.end.myConnection = undefined;
    this.cube.myConnection = undefined;
@@ -85,11 +86,18 @@ function thrusterHalt() {
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
-//TYPES: 'core' 'shield' 'thruster' 'solarPanel' 'gun'
+//TYPES: 'core' 'shield' 'thruster' 'solarPannel' 'hacker'
 ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
+	//Check if core has been created
+	if(type === 'core' && this.coreExists) {
+		//if so, return existing core b/c is singleton
+		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
+		return this.core;
+	}
+	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
-	var newCube = new Cube(this.gameState.game, x, y, type);
+	var newCube = new Cube(this.gameState, x, y, type);
     var scale = 0.5;
     newCube.name = this.gameState.debugNum++;
     newCube.scale.setTo(scale, scale);
@@ -113,9 +121,13 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(newCube, type);
+	var newModule = new Module(type, newCube);
 		
-	//TODO: edit special module attributes based on 'type'
+	//TODO: edit special module atributes based on 'type'
+	if(type === 'hacker') {
+		newModule.cycle = 6;
+		newModule.count = 0;
+	}
 	
 	//Store module if it is core
 	if(type === 'core')

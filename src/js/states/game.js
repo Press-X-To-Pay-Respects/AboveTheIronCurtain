@@ -2,8 +2,15 @@
 Main testing environment.
 */
 
+var Renderables = require('../functionAccess/Renderables');
+var UIBuilder = require('../ui/UIBuilder');
+var Cube = require('../entities/cube');
 var ModuleBuilder = require('../entities/ModuleBuilder');
+var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
+var Hackable = require('../entities/Hackable');
+var Emitter = require('../effects/Emitter');
+var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
 
 var bg, bg2;
@@ -39,11 +46,15 @@ Game.prototype = {
    this.mouse = new Mouse(this.game, this.input);
    
    this.updateDependents = [];
-   
+
+	//create Renderables class
+	this.renderables = new Renderables();
+	//create the UIBuilder
+	this.uiBuilder = new UIBuilder(this, this.renderables);   
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
-	this.coreModule = this.moduleBuilder.build('core', 1500, 1500, true);
+	this.coreModule = this.moduleBuilder.build('core', 1200, 1200, true);
 	this.cubeWidth = this.coreModule.cube.width;
 	this.coreModule.cube.body.setCollisionGroup(cubeCG);
 	this.coreModule.cube.body.collides([cubeCG, asteroidCG]);
@@ -55,9 +66,16 @@ Game.prototype = {
    
 	this.mouse = new Mouse(this.game, this.input, playerGroup);
 	this.player.isPlayer = true;
-   
+
+	//Create the emitter for the binary particle effects
+	this.BinaryEmitter = new Emitter(this);
+	
+	//test hackable object
+	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
+
 	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
+
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -87,8 +105,11 @@ Game.prototype = {
 	//solarPanel
 	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
     this.placeSPKey.onDown.add(this.addSP, this);
+	//hacker
+	this.placeHackKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+	this.placeHackKey.onDown.add(this.addHack, this);
 	//gun
-	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
     this.placeGunKey.onDown.add(this.addGun, this);
 	//END
     
@@ -101,7 +122,7 @@ Game.prototype = {
     this.myRoot = undefined;
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    this.loadData();
+    //this.loadData();
     
 	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
@@ -206,6 +227,7 @@ Game.prototype = {
   
   render: function () {
 	this.mouse.render();
+	this.renderables.renderAll();
   },
   
 	scrollBG: function() {
@@ -298,6 +320,11 @@ Game.prototype = {
   },
   addSP: function () {
 	var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+	newModule.cube.body.setCollisionGroup(cubeCG);
+	newModule.cube.body.collides([cubeCG, asteroidCG]);
+  },
+  addHack: function () {
+	var newModule = this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
 	newModule.cube.body.setCollisionGroup(cubeCG);
 	newModule.cube.body.collides([cubeCG, asteroidCG]);
   },
