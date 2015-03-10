@@ -1,9 +1,15 @@
-'use strict';
-
 var game = new Phaser.Game(window.innerWidth, window.innerHeigh, Phaser.AUTO, 'atic-game');
 
 window.playerState = {
     currentLevel: 'Game'
+};
+
+//  The Google WebFont Loader will look for this object, so create it before loading the script.
+WebFontConfig = {
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['Montserrat::latin']
+    }
 };
 
 game.state.add('Boot', require('./states/boot'));

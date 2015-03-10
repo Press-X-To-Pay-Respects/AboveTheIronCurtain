@@ -136,7 +136,7 @@ Game.prototype = {
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
     
-    // this.uiBuilder.buildBanner(this, 0.2, 0.2, ['hello world'], 'top_right');
+    this.testBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
   },
   
   loadData: function() {
@@ -161,6 +161,7 @@ Game.prototype = {
                      enemyGroup.add(newModule.cube, point);
                   }
                }
+               // TODO: define AI type in JSON
                enemyGroup.giveAI('ram', this.player);
             }
          }
@@ -347,7 +348,7 @@ Game.prototype = {
   },
 
   debug: function () {
-    this.juicy.shake();
+     
   }
 };
 

@@ -32,6 +32,8 @@ Preloader.prototype = {
 	this.load.text('level_one', 'assets/json/level_one.json');
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');
+   this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
+   this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
   create: function () {

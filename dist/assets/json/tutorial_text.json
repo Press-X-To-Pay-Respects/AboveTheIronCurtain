@@ -1,0 +1,11 @@
+{
+ "text":
+   [
+   "Welcome to AtiC, press the next and prev arrows to scroll through this guide. Press close to hide the guide. The guide can be reopened at any time by pressing the help button.",
+   "shield",
+   "solarPanel",
+   "shield"
+   ],
+ "colors":
+   [[0, 1], [0, 1], [0, 1], [0, 1]]
+}

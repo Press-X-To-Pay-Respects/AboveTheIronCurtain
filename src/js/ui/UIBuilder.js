@@ -36,8 +36,10 @@ UIBuilder.prototype.buildProgressBar = function(type, x, y, width, height, maxVa
 	return newProgBar;
 };
 
-UIBuilder.prototype.buildBanner = function(width, height, texts, snap) {
-   var newBanner = new Banner(this.gameState, width, height, texts, snap);
+UIBuilder.prototype.buildBanner = function(xRatio, yRatio, texts) {
+   var graphics = this.gameState.game.add.graphics(0, 0);
+   var newBanner = new Banner(this.gameState, xRatio, yRatio, texts, graphics, this.renderables);
+   this.renderables.subscribe(newBanner);
    return newBanner;
 };
 
