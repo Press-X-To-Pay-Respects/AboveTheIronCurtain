@@ -25,6 +25,7 @@ Preloader.prototype = {
     this.load.atlasJSONHash('connections', 'assets/images/connections.png', 'assets/json/connections.json');
 	this.load.image('asteroid', 'assets/images/asteroid.png');
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
+	this.load.image('shopPanel', 'assets/images/shopBackPanel.png');
 	this.load.atlasJSONHash('connections', 'assets/images/connections.png', 'assets/json/connections.json');
 	this.load.image('earthNight', 'assets/images/bg_earthNightSmall.jpg');
 	this.load.image('warning', 'assets/images/warning.png');
