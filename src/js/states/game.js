@@ -21,6 +21,8 @@ var asteroids, asteroidList;
 var leftKey, rightKey, cwKey, ccwKey;
 var warning;
 var timer;
+var shopPanel, shopMenuOpening = false, shopMenuClosing = false;
+var diff = 0;
 
 var Game = function () {
   this.testentity = null;
@@ -130,10 +132,13 @@ Game.prototype = {
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     //this.loadData();
     
+	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
+	shopPanel.kill();
 	this.game.camera.follow(this.coreModule.cube);
-	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
+	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
 	this.shopButton.onInputDown.add(this.playDownClick, this);
+	
 	
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
   },
@@ -179,8 +184,17 @@ Game.prototype = {
 		this.downClick.play();
 	},
   
-	openShopMenu: function() {
+	useShopButton: function() {
 		this.downClick.play();
+		console.log(shopPanel.alive);
+		if(!shopPanel.alive && !shopMenuOpening && !shopMenuClosing) {
+			shopPanel.revive();
+			diff = 0;
+			shopMenuOpening = true;
+		}
+		else if(shopPanel.alive&& !shopMenuClosing && !shopMenuOpening) {
+			shopMenuClosing = true;
+		}
 	},
 
   update: function () {    
@@ -217,6 +231,7 @@ Game.prototype = {
 		}
 	}
 	
+	//Warning Code
 	if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
 	this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
 	this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
@@ -237,8 +252,25 @@ Game.prototype = {
 	}
 	warning.x = this.game.camera.x;
 	warning.y = this.game.camera.y;
-	this.shopButton.x = this.game.camera.x + 1232;
+	
+	//Shop Movement Code
+	if(shopMenuOpening === true) {	
+		diff += 4;
+		if(diff >= 276) {
+			shopMenuOpening = false;
+		}
+	}
+	else if(shopMenuClosing === true) {
+		diff -= 4;
+		if(diff <= 0) {
+			shopPanel.kill();
+			shopMenuClosing = false;
+		}
+	}
+	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
+	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	shopPanel.y = this.game.camera.y + 16;
   },
   
   render: function () {
