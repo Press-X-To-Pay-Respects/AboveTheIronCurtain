@@ -73,6 +73,9 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    // if (other.group && other.group !== this && origin.ramDelay <= 0) {
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
+      if (this.game.juicy) {
+         this.game.juicy.shake();
+      }
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {

@@ -63,6 +63,7 @@ Game.prototype = {
 	this.coreModule.cube.body.setCollisionGroup(cubeCG);
 	this.coreModule.cube.body.collides([cubeCG, asteroidCG]);
 	this.cubeBuffer = 2;
+   this.testVar = 7;
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
@@ -133,12 +134,9 @@ Game.prototype = {
 	this.shopButton.onInputDown.add(this.playDownClick, this);
 	
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
-<<<<<<< HEAD
     this.game.camera.follow(this.coreModule.cube);
     
     // this.uiBuilder.buildBanner(this, 0.2, 0.2, ['hello world'], 'top_right');
-=======
->>>>>>> origin/gh-pages
   },
   
   loadData: function() {
