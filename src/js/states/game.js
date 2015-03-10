@@ -78,12 +78,7 @@ Game.prototype = {
 	//test hackable object
 	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
 
-<<<<<<< HEAD
-	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-=======
 	//this.thrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
->>>>>>> origin/gh-pages
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -163,14 +158,6 @@ Game.prototype = {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
-<<<<<<< HEAD
-                     newModule.cube.body.setCollisionGroup(cubeCG);
-                     newModule.cube.body.collides([cubeCG, asteroidCG]);
-=======
-					 //newModule.cube.body.setCollisionGroup(this.collisionGroup);
-					 //newModule.cube.body.collides(this.collisionGroup);
-                     // newCol.push(newModule.cube);
->>>>>>> origin/gh-pages
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }

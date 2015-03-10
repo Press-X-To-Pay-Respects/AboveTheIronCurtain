@@ -19,10 +19,10 @@ var Cube = function (gameState, x, y, sprite) {
 	};
 	//onEvent called when cube runs out of health
 	this.healthBar.onEvent = function() {
-		this.dying = true;
-		this.life = 50;
+		this.cube.dying = true;
+		this.cube.life = 50;
 		// this.group.countCubes();
-		this.destroy();
+		// this.destroy();
 	};
 	this.constraints = [];
 };
@@ -44,6 +44,7 @@ Cube.prototype.update = function() {
       this.life -= this.game.time.elapsed;
       if (this.life < 0) {
          this.dying = false;
+         this.healthBar.destroy();
          this.group.destroyCube(this);
       }
    }

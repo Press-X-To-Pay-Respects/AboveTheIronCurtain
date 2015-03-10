@@ -412,7 +412,6 @@ CubeGroup.prototype.dirToAngle = function(dir) {
 };
 
 CubeGroup.prototype.destroyCube = function(cube) {
-  // console.log('destroyCube');
   var loc = this.find(cube);
   if (!loc) {
      console.log('attempt to destroy cube not in group');
