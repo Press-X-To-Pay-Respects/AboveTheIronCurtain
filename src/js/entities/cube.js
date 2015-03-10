@@ -50,7 +50,7 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !other || !other.sprite || other.sprite.key === 'asteroid') {
+   if (!this.group || !other || !other.sprite || other.sprite.tag !== 'module') {
       return;
    }
 	this.group.handleCollision(this, other.sprite);

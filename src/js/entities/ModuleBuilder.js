@@ -1,5 +1,6 @@
 var Cube = require('./cube');
 var Module = require('./Module');
+var Bullet = require('./Bullet');
 
 var thrustAmt = 5000;
 
@@ -35,6 +36,17 @@ if (this === target || !this.cube.group || !target.cube.group || this.cube.group
    this.cube.myConnection = newConnection;
    target.cube.myConnection = newConnection;
    ourGroup.displayConnection(this.cube.myConnection);
+   
+	if(!target.isActive) {
+		//Activate the module
+		target.isActive = true;
+		if(target.type === 'gun') {
+			ourGroup.activeGuns.push(target);
+		}
+		else if(target.type === 'hacker') {
+			ourGroup.activeHackerModules.push(target);
+		}
+	}
 }
 
 function solarPanelMouseOver() {
@@ -83,6 +95,15 @@ function thrusterHalt() {
    this.haltTime = 1500;
 }
 
+function gunFire(){
+	var angle = this.cube.body.rotation % (2*Math.PI);
+	var direction = [Math.sin(angle), -Math.cos(angle)];
+	//var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
+	var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
+	var speed = deltaDist * 50;
+	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
+			   direction, speed, 'playerBullet');
+}
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
@@ -116,7 +137,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(type, newCube);
+	var newModule = new Module(type, newCube, this.gameState);
 		
 	//TODO: edit special module atributes based on 'type'
 	if(type === 'hacker') {
@@ -142,10 +163,10 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    //Thruster module events
 	if(type === 'thruster') {
       if (forPlayer) {
-         var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
-         this.gameState.input.keyboard.addKeyCapture([space]);
-         space.onDown.add(beginAct, newModule);
-         space.onUp.add(endAct, newModule);
+         var thrusterKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.W); 
+         this.gameState.input.keyboard.addKeyCapture([thrusterKey]);
+         thrusterKey.onDown.add(beginAct, newModule);
+         thrusterKey.onUp.add(endAct, newModule);
       } else {
          // newModule.thrust = false;
          newModule.beginAct = beginAct;
@@ -154,6 +175,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       newModule.update = thrusterUpdate;
       newModule.thrusterHalt = thrusterHalt;
 	}
+
+	//Gun module events
+	if(type === 'gun') {
+		newModule.fire = gunFire;
+	}
+	
 	//Return the module object
 	return newModule;
 };

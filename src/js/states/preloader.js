@@ -18,9 +18,10 @@ Preloader.prototype = {
 	this.load.spritesheet('core', 'assets/images/coreSheet.png', 64, 64); 
 	this.load.spritesheet('thruster', 'assets/images/thrusterSheet.png', 64, 64);
 	this.load.spritesheet('gun', 'assets/images/gunSheet.png', 64, 64);
+	this.load.spritesheet('hacker', 'assets/images/hackSheet.png', 64, 64);
+	this.load.image('bullet', 'assets/images/bullet.png');
 	this.load.image('shield', 'assets/images/shield.png');
 	this.load.image('solarPanel', 'assets/images/solarPanel.png');
-	this.load.image('hacker', 'assets/images/hacker.png');
 	this.load.spritesheet('hackable1', 'assets/images/hackable1.png', 256, 256);
     this.load.atlasJSONHash('connections', 'assets/images/connections.png', 'assets/json/connections.json');
 	this.load.image('asteroid', 'assets/images/asteroid.png');

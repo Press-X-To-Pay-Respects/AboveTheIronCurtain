@@ -40,12 +40,12 @@ Hackable.prototype.update = function() {
 	this.hackBar.setLocation(this.x, this.y - 70);
 	//check if getting hacked
 	if(!this.isHacked) {
-		if(this.gameState.player.hackerModules.length > 0) {
+		if(this.gameState.player.activeHackerModules.length > 0) {
 			var dist;
 			var hacker;
 			//Loop through all hacker modules on the player's cubsat
-			for(var i = 0; i < this.gameState.player.hackerModules.length; i++) {
-				hacker = this.gameState.player.hackerModules[i];
+			for(var i = 0; i < this.gameState.player.activeHackerModules.length; i++) {
+				hacker = this.gameState.player.activeHackerModules[i];
 				dist = Math.sqrt( Math.pow(this.x - hacker.cube.x, 2) + Math.pow(this.y - hacker.cube.y, 2) );
 				if(dist < this.hackDistance) {
 					//If hacker is in range, increase hack value and try to emit binary particle
