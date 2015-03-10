@@ -29,6 +29,7 @@ Preloader.prototype = {
 	this.load.image('warning', 'assets/warning.png');
     this.load.physics('module_physics', 'assets/module_physics.json');
 	this.load.text('level_one', 'assets/level_one.json');
+   // this.load.image('banner', 'assets/banner.png');
   },
 
   create: function () {

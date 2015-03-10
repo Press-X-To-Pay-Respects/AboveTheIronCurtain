@@ -87,14 +87,7 @@ function thrusterHalt() {
 
 //call this function from ModuleBuilder to construct modules
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel' 'hacker'
-ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
-	//Check if core has been created
-	if(type === 'core' && this.coreExists) {
-		//if so, return existing core b/c is singleton
-		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
-		return this.core;
-	}
-	
+ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
 	var newCube = new Cube(this.gameState, x, y, type);
@@ -106,10 +99,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
+    /*
     if (!this.gameState.rootSpawned) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
     }
+    */
 
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);

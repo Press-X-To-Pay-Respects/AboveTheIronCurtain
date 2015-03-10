@@ -125,6 +125,8 @@ Game.prototype = {
     
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
+    
+    // this.uiBuilder.buildBanner(this, 0.2, 0.2, ['hello world'], 'top_right');
   },
   
   loadData: function() {
@@ -155,7 +157,7 @@ Game.prototype = {
       }
   },
 
-  update: function () {    
+  update: function () {
 	if(leftKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity > -9) { 
 			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
