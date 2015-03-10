@@ -37,6 +37,10 @@ Game.prototype = {
     bg = this.game.add.sprite(0, 0, 'earthNight');
 	bg2 = this.game.add.sprite(-8000, 0, 'earthNight');
 	
+	//Load in sound effects
+	this.hoverClick = this.game.add.audio('hoverClick');
+	this.downClick = this.game.add.audio('downClick');
+	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
 
@@ -123,10 +127,18 @@ Game.prototype = {
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
     
+	this.game.camera.follow(this.coreModule.cube);
+	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
+	this.shopButton.onInputOver.add(this.playHoverClick, this);
+	this.shopButton.onInputDown.add(this.playDownClick, this);
+	
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
+<<<<<<< HEAD
     this.game.camera.follow(this.coreModule.cube);
     
     // this.uiBuilder.buildBanner(this, 0.2, 0.2, ['hello world'], 'top_right');
+=======
+>>>>>>> origin/gh-pages
   },
   
   loadData: function() {
@@ -156,6 +168,18 @@ Game.prototype = {
          }
       }
   },
+  
+	playHoverClick: function() {
+		this.hoverClick.play();
+	},
+	
+	playDownClick: function() {
+		this.downClick.play();
+	},
+  
+	openShopMenu: function() {
+		this.downClick.play();
+	},
 
   update: function () {
 	if(leftKey.isDown) {
@@ -211,6 +235,8 @@ Game.prototype = {
 	}
 	warning.x = this.game.camera.x;
 	warning.y = this.game.camera.y;
+	this.shopButton.x = this.game.camera.x + 1232;
+	this.shopButton.y = this.game.camera.y + 16;
   },
   
   render: function () {
