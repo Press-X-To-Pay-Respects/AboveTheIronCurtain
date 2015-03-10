@@ -4,13 +4,13 @@ Main testing environment.
 
 var Renderables = require('../functionAccess/Renderables');
 var UIBuilder = require('../ui/UIBuilder');
-var Cube = require('../entities/cube');
+// var Cube = require('../entities/cube');
 var ModuleBuilder = require('../entities/ModuleBuilder');
-var Utils = require('../utils');
+// var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
 var Hackable = require('../entities/Hackable');
 var Emitter = require('../effects/Emitter');
-var mouseBody; // physics body for mouse
+// var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
 
@@ -123,23 +123,25 @@ Game.prototype = {
     // Debug controller
     this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
     this.debugKey.onDown.add(this.debug, this);
-    this.rootSpawned = false;
+    // this.rootSpawned = false;
     
-    this.debugNum = 0;
-    this.myRoot = undefined;
+    // this.debugNum = 0;
+    // this.myRoot = undefined;
     
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    this.loadData();
+    // this.loadData();
     
-	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
 	this.shopButton.onInputDown.add(this.playDownClick, this);
-	
+
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
     
-    this.testBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
+   this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
+   this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
+	this.helpButton.onInputOver.add(this.playHoverClick, this);
+	this.helpButton.onInputDown.add(this.playDownClick, this);
   },
   
   loadData: function() {
@@ -237,6 +239,8 @@ Game.prototype = {
 	warning.y = this.game.camera.y;
 	this.shopButton.x = this.game.camera.x + 1232;
 	this.shopButton.y = this.game.camera.y + 16;
+   this.helpButton.x = this.game.camera.x + 16;
+	this.helpButton.y = this.game.camera.y + 16;
   },
   
   render: function () {
@@ -318,32 +322,38 @@ Game.prototype = {
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
   addCore: function () { 
 	//Attempts to create more core modules here will only return the existing core
-	var newModule = this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
   addShield: function () {
-	var newModule = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
   addThruster: function () {
-	var newModule = this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
   addSP: function () {
-	var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
   addHack: function () {
-	var newModule = this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
   addGun: function () {
-	var newModule = this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
+	// var newModule = this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
+   this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },

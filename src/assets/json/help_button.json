@@ -1,0 +1,36 @@
+{"frames": {
+
+"helpButton1.png":
+{
+	"frame": {"x":2,"y":2,"w":128,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":64},
+	"sourceSize": {"w":128,"h":64}
+},
+"helpButton2.png":
+{
+	"frame": {"x":132,"y":2,"w":128,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":64},
+	"sourceSize": {"w":128,"h":64}
+},
+"helpButton3.png":
+{
+	"frame": {"x":262,"y":2,"w":128,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":64},
+	"sourceSize": {"w":128,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "helpButtonSheet.png",
+	"format": "RGBA8888",
+	"size": {"w":392,"h":68},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:602b15e810bd6777252659b7ee28b6dd:5a1cd4c50098feb88837efefe939f22d:7fd587ba6129dd47be787f24e62f3f73$"
+}
+}

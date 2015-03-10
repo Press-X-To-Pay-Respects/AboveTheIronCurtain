@@ -29,6 +29,15 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.y = this.hideHeight;
    this.goalY = this.y;
    this.slideRate = 0.2;
+   this.visible = false;
+   // add buttons
+   this.rightButton = this.game.add.button(0, 0, 'arrowButton', this.nextIndex, this, 1, 0, 2);
+	this.rightButton.onInputOver.add(this.gameState.playHoverClick, this.gameState);
+	this.rightButton.onInputDown.add(this.gameState.playDownClick, this.gameState);
+   this.leftButton = this.game.add.button(0, 0, 'arrowButton', this.prevIndex, this, 1, 0, 2);
+	this.leftButton.onInputOver.add(this.gameState.playHoverClick, this.gameState);
+	this.leftButton.onInputDown.add(this.gameState.playDownClick, this.gameState);
+   this.leftButton.scale.x = -1;
 };
 
 Banner.prototype.constructor = Banner;
@@ -39,11 +48,18 @@ Banner.prototype.destroy = function() {
 };
 
 Banner.prototype.update = function() {
+   // my pos
    this.x = this.cam.x + this.cam.width * this.xRatio;
    this.y = Utils.lerp(this.y, this.goalY, this.slideRate);
+   // text pos
    var curText = this.textObjs[this.index];
    curText.x = this.x;
    curText.y = this.y;
+   // button pos
+   this.rightButton.x = this.x + this.width / 2 + this.rightButton.width / 2;
+   this.rightButton.y = this.y - this.rightButton.height / 2;
+   this.leftButton.x = this.x - this.width / 2 + this.leftButton.width / 2;
+   this.leftButton.y = this.y - this.leftButton.height / 2;
 };
 
 Banner.prototype.addTexts = function() {
@@ -86,10 +102,40 @@ Banner.prototype.render = function() {
 
 Banner.prototype.show = function() {
    this.goalY = this.cam.y + this.cam.height * this.yRatio;
+   this.visible = true;
 };
 
 Banner.prototype.hide = function() {
    this.goalY = this.hideHeight;
+   this.visible = false;
+};
+
+Banner.prototype.toggle = function() {
+  if (this.visible) {
+     this.hide();
+  } else {
+     this.show();
+  }  
+};
+
+Banner.prototype.hideCurText = function() {
+  this.textObjs[this.index].x = this.textObjs[this.index].y = 0; 
+};
+
+Banner.prototype.nextIndex = function() {
+   this.hideCurText();
+   this.index++;
+   if (this.index >= this.textObjs.length) {
+      this.index = 0;
+   }
+};
+
+Banner.prototype.prevIndex = function() {
+   this.hideCurText();
+   this.index--;
+   if (this.index <= 0) {
+      this.index = this.textObjs.length;
+   }
 };
 
 module.exports = Banner;
