@@ -71,17 +71,13 @@ Game.prototype = {
 	this.mouse = new Mouse(this.game, this.input, playerGroup);
 	this.player.isPlayer = true;
 	
-	this.test = new Bullet(this, 1100, 1200, [0,0], 'enemyBullet');
-	
 	//Create the emitter for the binary particle effects
 	this.BinaryEmitter = new Emitter(this);
 	
 	//test hackable object
 	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
 
-	this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	this.game.input.keyboard.addKeyCapture([this.spaceKey]);
-
+	//this.thrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -99,8 +95,8 @@ Game.prototype = {
 	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
 	//Key and listener for firing gun
-	this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
-	this.shiftKey.onDown.add(this.fire, this);
+	this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	this.fireKey.onDown.add(this.fire, this);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core

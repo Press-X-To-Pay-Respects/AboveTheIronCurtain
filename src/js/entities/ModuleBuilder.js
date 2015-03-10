@@ -98,8 +98,11 @@ function thrusterHalt() {
 function gunFire(){
 	var angle = this.cube.body.rotation % (2*Math.PI);
 	var direction = [Math.sin(angle), -Math.cos(angle)];
-	console.log(direction);
-	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], direction, 'playerBullet');
+	//var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
+	var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
+	var speed = deltaDist * 50;
+	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
+			   direction, speed, 'playerBullet');
 }
 /** End module functions **/
 
@@ -165,10 +168,10 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    //Thruster module events
 	if(type === 'thruster') {
       if (forPlayer) {
-         var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR); 
-         this.gameState.input.keyboard.addKeyCapture([space]);
-         space.onDown.add(beginAct, newModule);
-         space.onUp.add(endAct, newModule);
+         var thrusterKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.W); 
+         this.gameState.input.keyboard.addKeyCapture([thrusterKey]);
+         thrusterKey.onDown.add(beginAct, newModule);
+         thrusterKey.onUp.add(endAct, newModule);
       } else {
          // newModule.thrust = false;
          newModule.beginAct = beginAct;

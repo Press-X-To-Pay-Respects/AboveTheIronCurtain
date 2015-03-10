@@ -1,8 +1,8 @@
 //Bullets are tagged as 'playerBullet' or 'enemyBullet'
-var Bullet = function(gameState, x, y, direction, tag) {
+var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
     Phaser.Sprite.call(this, gameState.game, x, y, 'bullet');
 	this.direction = direction; //Unit vector representing direction bullet is travelling;
-	this.speed = 250;				//Speed bullet is travelling;
+	this.speed = 300 + inhertitSpeed;				//Speed bullet is travelling;
 	this.tag = tag;
 	this.game = gameState.game;
 	this.game.add.existing(this);
