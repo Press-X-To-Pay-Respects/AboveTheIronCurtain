@@ -17,7 +17,8 @@ var CubeGroup = function (game, root) {
    }
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
-	this.hackerModules = [];	//list of hacker modules in this group
+	this.activeHackerModules = [];	//list of hacker modules in this group
+	this.activeGuns = [];
 
    this.numCubes = 1;
    this.bounceBackForce = 30;
@@ -76,17 +77,6 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
-      //Check if one of these two is a hacker module, if so add it to the other's hackerModules list
-	   if(!origin.group) {
-			if(origin.module.type === 'hacker') {
-				other.group.hackerModules.push(origin.module);
-			}
-		}
-		if(!other.group) {
-			if(other.module.type === 'hacker') {
-				origin.group.hackerModules.push(other.module);
-			}
-		}
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       var otherLoc = this.adjust(originLoc, relSide);

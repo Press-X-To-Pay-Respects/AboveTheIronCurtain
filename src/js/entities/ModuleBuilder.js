@@ -1,5 +1,6 @@
 var Cube = require('./cube');
 var Module = require('./Module');
+var Bullet = require('./Bullet');
 
 var thrustAmt = 5000;
 
@@ -35,6 +36,17 @@ if (this === target || !this.cube.group || !target.cube.group || this.cube.group
    this.cube.myConnection = newConnection;
    target.cube.myConnection = newConnection;
    ourGroup.displayConnection(this.cube.myConnection);
+   
+	if(!target.isActive) {
+		//Activate the module
+		target.isActive = true;
+		if(target.type === 'gun') {
+			ourGroup.activeGuns.push(target);
+		}
+		else if(target.type === 'hacker') {
+			ourGroup.activeHackerModules.push(target);
+		}
+	}
 }
 
 function solarPanelMouseOver() {
@@ -83,6 +95,12 @@ function thrusterHalt() {
    this.haltTime = 1500;
 }
 
+function gunFire(){
+	var angle = this.cube.body.rotation % (2*Math.PI);
+	var direction = [Math.sin(angle), -Math.cos(angle)];
+	console.log(direction);
+	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], direction, 'playerBullet');
+}
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
@@ -121,7 +139,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    cIndicator.alpha = 0;
 	
 	//Create module to wrap around cube class
-	var newModule = new Module(type, newCube);
+	var newModule = new Module(type, newCube, this.gameState);
 		
 	//TODO: edit special module atributes based on 'type'
 	if(type === 'hacker') {
@@ -159,6 +177,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       newModule.update = thrusterUpdate;
       newModule.thrusterHalt = thrusterHalt;
 	}
+
+	//Gun module events
+	if(type === 'gun') {
+		newModule.fire = gunFire;
+	}
+	
 	//Return the module object
 	return newModule;
 };
