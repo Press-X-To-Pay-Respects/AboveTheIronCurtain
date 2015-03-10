@@ -46,9 +46,6 @@ Game.prototype = {
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
 	
-	//create the collision group
-	//this.collisionGroup = this.game.physics.p2.createCollisionGroup();
-	
    this.mouse = new Mouse(this.game, this.input);
    
    this.updateDependents = [];
@@ -79,8 +76,6 @@ Game.prototype = {
 	
 	//test hackable object
 	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
-
-	//this.thrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -125,29 +120,17 @@ Game.prototype = {
     // Debug controller
     this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
     this.debugKey.onDown.add(this.debug, this);
-    // this.rootSpawned = false;
-    
-    // this.debugNum = 0;
-    // this.myRoot = undefined;
-    
-    this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    // this.loadData();
-    
-<<<<<<< HEAD
-	this.shopButton = this.game.add.button(this.game.camera.x + 1232, 16, 'shopButton', this.openShopMenu, this, 1, 0, 2);
-	this.shopButton.onInputOver.add(this.playHoverClick, this);
-	this.shopButton.onInputDown.add(this.playDownClick, this);
 
-=======
+    this.levelData = JSON.parse(this.game.cache.getText('level_one'));
+    this.loadData();
+    
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
 	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
 	this.shopButton.onInputDown.add(this.playDownClick, this);
-	
-	
->>>>>>> origin/gh-pages
+   
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
     
@@ -194,7 +177,7 @@ Game.prototype = {
   
 	useShopButton: function() {
 		this.downClick.play();
-		console.log(shopPanel.alive);
+		// console.log(shopPanel.alive);
 		if(!shopPanel.alive && !shopMenuOpening && !shopMenuClosing) {
 			shopPanel.revive();
 			diff = 0;
@@ -277,13 +260,10 @@ Game.prototype = {
 	}
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
-<<<<<<< HEAD
    this.helpButton.x = this.game.camera.x + 16;
 	this.helpButton.y = this.game.camera.y + 16;
-=======
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
->>>>>>> origin/gh-pages
   },
   
   render: function () {
