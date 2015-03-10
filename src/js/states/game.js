@@ -223,7 +223,7 @@ Game.prototype = {
 	this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
 		if(timer.length === 0) {
 			warning.revive();
-			timer.loop(Phaser.Timer.SECOND * 10, this.resetPlayer, this);
+			timer.loop(Phaser.Timer.SECOND * 5, this.resetPlayer, this);
 			timer.start();
 		}
 	}
@@ -249,7 +249,7 @@ Game.prototype = {
 	scrollBG: function() {
 		bg.x += 0.125;
 		if(bg.x >= 8000) {
-			bg.x += 0;
+			bg.x = 0;
 		}
 		bg2.x += 0.125;
 		if(bg2.x >= 8000) {
