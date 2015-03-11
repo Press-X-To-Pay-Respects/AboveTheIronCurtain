@@ -129,7 +129,7 @@ Game.prototype = {
     this.debugKey.onDown.add(this.debug, this);
 
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    this.loadData();
+    // this.loadData();
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
