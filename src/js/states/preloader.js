@@ -37,6 +37,11 @@ Preloader.prototype = {
    this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
+	//menu buttons
+	this.load.image('menu_title', 'assets/images/atic_menu_titleT.png');
+	this.load.image('menu_select', 'assets/images/atic_menu_selectT.png');
+	this.load.image('menu_manual', 'assets/images/atic_menu_manualT.png');
+	this.load.image('menu_credits', 'assets/images/atic_menu_creditsT.png');
   },
 
   create: function () {
@@ -45,8 +50,8 @@ Preloader.prototype = {
 
   update: function () {
     if (!!this.ready) {
-      //this.game.state.start('Menu');
-      this.game.state.start(playerState.currentLevel); // jshint ignore:line
+      this.game.state.start('Menu');
+      //this.game.state.start(playerState.currentLevel); // jshint ignore:line
     }
   },
 
