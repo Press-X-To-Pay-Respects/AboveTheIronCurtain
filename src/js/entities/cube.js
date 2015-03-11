@@ -45,7 +45,11 @@ Cube.prototype.update = function() {
       if (this.life < 0) {
          this.dying = false;
          this.healthBar.destroy();
-         this.group.destroyCube(this);
+         if (this.group) {
+            this.group.destroyCube(this);
+         } else {
+            this.destroy();
+         }
       }
    }
 };
