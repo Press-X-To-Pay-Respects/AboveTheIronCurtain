@@ -11,6 +11,7 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.shadowBlur = 5;
    this.normalText = '#ffffff';
    this.highlightText = '#00ff00';
+   this.textWrapPadding = 10;
    this.textJSON = textJSON;
    this.gameState = gameState;
    this.game = gameState.game;
@@ -22,7 +23,6 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.width = 400;
    this.height = 200;
    this.index = 0;
-   this.addTexts();
    this.x = 0;
    this.hideBuffer = -50;
    this.hideHeight = -this.height - this.hideBuffer;
@@ -38,6 +38,12 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
 	this.leftButton.onInputOver.add(this.gameState.playHoverClick, this.gameState);
 	this.leftButton.onInputDown.add(this.gameState.playDownClick, this.gameState);
    this.leftButton.scale.x = -1;
+   this.group = new Phaser.Group(this.game);
+   this.group.add(this.graphics);
+   this.group.add(this.rightButton);
+   this.group.add(this.leftButton);
+   this.addTexts();
+   this.game.world.bringToTop(this.group);
 };
 
 Banner.prototype.constructor = Banner;
@@ -48,6 +54,8 @@ Banner.prototype.destroy = function() {
 };
 
 Banner.prototype.update = function() {
+   // TODO: add layer groups to other things
+   this.game.world.bringToTop(this.group);
    // my pos
    this.x = this.cam.x + this.cam.width * this.xRatio;
    this.y = Utils.lerp(this.y, this.goalY, this.slideRate);
@@ -77,7 +85,7 @@ Banner.prototype.addTexts = function() {
       newText.align = 'center';
       newText.fill = this.normalText;
       newText.wordWrap = true;
-      newText.wordWrapWidth = this.width;
+      newText.wordWrapWidth = this.width - this.textWrapPadding;
       newText.anchor.set(0.5);
       newText.setShadow(this.shadowOffsetX, this.shadowOffsetY, this.shadowColor, this.shadowBlur);
       var newColors = textColors[i];
@@ -87,6 +95,7 @@ Banner.prototype.addTexts = function() {
          newText.addColor(this.normalText, newColors[j]);
       }
       this.textObjs.push(newText);
+      this.group.add(newText);
    }
 };
 
@@ -133,8 +142,8 @@ Banner.prototype.nextIndex = function() {
 Banner.prototype.prevIndex = function() {
    this.hideCurText();
    this.index--;
-   if (this.index <= 0) {
-      this.index = this.textObjs.length;
+   if (this.index < 0) {
+      this.index = this.textObjs.length - 1;
    }
 };
 
