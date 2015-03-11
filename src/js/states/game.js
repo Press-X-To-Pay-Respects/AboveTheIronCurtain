@@ -17,6 +17,7 @@ var Bullet = require('../entities/Bullet');
 var bg, bg2;
 var numRoids = 0;
 var maxRoids = 100;
+var newModuleSpeed = 1000;
 var asteroids, asteroidList;
 var leftKey, rightKey, cwKey, ccwKey;
 var warning;
@@ -43,6 +44,8 @@ Game.prototype = {
 	//Load in sound effects
 	this.hoverClick = this.game.add.audio('hoverClick');
 	this.downClick = this.game.add.audio('downClick');
+	this.cashRegister = this.game.add.audio('cashRegister');
+	this.cashRegister.allowMultiple = true;
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
@@ -135,16 +138,26 @@ Game.prototype = {
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
-	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {game: this.game, key: 'shield'}, 1, 0, 2);
+	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {state: this, key: 'shield'}, 1, 0, 2);
 	shieldButton.kill();
-	solarPanelButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 2), 'solarPanelButton', this.purchaseModule, {game: this.game, key: 'solarPanel'}, 1, 0, 2);
+	shieldButton.onInputOver.add(this.playHoverClick, this);
+	shieldButton.onInputDown.add(this.playDownClick, this);
+	solarPanelButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 2), 'solarPanelButton', this.purchaseModule, {state: this, key: 'solarPanel'}, 1, 0, 2);
 	solarPanelButton.kill();
-	thrusterButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 3), 'thrusterButton', this.purchaseModule, {game: this.game, key: 'thruster'}, 1, 0, 2);
+	solarPanelButton.onInputOver.add(this.playHoverClick, this);
+	solarPanelButton.onInputDown.add(this.playDownClick, this);
+	thrusterButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 3), 'thrusterButton', this.purchaseModule, {state: this, key: 'thruster'}, 1, 0, 2);
 	thrusterButton.kill();
-	gunButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 4), 'gunButton', this.purchaseModule, {game: this.game, key: 'gun'}, 1, 0, 2);
+	thrusterButton.onInputOver.add(this.playHoverClick, this);
+	thrusterButton.onInputDown.add(this.playDownClick, this);
+	gunButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 4), 'gunButton', this.purchaseModule, {state: this, key: 'gun'}, 1, 0, 2);
 	gunButton.kill();
-	hackButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 5), 'hackButton', this.purchaseModule, {game: this.game, key: 'hack'}, 1, 0, 2);
+	gunButton.onInputOver.add(this.playHoverClick, this);
+	gunButton.onInputDown.add(this.playDownClick, this);
+	hackButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 5), 'hackButton', this.purchaseModule, {state: this, key: 'hack'}, 1, 0, 2);
 	hackButton.kill();
+	hackButton.onInputOver.add(this.playHoverClick, this);
+	hackButton.onInputDown.add(this.playDownClick, this);
 	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
@@ -216,7 +229,23 @@ Game.prototype = {
 	},
 	
 	purchaseModule: function() {
-		console.log('shrek');
+		this.state.cashRegister.play();
+		var randY = this.state.game.rnd.integerInRange(100, this.state.game.camera.height - 100);
+		if(this.key === 'shield') {
+			this.state.addShield(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+		}
+		else if(this.key === 'solarPanel') {
+			this.state.addSP(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+		}
+		else if(this.key === 'thruster') {
+			this.state.addThruster(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+		}
+		else if(this.key === 'gun') {
+			this.state.addGun(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+		}
+		else if(this.key === 'hack') {
+			this.state.addHack(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+		}
 	},
 
   update: function () {    
@@ -383,36 +412,41 @@ Game.prototype = {
 	},
 	
   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
-  addCore: function () { 
+  addCore: function (x, y) { 
 	//Attempts to create more core modules here will only return the existing core
-	var newModule = this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+	var newModule = this.moduleBuilder.build('core', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
-  addShield: function () {
-	var newModule = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+  addShield: function (x, y) {
+	var newModule = this.moduleBuilder.build('shield', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
+	newModule.cube.body.moveLeft(newModuleSpeed);
   },
-  addThruster: function () {
-	var newModule = this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+  addThruster: function (x, y) {
+	var newModule = this.moduleBuilder.build('thruster', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
+	newModule.cube.body.moveLeft(newModuleSpeed);
   },
-  addSP: function () {
-	var newModule = this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+  addSP: function (x, y) {
+	var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
+	newModule.cube.body.moveLeft(newModuleSpeed);
   },
-  addHack: function () {
-	var newModule = this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
+  addHack: function (x, y) {
+	var newModule = this.moduleBuilder.build('hacker', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
+	newModule.cube.body.moveLeft(newModuleSpeed);
   },
-  addGun: function () {
-	var newModule = this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
+  addGun: function (x, y) {
+	var newModule = this.moduleBuilder.build('gun', x, y, true);
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
+	newModule.cube.body.moveLeft(newModuleSpeed);
   },
 
   fire: function() {

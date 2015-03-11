@@ -37,8 +37,12 @@ Preloader.prototype = {
 	this.load.image('warning', 'assets/images/warning.png');
     this.load.physics('module_physics', 'assets/json/module_physics.json');
 	this.load.text('level_one', 'assets/json/level_one.json');
+	//Load Sound Effects
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');
+	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
+	//Load Music
+	this.load.audio('menuSong', 'assets/sound/menuSong.ogg');
   },
 
   create: function () {
