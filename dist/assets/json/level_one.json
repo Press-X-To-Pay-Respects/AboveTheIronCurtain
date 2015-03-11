@@ -1,0 +1,24 @@
+{
+    "level_one": {
+		"enemy_one": {
+         "x_pos": 1100,
+         "y_pos": 1100,
+         "type": "ram",
+			"blueprint": [
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
+         ]
+        },
+		"enemy_two": {
+         "x_pos": 1300,
+         "y_pos": 1100,
+         "type": "shoot",
+			"blueprint": [
+         ["shield", "shield", "solarPanel", "gun"],
+         ["shield", "core", "shield", "shield"],
+         ["shield", "shield", "solarPanel", "gun"]
+         ]
+        }
+    }
+}

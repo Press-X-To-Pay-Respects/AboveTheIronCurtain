@@ -53,7 +53,6 @@ Preloader.prototype = {
 	//Load Sound Effects
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');
-<<<<<<< HEAD
    this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
    this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
@@ -63,13 +62,13 @@ Preloader.prototype = {
 	this.load.image('menu_select', 'assets/images/atic_menu_selectT.png');
 	this.load.image('menu_manual', 'assets/images/atic_menu_manualT.png');
 	this.load.image('menu_credits', 'assets/images/atic_menu_creditsT.png');
-=======
+
 	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
 	
 	//Load Music
 	//this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
 	this.load.audio('mainSong', 'assets/sound/Top (down) Night.ogg');
->>>>>>> origin/gh-pages
+
   },
 
   create: function () {
