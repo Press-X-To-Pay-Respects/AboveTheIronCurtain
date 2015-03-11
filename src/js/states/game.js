@@ -69,7 +69,6 @@ Game.prototype = {
 	this.player.isPlayer = true;
    
 	this.mouse = new Mouse(this.game, this.input, playerGroup);
-	this.player.isPlayer = true;
 	
 	//Create the emitter for the binary particle effects
 	this.BinaryEmitter = new Emitter(this);
@@ -98,8 +97,8 @@ Game.prototype = {
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
-	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-	this.placeCoreKey.onDown.add(this.addCore, this);
+	// this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+	// this.placeCoreKey.onDown.add(this.addCore, this);
 	//shield
 	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
     this.placeShieldKey.onDown.add(this.addShield, this);
@@ -122,7 +121,7 @@ Game.prototype = {
     this.debugKey.onDown.add(this.debug, this);
 
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    this.loadData();
+    // this.loadData();
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
@@ -382,12 +381,15 @@ Game.prototype = {
   },
 
   fire: function() {
-	console.log(this.player.activeGuns.length);
+	// console.log(this.player.activeGuns.length);
+   /*
 	if(this.player.activeGuns.length > 0) {
 		for(var i = 0; i < this.player.activeGuns.length; i++) {
 			this.player.activeGuns[i].fire();
 		}
 	}
+   */
+   this.player.call('fire');
   },
   
   debug: function () {

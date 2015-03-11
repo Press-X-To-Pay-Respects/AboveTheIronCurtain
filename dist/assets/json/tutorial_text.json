@@ -4,9 +4,11 @@
    "Welcome. Press the left and right arrows to scroll through this guide. Press close to hide the guide. The guide can be reopened at any time by pressing the help button.",
    "You control the cube in the center of the screen. The game is over when your cube is destroyed or you leave the level.",
    "Press A and D to rotate your cube.",
-   "Purchase cubes to build your ship with by pressing the $ button.",
-   "Click and drag floating cubes to move them. Bring them next to your cube to attatch them."
+   "Purchase cubes to build your ship with by pressing the б button.",
+   "Click and drag floating cubes to move them. Bring them next to your cube to attatch them.",
+   "Destroy all other ships to complete the level.",
+   "Have fun!"
    ],
  "colors":
-   [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
+   [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
 }

@@ -17,8 +17,8 @@ var CubeGroup = function (game, root) {
    }
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
-	this.activeHackerModules = [];	//list of hacker modules in this group
-	this.activeGuns = [];
+	// this.activeHackerModules = [];	//list of hacker modules in this group
+	// this.activeGuns = [];
 
    this.numCubes = 1;
    this.bounceBackForce = 30;
@@ -50,6 +50,19 @@ CubeGroup.prototype.call = function(fun) {
          }
       }
    }
+};
+
+CubeGroup.prototype.getModules = function(type) {
+   var modules = [];
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.module.type === type) {
+            modules.push(cube.module);
+         }
+      }
+   }
+   return modules;
 };
 
 CubeGroup.prototype.giveAI = function(type, player) {
