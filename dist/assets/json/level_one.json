@@ -1,7 +1,7 @@
 {
     "level_one": {
 		"enemy_one": {
-         "x_pos": 1100,
+         "x_pos": 300,
          "y_pos": 1100,
          "type": "ram",
 			"blueprint": [
@@ -11,13 +11,33 @@
          ]
         },
 		"enemy_two": {
-         "x_pos": 1300,
+         "x_pos": 2300,
          "y_pos": 1100,
          "type": "shoot",
 			"blueprint": [
          ["shield", "shield", "solarPanel", "gun"],
          ["shield", "core", "shield", "shield"],
          ["shield", "shield", "solarPanel", "gun"]
+         ]
+        },
+       "enemy_three": {
+         "x_pos": 2300,
+         "y_pos": 1800,
+         "type": "shoot",
+			"blueprint": [
+         ["shield", "shield", "solarPanel", "gun"],
+         ["shield", "core", "shield", "shield"],
+         ["shield", "shield", "solarPanel", "gun"]
+         ]
+        },
+       "enemy_four": {
+         "x_pos": 300,
+         "y_pos": 1800,
+         "type": "ram",
+			"blueprint": [
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
          ]
         }
     }

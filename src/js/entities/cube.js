@@ -55,7 +55,13 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
+   if (this.group && this.group.isPlayer) {
+      console.log('PLAYER');
+   } else {
+      console.log('OTHER');
+   }
    if (!this.group || !other || !other.sprite || other.sprite.tag !== 'module') {
+      // console.log('bad collision cube: ', this.group, other, other.sprite, other.sprite.tag);
       return;
    }
 	this.group.handleCollision(this, other.sprite);
