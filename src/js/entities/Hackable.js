@@ -55,10 +55,14 @@ Hackable.prototype.update = function() {
 					//If hacker is in range, increase hack value and try to emit binary particle
 					this.hackBar.addValue(0.05);
 					hacker.count++;
+					hacker.cube.animations.play('hacker');
 					if(hacker.count >= hacker.cycle) {
 						hacker.count = 0;
 						this.gameState.BinaryEmitter.emitBinary(this, hacker.cube.x, hacker.cube.y, 60);
 					}
+				}
+				else {
+					hacker.cube.animations.stop();
 				}
 			}
 		}

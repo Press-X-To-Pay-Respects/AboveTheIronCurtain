@@ -8,7 +8,7 @@ window.playerState = {
 WebFontConfig = { // jshint ignore:line
     //  The Google Fonts we want to load (specify as many as you like in the array)
     google: {
-      families: ['Montserrat::latin']
+      families: ['Roboto::latin']
     }
 };
 
