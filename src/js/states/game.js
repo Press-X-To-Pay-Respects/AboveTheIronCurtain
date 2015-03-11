@@ -163,6 +163,9 @@ Game.prototype = {
 	this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
+	
+	this.mainSong = this.game.add.audio('mainSong');
+	this.mainSong.play();
   },
   
   loadData: function() {

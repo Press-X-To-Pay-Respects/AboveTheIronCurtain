@@ -29,12 +29,12 @@ Preloader.prototype = {
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
 	
 	//Load Images
+	this.load.image('earthNight', 'assets/images/bg_earthNightSmall.jpg');
 	this.load.image('bullet', 'assets/images/bullet.png');
 	this.load.image('shield', 'assets/images/shield.png');
 	this.load.image('solarPanel', 'assets/images/solarPanel.png');
 	this.load.image('asteroid', 'assets/images/asteroid.png');
 	this.load.image('shopPanel', 'assets/images/shopBackPanel.png');
-	this.load.image('earthNight', 'assets/images/bg_earthNightSmall.jpg');
 	this.load.image('warning', 'assets/images/warning.png');
     
 	//Load Fonts
@@ -56,7 +56,8 @@ Preloader.prototype = {
 	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
 	
 	//Load Music
-	this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
+	//this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
+	this.load.audio('mainSong', 'assets/sound/Top (down) Night.ogg');
   },
 
   create: function () {
