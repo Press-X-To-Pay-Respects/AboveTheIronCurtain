@@ -159,8 +159,8 @@ Game.prototype = {
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
     this.game.camera.follow(this.coreModule.cube);
     
-   this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
-   this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
+	this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
+	this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
   },
@@ -359,8 +359,8 @@ Game.prototype = {
 			
 			var asteroid = asteroids.create(randX, randY, 'asteroid');
 			
-			asteroid.body.setCircle(16); //Change the collision detection from an AABB to a circle
-			asteroid.body.angularDamping = 0;
+			asteroid.body.clearShapes(); 
+			asteroid.body.loadPolygon('asteroidPolygon', 'asteroid'); //Change the collision detection from an AABB to a polygon
 			asteroid.body.damping = this.game.rnd.realInRange(0, 0.5) * this.game.rnd.integerInRange(0, 1);
 			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
 			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
