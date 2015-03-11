@@ -120,7 +120,7 @@ function gunUpdate() {
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
                direction, speed, 'playerBullet');
-      this.timer = 100;
+      this.timer = 600;
    } else {
       this.timer -= this.gameState.game.time.elapsed;
    }
