@@ -23,6 +23,7 @@ var warning;
 var timer;
 var shopPanel, shopMenuOpening = false, shopMenuClosing = false;
 var diff = 0;
+var shieldButton, solarPanelButton, thrusterButton, gunButton, hackButton;
 
 var Game = function () {
   this.testentity = null;
@@ -134,6 +135,16 @@ Game.prototype = {
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
+	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {game: this.game, key: 'shield'}, 1, 0, 2);
+	shieldButton.kill();
+	solarPanelButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 2), 'solarPanelButton', this.purchaseModule, {game: this.game, key: 'solarPanel'}, 1, 0, 2);
+	solarPanelButton.kill();
+	thrusterButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 3), 'thrusterButton', this.purchaseModule, {game: this.game, key: 'thruster'}, 1, 0, 2);
+	thrusterButton.kill();
+	gunButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 4), 'gunButton', this.purchaseModule, {game: this.game, key: 'gun'}, 1, 0, 2);
+	gunButton.kill();
+	hackButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 5), 'hackButton', this.purchaseModule, {game: this.game, key: 'hack'}, 1, 0, 2);
+	hackButton.kill();
 	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
@@ -186,7 +197,6 @@ Game.prototype = {
   
 	useShopButton: function() {
 		this.downClick.play();
-		console.log(shopPanel.alive);
 		if(!shopPanel.alive && !shopMenuOpening && !shopMenuClosing) {
 			shopPanel.revive();
 			diff = 0;
@@ -195,6 +205,18 @@ Game.prototype = {
 		else if(shopPanel.alive&& !shopMenuClosing && !shopMenuOpening) {
 			shopMenuClosing = true;
 		}
+	},
+	
+	addShopButtons: function() {
+		shieldButton.revive();
+		solarPanelButton.revive();
+		thrusterButton.revive();
+		gunButton.revive();
+		hackButton.revive();
+	},
+	
+	purchaseModule: function() {
+		console.log('shrek');
 	},
 
   update: function () {    
@@ -258,6 +280,7 @@ Game.prototype = {
 		diff += 4;
 		if(diff >= 276) {
 			shopMenuOpening = false;
+			this.addShopButtons();
 		}
 	}
 	else if(shopMenuClosing === true) {
@@ -271,6 +294,16 @@ Game.prototype = {
 	this.shopButton.y = this.game.camera.y + 16;
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
+	shieldButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	shieldButton.y = this.game.camera.y + 70 + (86 * 0);
+	solarPanelButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	solarPanelButton.y = this.game.camera.y + 70 + (86 * 1);
+	thrusterButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	thrusterButton.y = this.game.camera.y + 70 + (86 * 2);
+	gunButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	gunButton.y = this.game.camera.y + 70 + (86 * 3);
+	hackButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
+	hackButton.y = this.game.camera.y + 70 + (86 * 4);
   },
   
   render: function () {

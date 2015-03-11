@@ -27,6 +27,11 @@ Preloader.prototype = {
 	this.load.image('asteroid', 'assets/images/asteroid.png');
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
 	this.load.image('shopPanel', 'assets/images/shopBackPanel.png');
+	this.load.spritesheet('shieldButton', 'assets/images/shieldButtonSheet.png', 256, 82);
+	this.load.spritesheet('solarPanelButton', 'assets/images/solarPanelButtonSheet.png', 256, 82);
+	this.load.spritesheet('thrusterButton', 'assets/images/thrusterButtonSheet.png', 256, 82);
+	this.load.spritesheet('gunButton', 'assets/images/gunButtonSheet.png', 256, 82);
+	this.load.spritesheet('hackButton', 'assets/images/hackButtonSheet.png', 256, 82);
 	this.load.atlasJSONHash('connections', 'assets/images/connections.png', 'assets/json/connections.json');
 	this.load.image('earthNight', 'assets/images/bg_earthNightSmall.jpg');
 	this.load.image('warning', 'assets/images/warning.png');
