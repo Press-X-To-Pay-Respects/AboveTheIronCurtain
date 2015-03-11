@@ -368,8 +368,10 @@ Game.prototype = {
 	this.mouse.render();
 	this.renderables.renderAll();
    ////
-   for (var i = 0; i < this.lineTargets.length; i++) {
-        this.game.debug.geom(this.lines[i]);
+   if (!this.helpBanner.visible) {
+      for (var i = 0; i < this.lineTargets.length; i++) {
+           this.game.debug.geom(this.lines[i]);
+      }
    }
    ////
   },
