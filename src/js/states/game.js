@@ -15,7 +15,7 @@ var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
 
 var bg, bg2;
-var numRoids = 0;
+var numRoids;
 var maxRoids = 100;
 var newModuleSpeed = 1000;
 var asteroids, asteroidList;
@@ -23,7 +23,7 @@ var leftKey, rightKey, cwKey, ccwKey;
 var warning;
 var timer;
 var shopPanel, shopMenuOpening = false, shopMenuClosing = false;
-var diff = 0;
+var diff;
 var shieldButton, solarPanelButton, thrusterButton, gunButton, hackButton;
 
 var Game = function () {
@@ -36,6 +36,9 @@ Game.prototype = {
 	
   create: function () {
 	this.game.world.setBounds(0, 0, 8000, 4000);
+	
+	numRoids = 0;
+	diff = 0;
 	
 	//Create the two background images
     bg = this.game.add.sprite(0, 0, 'earthNight');
@@ -122,6 +125,9 @@ Game.prototype = {
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
     this.placeGunKey.onDown.add(this.addGun, this);
+	//reset game
+	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
+    this.resetKey.onDown.add(this.restartLevel, this);
 	//END
     
     // Debug controller
@@ -167,7 +173,12 @@ Game.prototype = {
 	this.helpButton.onInputDown.add(this.playDownClick, this);
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
-	this.mainSong.play();
+	this.mainSong.play('',0,1,true,true);
+  },
+  
+  restartLevel: function() {
+	this.mainSong.stop();
+	this.game.state.start(playerState.currentLevel);
   },
   
   loadData: function() {
@@ -253,13 +264,13 @@ Game.prototype = {
   update: function () {
 	if(leftKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity > -9) { 
-			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
+			this.coreModule.cube.body.angularForce += -7.5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
 	
 	if(rightKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity < 9) {
-			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
+			this.coreModule.cube.body.angularForce += 7.5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
 	

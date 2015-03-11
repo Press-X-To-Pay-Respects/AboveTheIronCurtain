@@ -162,6 +162,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	if(type === 'hacker') {
 		newModule.cycle = 6;
 		newModule.count = 0;
+		newModule.cube.animations.add('hacker', [0,1,2,3,4], 10, true);
 	}
 	
 	//Store module if it is core
