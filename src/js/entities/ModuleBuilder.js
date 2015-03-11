@@ -120,7 +120,7 @@ function gunUpdate() {
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
                direction, speed, 'playerBullet');
-      this.timer = 100;
+      this.timer = 600;
    } else {
       this.timer -= this.gameState.game.time.elapsed;
    }
@@ -137,17 +137,15 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.name = this.gameState.debugNum++;
     newCube.scale.setTo(scale, scale);
     newCube.anchor.setTo(0.5, 0.5);
+	
+	//Create physics for new cube
     this.gameState.game.physics.p2.enable(newCube);
-    newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
+	newCube.body.setCollisionGroup(this.gameState.collisionGroup);
+	newCube.body.collides(this.gameState.collisionGroup);
+	newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
-    /*
-    if (!this.gameState.rootSpawned) {
-       newCube.root = true;
-       this.gameState.rootSpawned = true;
-    }
-    */
-
+ 
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);
    cIndicator.animations.add('end', ['connection_end.png'], 60, true);
