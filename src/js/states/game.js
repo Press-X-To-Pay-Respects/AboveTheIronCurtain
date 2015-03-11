@@ -98,11 +98,6 @@ Game.prototype = {
 	ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
-	//Key and listener for firing gun
-	// this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	// this.fireKey.onDown.add(this.fire, this);
-   // this.fireKey.onUp.add(this.player.call('
-	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
@@ -129,7 +124,7 @@ Game.prototype = {
     this.debugKey.onDown.add(this.debug, this);
 
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    // this.loadData();
+    this.loadData();
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
@@ -171,6 +166,10 @@ Game.prototype = {
   },
   
   loadData: function() {
+     ////
+     this.lines = [];
+     this.lineTargets = [];
+     ////
       var myLevel = this.levelData['level_one'];
       for (var key in myLevel) {
          if (myLevel.hasOwnProperty(key)) {
@@ -193,6 +192,8 @@ Game.prototype = {
                }
                var aiType = element['type'];
                enemyGroup.giveAI(aiType, this.player);
+               this.lines.push(new Phaser.Line(0, 0, 0, 0));
+               this.lineTargets.push(enemyGroup.root);
             }
          }
       }
@@ -333,11 +334,29 @@ Game.prototype = {
 	gunButton.y = this.game.camera.y + 70 + (86 * 3);
 	hackButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	hackButton.y = this.game.camera.y + 70 + (86 * 4);
+   
+   ////
+   if (this.player.root) {
+      for (var i = 0; i < this.lineTargets.length; i++) {
+         if (!this.lineTargets[i]) {
+            continue;
+         }
+         var pointA = new Phaser.Point(this.player.root.x, this.player.root.y);
+         var pointB = new Phaser.Point(this.lineTargets[i].x, this.lineTargets[i].y);
+         this.lines[i].setTo(pointA.x, pointA.y, pointB.x, pointB.y);
+      }
+   }
+   ////
   },
   
   render: function () {
 	this.mouse.render();
 	this.renderables.renderAll();
+   ////
+   for (var i = 0; i < this.lineTargets.length; i++) {
+        this.game.debug.geom(this.lines[i]);
+   }
+   ////
   },
   
 	scrollBG: function() {
