@@ -15,7 +15,7 @@ var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
 
 var bg, bg2;
-var numRoids = 0;
+var numRoids;
 var maxRoids = 100;
 var newModuleSpeed = 1000;
 var asteroids, asteroidList;
@@ -23,7 +23,7 @@ var leftKey, rightKey, cwKey, ccwKey;
 var warning;
 var timer;
 var shopPanel, shopMenuOpening = false, shopMenuClosing = false;
-var diff = 0;
+var diff;
 var shieldButton, solarPanelButton, thrusterButton, gunButton, hackButton;
 
 var Game = function () {
@@ -36,6 +36,9 @@ Game.prototype = {
 	
   create: function () {
 	this.game.world.setBounds(0, 0, 8000, 4000);
+	
+	numRoids = 0;
+	diff = 0;
 	
 	//Create the two background images
     bg = this.game.add.sprite(0, 0, 'earthNight');
@@ -122,6 +125,9 @@ Game.prototype = {
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
     this.placeGunKey.onDown.add(this.addGun, this);
+	//reset game
+	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
+    this.resetKey.onDown.add(this.restartLevel, this);
 	//END
     
     // Debug controller
@@ -166,8 +172,13 @@ Game.prototype = {
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
 	
-	this.mainSong = this.game.add.audio('mainSong');
-	this.mainSong.play();
+	this.mainSong = this.game.add.audio('mainSong', 1, true);
+	this.mainSong.play('',0,1,true,true);
+  },
+  
+  restartLevel: function() {
+	this.mainSong.stop();
+	this.game.state.start(playerState.currentLevel);
   },
   
   loadData: function() {
@@ -227,35 +238,39 @@ Game.prototype = {
 	},
 	
 	purchaseModule: function() {
-		this.state.cashRegister.play();
 		var randY = this.state.game.rnd.integerInRange(100, this.state.game.camera.height - 100);
-		if(this.key === 'shield') {
+		if(this.key === 'shield' && this.state.mouse.x > shieldButton.x && this.state.mouse.x < shieldButton.x + 256 && this.state.mouse.y > shieldButton.y && this.state.mouse.y < shieldButton.y + 82) {
 			this.state.addShield(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+			this.state.cashRegister.play();
 		}
-		else if(this.key === 'solarPanel') {
+		else if(this.key === 'solarPanel' && this.state.mouse.x > solarPanelButton.x && this.state.mouse.x < solarPanelButton.x + 256 && this.state.mouse.y > solarPanelButton.y && this.state.mouse.y < solarPanelButton.y + 82) {
 			this.state.addSP(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+			this.state.cashRegister.play();
 		}
-		else if(this.key === 'thruster') {
+		else if(this.key === 'thruster' && this.state.mouse.x > thrusterButton.x && this.state.mouse.x < thrusterButton.x + 256 && this.state.mouse.y > thrusterButton.y && this.state.mouse.y < thrusterButton.y + 82) {
 			this.state.addThruster(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+			this.state.cashRegister.play();
 		}
-		else if(this.key === 'gun') {
+		else if(this.key === 'gun' && this.state.mouse.x > gunButton.x && this.state.mouse.x < gunButton.x + 256 && this.state.mouse.y > gunButton.y && this.state.mouse.y < gunButton.y + 82) {
 			this.state.addGun(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+			this.state.cashRegister.play();
 		}
-		else if(this.key === 'hack') {
+		else if(this.key === 'hack' && this.state.mouse.x > hackButton.x && this.state.mouse.x < hackButton.x + 256 && this.state.mouse.y > hackButton.y && this.state.mouse.y < hackButton.y + 82) {
 			this.state.addHack(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+			this.state.cashRegister.play();
 		}
 	},
 
   update: function () {
 	if(leftKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity > -9) { 
-			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
+			this.coreModule.cube.body.angularForce += -7.5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
 	
 	if(rightKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity < 9) {
-			this.coreModule.cube.body.angularForce += 5 * Math.pow(this.player.numCubes, 1.65);
+			this.coreModule.cube.body.angularForce += 7.5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
 	
@@ -319,7 +334,7 @@ Game.prototype = {
 	}
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
-   this.helpButton.x = this.game.camera.x + 16;
+	this.helpButton.x = this.game.camera.x + 16;
 	this.helpButton.y = this.game.camera.y + 16;
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
