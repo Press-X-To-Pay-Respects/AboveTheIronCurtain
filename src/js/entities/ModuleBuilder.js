@@ -10,6 +10,7 @@ var ModuleBuilder = function(setGameState, setColGroup) {
 	if(ModuleBuilder.prototype.exists) {
 		return ModuleBuilder.prototype.existingReference;
 	}
+		
 	this.gameState = setGameState;
    this.colGroup = setColGroup;
 	// this.coreExists = false;	//records if core has been created
@@ -27,13 +28,8 @@ ModuleBuilder.prototype.existingReference = null;
 
 /** Module functions **/
 function solarPanelGiveTarget(target) {
-   if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group ||
-   target.cube.myConnection) {
+if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group) {
       return;
-   }
-   if (this.cube.myConnection) {
-      this.cube.myConnection.end.myConnection = undefined;
-      this.cube.myConnection = undefined;
    }
    var ourGroup = this.cube.group;
    var newConnection = {start: this.cube, end: target.cube};
@@ -41,21 +37,16 @@ function solarPanelGiveTarget(target) {
    target.cube.myConnection = newConnection;
    ourGroup.displayConnection(this.cube.myConnection);
    
-   /*
 	if(!target.isActive) {
 		//Activate the module
-		target.isActive = true;=
+		target.isActive = true;
 		if(target.type === 'gun') {
 			ourGroup.activeGuns.push(target);
 		}
 		else if(target.type === 'hacker') {
 			ourGroup.activeHackerModules.push(target);
 		}
-      if(target.type === 'hacker') {
-			ourGroup.activeHackerModules.push(target);
-		}
 	}
-   */
 }
 
 function solarPanelMouseOver() {
@@ -66,10 +57,12 @@ function solarPanelMouseOver() {
 }
 
 function solarPanelOnRemove() {
-   if (this.cube.myConnection) {
-      this.cube.myConnection.end.myConnection = undefined;
-      this.cube.myConnection = undefined;
+   if (!this.cube.myConnection || !this.cube.myConnection.end) {
+      console.log('solarPanelOnRemove() had an error');
+      return;
    }
+   this.cube.myConnection.end.myConnection = undefined;
+   this.cube.myConnection = undefined;
 }
 
 
@@ -105,9 +98,6 @@ function thrusterHalt() {
 
 /*
 function gunFire(){
-   if (!this.cube.myConnection) {
-      return;
-   }
 	var angle = this.cube.body.rotation % (2*Math.PI);
 	var direction = [Math.sin(angle), -Math.cos(angle)];
 	//var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
@@ -151,6 +141,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
+    /*
+    if (!this.gameState.rootSpawned) {
+       newCube.root = true;
+       this.gameState.rootSpawned = true;
+    }
+    */
 
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);

@@ -40,7 +40,6 @@ Hackable.prototype.update = function() {
 	this.hackBar.setLocation(this.x, this.y - 70);
 	//check if getting hacked
 	if(!this.isHacked) {
-      /*
 		if(this.gameState.player.activeHackerModules.length > 0) {
 			var dist;
 			var hacker;
@@ -59,21 +58,6 @@ Hackable.prototype.update = function() {
 				}
 			}
 		}
-      */
-      var hackingModules = this.gameState.player.getModules('hacker');
-      for (var i = 0; i < hackingModules.length; i++) {
-         var hacker = hackingModules[i];
-         var dist = Math.sqrt( Math.pow(this.x - hacker.cube.x, 2) + Math.pow(this.y - hacker.cube.y, 2) );
-         if (hacker.cube.myConnection && dist < this.hackDistance) {
-            //If hacker is in range, increase hack value and try to emit binary particle
-            this.hackBar.addValue(0.05);
-            hacker.count++;
-            if(hacker.count >= hacker.cycle) {
-               hacker.count = 0;
-               this.gameState.BinaryEmitter.emitBinary(this, hacker.cube.x, hacker.cube.y, 60);
-            }
-         }
-      }
 	}
 };
 

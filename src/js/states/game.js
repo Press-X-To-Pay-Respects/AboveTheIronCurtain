@@ -69,6 +69,7 @@ Game.prototype = {
 	this.player.isPlayer = true;
    
 	this.mouse = new Mouse(this.game, this.input, playerGroup);
+	this.player.isPlayer = true;
 	
 	//Create the emitter for the binary particle effects
 	this.BinaryEmitter = new Emitter(this);
@@ -98,8 +99,8 @@ Game.prototype = {
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
-	// this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-	// this.placeCoreKey.onDown.add(this.addCore, this);
+	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+	this.placeCoreKey.onDown.add(this.addCore, this);
 	//shield
 	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
     this.placeShieldKey.onDown.add(this.addShield, this);
@@ -156,6 +157,7 @@ Game.prototype = {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+                     newModule.cube.tag = 'enemy_module';
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }
@@ -380,18 +382,6 @@ Game.prototype = {
 	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//newModule.cube.body.collides(this.collisionGroup);
   },
-
-  /*
-  fire: function() {
-	// console.log(this.player.activeGuns.length);
-	if(this.player.activeGuns.length > 0) {
-		for(var i = 0; i < this.player.activeGuns.length; i++) {
-			this.player.activeGuns[i].fire();
-		}
-	}
-   //this.player.call('fire');
-  },
-  */
   
   debug: function () {
      
