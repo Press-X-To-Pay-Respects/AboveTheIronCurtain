@@ -366,7 +366,7 @@ Game.prototype = {
 			
 			asteroid.body.clearShapes(); 
 			asteroid.body.loadPolygon('asteroidPolygon', 'asteroid'); //Change the collision detection from an AABB to a polygon
-			asteroid.body.damping = this.game.rnd.realInRange(0, 0.5) * this.game.rnd.integerInRange(0, 1);
+			asteroid.body.damping = this.game.rnd.realInRange(0, 0.3) * this.game.rnd.integerInRange(0, 1) * this.game.rnd.integerInRange(0, 1);
 			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
 			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
