@@ -153,18 +153,17 @@ CubeGroup.prototype.decideConstraintAngle = function(sideA, sideB) {
      } else if (sideB === 2) {
          return Math.PI;
      } else if (sideB === 3) {
-         // return 1 / 2 * Math.PI;
-         return 3 / 2 * Math.PI
+         return 1 / 2 * Math.PI;
      }
   } else if (sideA === 3) {
      if (sideB === 0) {
-        
+        return 1 / 2 * Math.PI;
      } else if (sideB === 1) {
-
+         return 0;
      } else if (sideB === 2) {
-
+         return 3 / 2 * Math.PI;
      } else if (sideB === 3) {
-
+         return Math.PI;
      }
   }
   // return Math.abs(sideB - sideA) * 1 / 2 * Math.PI;
@@ -178,21 +177,27 @@ CubeGroup.prototype.createConstraints = function(me, point, angle) {
    var myWest = this.get(this.adjust(point, this.DIR.WEST));
    var constraint;
    if (myNorth) {
-      constraint = this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset], angle); // me - north
+      console.log('a type');
+      // constraint = this.game.physics.p2.createLockConstraint(me.body, myNorth.body, [0, me.width + this.offset], angle); // me - north
+      constraint = this.game.physics.p2.createLockConstraint(myNorth.body, me.body, [0, -(me.width + this.offset)], angle); // north - me
       me.constraints.push(constraint);
       myNorth.constraints.push(constraint);
    }
    if (myEast) {
-      constraint = this.game.physics.p2.createLockConstraint(me.body, myEast.body, [-me.width - this.offset, 0], angle); // me - east
+      console.log('b type');
+      // constraint = this.game.physics.p2.createLockConstraint(me.body, myEast.body, [-me.width - this.offset, 0], angle); // me - east
+      constraint = this.game.physics.p2.createLockConstraint(myEast.body, me.body, [me.width + this.offset, 0], angle); // east - me
       me.constraints.push(constraint);
       myEast.constraints.push(constraint);
    }
    if (mySouth) {
+      console.log('c type');
       constraint = this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset], angle); // south - me
       me.constraints.push(constraint);
       mySouth.constraints.push(constraint);
    }
    if (myWest) {
+      console.log('d type');
       constraint = this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0], angle); // west - me
       me.constraints.push(constraint);
       myWest.constraints.push(constraint);
