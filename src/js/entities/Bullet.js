@@ -15,7 +15,6 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 	//Set proper collision function by determining type from 'tag'
 	if(this.tag === 'enemyBullet') {
 		this.collision = function(other) {
-			console.log(this.tag);
 			if(other.sprite.tag === 'module') {
 				other.sprite.takeDamage(0.5);
 			}
@@ -24,6 +23,15 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 	}
 	else if(this.tag === 'playerBullet') {
 		this.collision = function(other) {
+			if(other) {
+				if(other.sprite){
+					if(other.sprite.tag) {
+						if(other.sprite.tag === 'enemy_module') {
+							other.sprite.takeDamage(0.5);
+						}
+					}
+				}
+			}
 			this.destroy();
 		};
 	}

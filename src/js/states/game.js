@@ -156,6 +156,7 @@ Game.prototype = {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+					 newModule.cube.tag = 'enemy_module';
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }
