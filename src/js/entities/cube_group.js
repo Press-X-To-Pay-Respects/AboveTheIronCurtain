@@ -52,6 +52,22 @@ CubeGroup.prototype.call = function(fun) {
    }
 };
 
+CubeGroup.prototype.callOnType = function(fun, type) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.hasOwnProperty(fun)) {
+            // if cubes need functions called
+         } else if (cube && cube.module && cube.module.type === type && cube.module.hasOwnProperty(fun)) {
+            var fn = cube.module[fun];
+            if (typeof fn === 'function') {
+               fn.call(cube.module);
+            }
+         }
+      }
+   }
+};
+
 CubeGroup.prototype.getModules = function(type) {
    var modules = [];
    for (var row = 0; row < this.cubesWidth(); row++) {

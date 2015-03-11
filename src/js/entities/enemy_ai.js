@@ -15,6 +15,8 @@ var EnemyAI = function(game, group, type, playerGroup) {
       case 'ram':
       this.allocateTo('thruster');
       break;
+      case 'shoot':
+      this.allocateTo('gun');
    }
 };
 
@@ -47,11 +49,13 @@ EnemyAI.prototype.customUpdate = function(type, threshold) {
          root.body.angularForce = -this.rotationForce;
       }
       if (Math.abs(diffAngle) <= this.facingAllowance && !this.acting) {
-         this.group.call('beginAct');
+         // this.group.call('beginAct');
+         this.group.callOnType('beginAct', type);
          this.acting = true;
-         this.allocateTo(type);
+         // this.allocateTo(type);
       } else if (Math.abs(diffAngle) > this.facingAllowance && this.acting){
-         this.group.call('endAct');
+         // this.group.call('endAct');
+         this.group.callOnType('endAct', type);
          this.acting = false;
       }
    }

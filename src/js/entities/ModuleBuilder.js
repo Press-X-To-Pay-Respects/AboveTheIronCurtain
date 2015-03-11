@@ -74,6 +74,7 @@ function solarPanelOnRemove() {
 
 
 function beginAct() {
+   this.timer = 0;
    this.act = true;
 }
 
@@ -102,6 +103,7 @@ function thrusterHalt() {
    this.haltTime = 1500;
 }
 
+/*
 function gunFire(){
    if (!this.cube.myConnection) {
       return;
@@ -113,6 +115,25 @@ function gunFire(){
 	var speed = deltaDist * 50;
 	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
 			   direction, speed, 'playerBullet');
+}
+*/
+
+function gunUpdate() {
+   if (!this.cube.myConnection || !this.act) {
+      return;
+   }
+   if (this.timer <= 0) {
+      var angle = this.cube.body.rotation % (2*Math.PI);
+      var direction = [Math.sin(angle), -Math.cos(angle)];
+      //var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
+      var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
+      var speed = deltaDist * 50;
+      new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
+               direction, speed, 'playerBullet');
+      this.timer = 100;
+   } else {
+      this.timer -= this.gameState.game.time.elapsed;
+   }
 }
 /** End module functions **/
 
@@ -182,7 +203,17 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 
 	//Gun module events
 	if(type === 'gun') {
-		newModule.fire = gunFire;
+		// newModule.fire = gunFire;
+      newModule.update = gunUpdate;
+      if (forPlayer) {
+         var actKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+         this.gameState.input.keyboard.addKeyCapture([actKey]);
+         actKey.onDown.add(beginAct, newModule);
+         actKey.onUp.add(endAct, newModule);
+      } else {
+         newModule.beginAct = beginAct;
+         newModule.endAct = endAct;
+      }
 	}
 	
 	//Return the module object
