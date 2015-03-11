@@ -47,12 +47,16 @@ Game.prototype = {
 	this.cashRegister = this.game.add.audio('cashRegister');
 	this.cashRegister.allowMultiple = true;
 	
+	//Set up physics
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
-   this.game.physics.p2.setImpactEvents(true);
+	this.game.physics.p2.setImpactEvents(true);
+	//add collision group
+	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.mouse = new Mouse(this.game, this.input);
+	
+	this.mouse = new Mouse(this.game, this.input);
    
-   this.updateDependents = [];
+	this.updateDependents = [];
 
 	//create Renderables class
 	this.renderables = new Renderables();
@@ -63,10 +67,8 @@ Game.prototype = {
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', 1200, 1200, true);
 	this.cubeWidth = this.coreModule.cube.width;
-	//this.coreModule.cube.body.setCollisionGroup(this.collisionGroup);
-	//this.coreModule.cube.body.collides(this.collisionGroup);
 	this.cubeBuffer = 2;
-   this.testVar = 7;
+	this.testVar = 7;
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
@@ -365,8 +367,8 @@ Game.prototype = {
 			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
 			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
 			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-			//asteroid.body.setCollisionGroup(this.collisionGroup);
-			//asteroid.body.collides(this.collisionGroup);
+			asteroid.body.setCollisionGroup(this.collisionGroup);
+			asteroid.body.collides(this.collisionGroup);
 			asteroid.body.collideWorldBounds = false;
 			asteroid.autoCull = true;
 			asteroid.checkWorldBounds = true;

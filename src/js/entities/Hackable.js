@@ -24,7 +24,11 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
    this.scale.x = scale;
    this.scale.y = scale;
    this.anchor.setTo(0.5, 0.5);
+   
+   //Set up physics body for 'hackable' sprite
    gameState.game.physics.p2.enable(this);
+   this.body.setCollisionGroup(gameState.collisionGroup);
+	this.body.collides(gameState.collisionGroup);
    this.body.onBeginContact.add(this.cubeCollide, this);
    this.body.damping = 0.9;
    this.body.angularDamping = 0.9;
