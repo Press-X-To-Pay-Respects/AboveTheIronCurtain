@@ -67,6 +67,7 @@ function solarPanelOnRemove() {
 
 
 function beginAct() {
+   this.timer = 0;
    this.act = true;
 }
 
@@ -95,6 +96,7 @@ function thrusterHalt() {
    this.haltTime = 1500;
 }
 
+/*
 function gunFire(){
 	var angle = this.cube.body.rotation % (2*Math.PI);
 	var direction = [Math.sin(angle), -Math.cos(angle)];
@@ -104,18 +106,30 @@ function gunFire(){
 	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
 			   direction, speed, 'playerBullet');
 }
+*/
+
+function gunUpdate() {
+   if (!this.cube.myConnection || !this.act) {
+      return;
+   }
+   if (this.timer <= 0) {
+      var angle = this.cube.body.rotation % (2*Math.PI);
+      var direction = [Math.sin(angle), -Math.cos(angle)];
+      //var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
+      var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
+      var speed = deltaDist * 50;
+      new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
+               direction, speed, 'playerBullet');
+      this.timer = 100;
+   } else {
+      this.timer -= this.gameState.game.time.elapsed;
+   }
+}
 /** End module functions **/
 
 //call this function from ModuleBuilder to construct modules
 //TYPES: 'core' 'shield' 'thruster' 'solarPannel' 'hacker'
-ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
-	//Check if core has been created
-	if(type === 'core' && this.coreExists) {
-		//if so, return existing core b/c is singleton
-		//b/c of this, can call ModuleBuilder.build('core') to access reference to existing core
-		return this.core;
-	}
-	
+ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {	
 	//Create cube object to be stored within module
 	//Sprite names for modules are directly mapped to module names, so just pass 'type' as sprite name
 	var newCube = new Cube(this.gameState, x, y, type);
@@ -127,10 +141,12 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
     newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
     newCube.body.damping = 0.9;
     newCube.body.angularDamping = 0.9;
+    /*
     if (!this.gameState.rootSpawned) {
        newCube.root = true;
        this.gameState.rootSpawned = true;
     }
+    */
 
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);
@@ -183,7 +199,17 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 
 	//Gun module events
 	if(type === 'gun') {
-		newModule.fire = gunFire;
+		// newModule.fire = gunFire;
+      newModule.update = gunUpdate;
+      if (forPlayer) {
+         var actKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+         this.gameState.input.keyboard.addKeyCapture([actKey]);
+         actKey.onDown.add(beginAct, newModule);
+         actKey.onUp.add(endAct, newModule);
+      } else {
+         newModule.beginAct = beginAct;
+         newModule.endAct = endAct;
+      }
 	}
 	
 	//Return the module object

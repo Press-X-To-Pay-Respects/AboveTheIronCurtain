@@ -52,6 +52,35 @@ CubeGroup.prototype.call = function(fun) {
    }
 };
 
+CubeGroup.prototype.callOnType = function(fun, type) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.hasOwnProperty(fun)) {
+            // if cubes need functions called
+         } else if (cube && cube.module && cube.module.type === type && cube.module.hasOwnProperty(fun)) {
+            var fn = cube.module[fun];
+            if (typeof fn === 'function') {
+               fn.call(cube.module);
+            }
+         }
+      }
+   }
+};
+
+CubeGroup.prototype.getModules = function(type) {
+   var modules = [];
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.module.type === type) {
+            modules.push(cube.module);
+         }
+      }
+   }
+   return modules;
+};
+
 CubeGroup.prototype.giveAI = function(type, player) {
    this.AI = new EnemyAI(this.game, this, type, player);
 };
@@ -74,6 +103,9 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    // if (other.group && other.group !== this && origin.ramDelay <= 0) {
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
+      if (this.game.juicy) {
+         this.game.juicy.shake();
+      }
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
@@ -409,7 +441,6 @@ CubeGroup.prototype.dirToAngle = function(dir) {
 };
 
 CubeGroup.prototype.destroyCube = function(cube) {
-  // console.log('destroyCube');
   var loc = this.find(cube);
   if (!loc) {
      console.log('attempt to destroy cube not in group');

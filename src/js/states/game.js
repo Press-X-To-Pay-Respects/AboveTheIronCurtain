@@ -4,13 +4,13 @@ Main testing environment.
 
 var Renderables = require('../functionAccess/Renderables');
 var UIBuilder = require('../ui/UIBuilder');
-var Cube = require('../entities/cube');
+// var Cube = require('../entities/cube');
 var ModuleBuilder = require('../entities/ModuleBuilder');
-var Utils = require('../utils');
+// var Utils = require('../utils');
 var CubeGroup = require('../entities/cube_group');
 var Hackable = require('../entities/Hackable');
 var Emitter = require('../effects/Emitter');
-var mouseBody; // physics body for mouse
+// var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
 
@@ -50,9 +50,6 @@ Game.prototype = {
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
    this.game.physics.p2.setImpactEvents(true);
 	
-	//create the collision group
-	//this.collisionGroup = this.game.physics.p2.createCollisionGroup();
-	
    this.mouse = new Mouse(this.game, this.input);
    
    this.updateDependents = [];
@@ -69,6 +66,7 @@ Game.prototype = {
 	//this.coreModule.cube.body.setCollisionGroup(this.collisionGroup);
 	//this.coreModule.cube.body.collides(this.collisionGroup);
 	this.cubeBuffer = 2;
+   this.testVar = 7;
 	var playerGroup = new CubeGroup(this, this.coreModule.cube);
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
@@ -81,9 +79,7 @@ Game.prototype = {
 	this.BinaryEmitter = new Emitter(this);
 	
 	//test hackable object
-	this.testHack = new Hackable(this, 1600,1200, 'hackable1', 400);
-
-	//this.thrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+	this.testHack = new Hackable(this, 1600, 1200, 'hackable1', 400);
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -101,8 +97,9 @@ Game.prototype = {
 	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
 	//Key and listener for firing gun
-	this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	this.fireKey.onDown.add(this.fire, this);
+	// this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	// this.fireKey.onDown.add(this.fire, this);
+   // this.fireKey.onUp.add(this.player.call('
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//core
@@ -128,13 +125,9 @@ Game.prototype = {
     // Debug controller
     this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
     this.debugKey.onDown.add(this.debug, this);
-    this.rootSpawned = false;
-    
-    this.debugNum = 0;
-    this.myRoot = undefined;
-    
+
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
-    //this.loadData();
+    this.loadData();
     
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
@@ -162,9 +155,14 @@ Game.prototype = {
 	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
 	this.shopButton.onInputDown.add(this.playDownClick, this);
-	
-	
+   
     this.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this));
+    this.game.camera.follow(this.coreModule.cube);
+    
+   this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
+   this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
+	this.helpButton.onInputOver.add(this.playHoverClick, this);
+	this.helpButton.onInputDown.add(this.playDownClick, this);
   },
   
   loadData: function() {
@@ -178,23 +176,18 @@ Game.prototype = {
                var enemyGroup = new CubeGroup(this, undefined);
                this.updateDependents.push(enemyGroup);
                var blueprint = element['blueprint'];
-               // var practical = [];
                for (var row = 0; row < blueprint.length; row++) {
-                  // var newCol = [];
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
                      var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
                      enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
-					 //newModule.cube.body.setCollisionGroup(this.collisionGroup);
-					 //newModule.cube.body.collides(this.collisionGroup);
-                     // newCol.push(newModule.cube);
+                     newModule.cube.tag = 'enemy_module';
                      var point = new Phaser.Point(row, col);
                      enemyGroup.add(newModule.cube, point);
                   }
-                  // practical.push(newCol);
                }
-               // TODO: give different types here
-               enemyGroup.giveAI('ram', this.player);
+               var aiType = element['type'];
+               enemyGroup.giveAI(aiType, this.player);
             }
          }
       }
@@ -248,7 +241,7 @@ Game.prototype = {
 		}
 	},
 
-  update: function () {    
+  update: function () {
 	if(leftKey.isDown) {
 		if(this.coreModule.cube.body.angularVelocity > -9) { 
 			this.coreModule.cube.body.angularForce += -5 * Math.pow(this.player.numCubes, 1.65);
@@ -321,6 +314,8 @@ Game.prototype = {
 	}
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
+   this.helpButton.x = this.game.camera.x + 16;
+	this.helpButton.y = this.game.camera.y + 16;
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
 	shieldButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
@@ -448,18 +443,9 @@ Game.prototype = {
 	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
-
-  fire: function() {
-	console.log(this.player.activeGuns.length);
-	if(this.player.activeGuns.length > 0) {
-		for(var i = 0; i < this.player.activeGuns.length; i++) {
-			this.player.activeGuns[i].fire();
-		}
-	}
-  },
   
   debug: function () {
-    this.juicy.shake();
+     
   }
 };
 

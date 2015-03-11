@@ -14,7 +14,6 @@ Preloader.prototype = {
 
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
-    this.load.image('testsprite', 'assets/images/test2.png');
 	this.load.spritesheet('core', 'assets/images/coreSheet.png', 64, 64); 
 	this.load.spritesheet('thruster', 'assets/images/thrusterSheet.png', 64, 64);
 	this.load.spritesheet('gun', 'assets/images/gunSheet.png', 64, 64);
@@ -37,6 +36,10 @@ Preloader.prototype = {
 	this.load.image('warning', 'assets/images/warning.png');
     this.load.physics('module_physics', 'assets/json/module_physics.json');
 	this.load.text('level_one', 'assets/json/level_one.json');
+	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
+	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
+	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
 	//Load Sound Effects
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');

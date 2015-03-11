@@ -1,4 +1,5 @@
 var ProgressBar = require('./ProgressBar');
+var Banner = require('./banner');
 
 var UIBuilder = function(setGameState, setRenderables) {
 	//Ensure that cannot create multiple instances of this class
@@ -33,6 +34,13 @@ UIBuilder.prototype.buildProgressBar = function(type, x, y, width, height, maxVa
 	//subscribe to 'renderables' so that render() is called automatically
 	this.renderables.subscribe(newProgBar);
 	return newProgBar;
+};
+
+UIBuilder.prototype.buildBanner = function(xRatio, yRatio, texts) {
+   var graphics = this.gameState.game.add.graphics(0, 0);
+   var newBanner = new Banner(this.gameState, xRatio, yRatio, texts, graphics, this.renderables);
+   this.renderables.subscribe(newBanner);
+   return newBanner;
 };
 
 module.exports = UIBuilder;
