@@ -9,8 +9,10 @@
    "Shield modules protect the rest of your ship but do nothing else.",
    "Thruster modules propel your ship forwards. Press W to activate.",
    "Solar panel modules power other modules. Click on a solar panel and then click on another module to create a connection. Modules need power to function.",
+   "Each solar panel can only power one module.",
    "Hacking modules allow you to hack objectives for bonus currency. Get close to an objective to start hacking it.",
    "Gun modules fire bullets. Press SPACEBAR to fire.",
+   "Ram into enemies to damage them. Go faster to avoid taking damage yourself.",
    "A and D: rotate your cube.\n Click and drag: grab a cube.\n Q and E: rotate a cube you grabbed.\n Click on a solar panel and a module to make a connection.",
    "Have fun!"
    ],
@@ -24,8 +26,10 @@
    [15, 22, 52, 64],
    [17, 23, 50, 51],
    [20, 25, 41, 46, 73, 78],
+   [0, 1],
    [29, 33, 65, 74],
    [12, 24, 32, 40],
+   [0, 1],
    [0, 1, 6, 7, 28, 42, 58, 59, 64, 65, 95, 100],
    [5, 8]
    ]

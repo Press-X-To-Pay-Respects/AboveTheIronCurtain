@@ -148,6 +148,7 @@ Game.prototype = {
     this.loadData();
     
 	//Buttons & Button Events
+   this.shopSpeed = 1;
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
 	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {state: this, key: 'shield'}, 1, 0, 2);
@@ -375,14 +376,16 @@ Game.prototype = {
 	
 	//Shop Movement Code
 	if(shopMenuOpening === true) {	
-		diff += 4;
+		// diff += 4;
+      diff += this.shopSpeed * this.game.time.elapsed;
 		if(diff >= 276) {
 			shopMenuOpening = false;
 			this.addShopButtons();
 		}
 	}
 	else if(shopMenuClosing === true) {
-		diff -= 4;
+		// diff -= 4;
+      diff -= this.shopSpeed * this.game.time.elapsed;
 		if(diff <= 0) {
 			shopPanel.kill();
 			shopMenuClosing = false;
