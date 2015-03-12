@@ -117,7 +117,7 @@ function gunUpdate() {
       return;
    }
    if (this.timer <= 0) {
-	  this.cube.animations.play('gun');
+	  //this.cube.animations.play('gun');
       var angle = this.cube.body.rotation % (2*Math.PI);
       var direction = [Math.sin(angle), -Math.cos(angle)];
       //var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
