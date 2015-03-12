@@ -86,7 +86,7 @@ EnemyAI.prototype.allocateTo = function(type) {
       var newConnection = {start: tarPanel.cube, end: tarType.cube};
       tarPanel.cube.myConnection = newConnection;
       tarType.cube.myConnection = newConnection;
-      // this.group.displayConnection(tarPanel.cube.myConnection);
+      this.group.displayConnection(tarPanel.cube.myConnection);
       i++;
    }
 };

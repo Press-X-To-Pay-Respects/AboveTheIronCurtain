@@ -59,7 +59,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.simplify = true;
+   this.simplify = false; // prevents things that get in the way of debugging
 	
 	this.mouse = new Mouse(this.game, this.input);
    
@@ -531,8 +531,7 @@ Game.prototype = {
 	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
   },
   debugAddShield: function () {
-	var grab = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
-   grab.cube.body.rotation = Math.random() * 4 * Math.PI - 2 * Math.PI;
+	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
   },
   debugAddThruster: function () {
 	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);

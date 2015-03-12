@@ -468,30 +468,27 @@ CubeGroup.prototype.displayConnection = function(connection) {
       if (!previous) {
          indicator.animations.play('end');
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         // dir = this.dirBetween(curPoint, nextPoint);
-         // indicator.rotation = this.dirToAngle(dir);
-         
          var nextCube = this.get(nextPoint);
          var side = this.relativeSide(curCube.body, nextCube.body);
          indicator.rotation = this.dirToAngle(side);
       } else if (i === result.length - 1) {
          indicator.animations.play('end');
          prevPoint = new Phaser.Point(previous.x, previous.y);
-         // dir = this.dirBetween(curPoint, prevPoint);
-         // indicator.rotation = this.dirToAngle(dir);
          var prevCube = this.get(prevPoint);
          var side = this.relativeSide(curCube.body, prevCube.body);
          indicator.rotation = this.dirToAngle(side);
-         // console.log('side:', side, 'indicator.rotation:', indicator.rotation, 'curCube.body.rotation:', curCube.body.rotation);
       } else {
-         /*
          indicator.animations.play('line');
          prevPoint = new Phaser.Point(previous.x, previous.y);
-         var prevDir = this.dirBetween(curPoint, prevPoint);
+         // var prevDir = this.dirBetween(curPoint, prevPoint);
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         var nextDir = this.dirBetween(curPoint, nextPoint);
-         this.manageIndicator(indicator, prevDir, nextDir);
-         */
+         // var nextDir = this.dirBetween(curPoint, nextPoint);
+         // this.manageIndicator(indicator, prevDir, nextDir);
+         var prevCube = this.get(prevPoint);
+         var nextCube = this.get(nextPoint);
+         var prevSide = this.relativeSide(curCube.body, prevCube.body);
+         var nextSide = this.relativeSide(curCube.body, nextCube.body);
+         this.manageIndicator(indicator, prevSide, nextSide);
       }
       previous = result[i];
       curCube.displayIndicator();
@@ -501,32 +498,44 @@ CubeGroup.prototype.displayConnection = function(connection) {
 CubeGroup.prototype.manageIndicator = function(indicator, prevDir, nextDir) {
   indicator.scale.setTo(Math.abs(indicator.scale.x), indicator.scale.y);
   if (prevDir === this.DIR.NORTH && nextDir === this.DIR.SOUTH) { // 2
+      if (this.debug) { console.log('case 2'); }
       indicator.rotation = Math.PI;
    } else if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.NORTH) { // 1
+      if (this.debug) { console.log('case 1'); }
       indicator.rotation = 0;
    } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.WEST) { // 4
+      if (this.debug) { console.log('case 4'); }
       indicator.rotation = 1 / 2 * Math.PI;
    } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.EAST) { // 3
+      if (this.debug) { console.log('case 3'); }
       indicator.rotation = 3 / 2  * Math.PI;
    } else {
       indicator.animations.play('right');
       if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.EAST) { // 5
+         if (this.debug) { console.log('case 5'); }
          indicator.rotation = 0;
       } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.SOUTH) { // 6
+         if (this.debug) { console.log('case 6'); }
          indicator.rotation = 1 / 2 * Math.PI;
       } else if (prevDir === this.DIR.NORTH && nextDir === this.DIR.WEST) { // 7
+         if (this.debug) { console.log('case 7'); }
          indicator.rotation = Math.PI;
       } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.NORTH) { // 8
+         if (this.debug) { console.log('case 8'); }
          indicator.rotation = 3 / 2 * Math.PI;
       } else {
          indicator.scale.setTo(-Math.abs(indicator.scale.x), indicator.scale.y);
          if (prevDir === this.DIR.SOUTH && nextDir === this.DIR.WEST) { // 9
+            if (this.debug) { console.log('case 9'); }
             indicator.rotation = 0;
          } else if (prevDir === this.DIR.WEST && nextDir === this.DIR.NORTH) { // 10
+            if (this.debug) { console.log('case 10'); }
             indicator.rotation = 1 / 2 * Math.PI;
          } else if (prevDir === this.DIR.NORTH && nextDir === this.DIR.EAST) { // 11
+            if (this.debug) { console.log('case 11'); }
             indicator.rotation = Math.PI;
          } else if (prevDir === this.DIR.EAST && nextDir === this.DIR.SOUTH) { // 12
+            if (this.debug) { console.log('case 12'); }
             indicator.rotation = 3 / 2 * Math.PI;
          }
       }
