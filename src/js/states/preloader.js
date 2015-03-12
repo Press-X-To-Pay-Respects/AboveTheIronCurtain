@@ -25,7 +25,7 @@ Preloader.prototype = {
 	this.load.spritesheet('thrusterButton', 'assets/images/thrusterButtonSheet.png', 256, 82);
 	this.load.spritesheet('gunButton', 'assets/images/gunButtonSheet.png', 256, 82);
 	this.load.spritesheet('hackButton', 'assets/images/hackButtonSheet.png', 256, 82);
-	this.load.spritesheet('hackable1', 'assets/images/hackable1.png', 256, 256);
+	this.load.spritesheet('hackable1', 'assets/images/hackableSheet.png', 64, 64);
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
 	
 	//Load Images

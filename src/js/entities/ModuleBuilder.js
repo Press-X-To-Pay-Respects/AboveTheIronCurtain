@@ -113,6 +113,7 @@ function gunUpdate() {
       return;
    }
    if (this.timer <= 0) {
+	  this.cube.animations.play('gun');
       var angle = this.cube.body.rotation % (2*Math.PI);
       var direction = [Math.sin(angle), -Math.cos(angle)];
       //var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
@@ -120,7 +121,7 @@ function gunUpdate() {
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
                direction, speed, this.tag + 'Bullet');
-      this.timer = 300;
+      this.timer = 400;
    } else {
       this.timer -= this.gameState.game.time.elapsed;
    }
@@ -198,6 +199,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 
 	//Gun module events
 	if(type === 'gun') {
+	  newModule.cube.animations.add('gun', [0,1,2,3,4,5], 24, true);
       if (forPlayer) {
 	     newModule.tag = 'player';
          var actKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);

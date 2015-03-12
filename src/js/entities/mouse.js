@@ -103,7 +103,7 @@ Mouse.prototype.move = function(pointer) {
 };
 
 Mouse.prototype.render = function() {
-   this.game.debug.geom(this.line);
+   //this.game.debug.geom(this.line);
 };
 
 module.exports = Mouse;

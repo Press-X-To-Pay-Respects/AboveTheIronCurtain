@@ -1,5 +1,5 @@
 var BinaryParticle = function(game, targetObj, x, y, tarOffsetX, tarOffsetY) {
-	var style = {font: '20px Avant Garde', fill: '#EEEE33', align: 'center'};
+	var style = {font: '20px VT323', fill: '#FFFFFF', align: 'center'};
 	var byteSymbol = Math.random() >= 0.5 ? '1' : '0';
 	Phaser.Text.call(this, game, x, y, byteSymbol, style);
 	game.add.existing(this);

@@ -36,6 +36,9 @@ EnemyAI.prototype.customUpdate = function(type, threshold) {
    if (!this.group.root) {
       return;
    }
+   else if(!this.group.root.body) {
+		return;
+   }
    var root = this.group.root;
    var myPos = new Phaser.Point(root.x, root.y);
    var playerPos = new Phaser.Point(this.player.x, this.player.y);

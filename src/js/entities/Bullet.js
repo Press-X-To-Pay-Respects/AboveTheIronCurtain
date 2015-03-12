@@ -2,7 +2,7 @@
 var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
     Phaser.Sprite.call(this, gameState.game, x, y, 'bullet');
 	this.direction = direction; //Unit vector representing direction bullet is travelling;
-	this.speed = 300 + inhertitSpeed;				//Speed bullet is travelling;
+	this.speed = 500 + inhertitSpeed;				//Speed bullet is travelling;
 	this.tag = tag;
 	this.game = gameState.game;
 	this.game.add.existing(this);
@@ -11,6 +11,7 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 	this.scale.x = scale;
 	this.scale.y = scale;
 	this.anchor.setTo(0.5, 0.5);
+	this.destroyBuffer = 100;
 	
 	//set physics
 	gameState.game.physics.p2.enable(this);
@@ -23,7 +24,7 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 				if(other.sprite){
 					if(other.sprite.tag) {
 						if(other.sprite.tag === 'module') {
-							other.sprite.takeDamage(0.5);
+							other.sprite.takeDamage(1);
 						}
 						this.destroy();
 					}
@@ -37,7 +38,7 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 				if(other.sprite){
 					if(other.sprite.tag) {
 						if(other.sprite.tag === 'enemy_module') {
-							other.sprite.takeDamage(0.5);
+							other.sprite.takeDamage(1);
 						}
 					}
 				}
@@ -55,13 +56,11 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 Bullet.prototype = Object.create(Phaser.Sprite.prototype);
 Bullet.prototype.constructor = Bullet;
 
-Bullet.prototype.update = function() {/*
-	this.x += this.direction[0] * this.speed;
-	this.y += this.direction[1] * this.speed;
-	//this.lifeTime--;
-	if(this.lifeTime <= 0) {
-		//TODO destroy bullet
-	}*/
+Bullet.prototype.update = function() {
+	if(this.body.x > this.game.camera.x + this.game.camera.width + this.destroyBuffer || this.body.x  < this.game.camera.x - this.destroyBuffer || 
+	this.body.y > this.game.camera.y + this.game.camera.height + this.destroyBuffer || this.body.y < this.game.camera.y - this.destroyBuffer) {
+		this.destroy(true);
+	}
 };
 
 module.exports = Bullet;

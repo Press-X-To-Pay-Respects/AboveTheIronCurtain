@@ -108,11 +108,11 @@ Game.prototype = {
 	
 	this.shopKey = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
 	this.shopKey.onDown.add(this.useShopButton, this);
-	this.pauseKey = this.game.input.keyboard.addKey(27);
-	this.pauseKey.onDown.add(this.pauseMenu, this);
+	/*this.pauseKey = this.game.input.keyboard.addKey(27);
+	this.pauseKey.onDown.add(this.pauseMenu, this);*/
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
-	// Module debug buttons are broken and obsolete with the purchasing menu
+	//Module debug buttons are broken and obsolete with the purchasing menu
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
 	this.placeCoreKey.onDown.add(this.debugAddCore, this);
@@ -131,6 +131,7 @@ Game.prototype = {
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
     this.placeGunKey.onDown.add(this.debugAddGun, this);
+	
 	//reset game
 	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
     this.resetKey.onDown.add(this.restartLevel, this);
@@ -196,14 +197,14 @@ Game.prototype = {
 	this.game.state.start(playerState.currentLevel);
   },
   
-	pauseMenu: function() {
+	/*pauseMenu: function() {
 		if(this.game.paused === false) {
 			this.game.paused = true;
 		}
 		else {
 			this.game.paused = false;
 		}
-	},
+	},*/
   
   loadData: function() {
       var myLevel = this.levelData['level_one'];
@@ -486,31 +487,32 @@ Game.prototype = {
 		}
 	},
 	
-  //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
-  addCore: function (x, y) { 
-	var newModule = this.moduleBuilder.build('core', x, y, true);
-  },
-  addShield: function (x, y) {
-	var newModule = this.moduleBuilder.build('shield', x, y, true);
-	newModule.cube.body.moveLeft(newModuleSpeed);
-  },
-  addThruster: function (x, y) {
-	var newModule = this.moduleBuilder.build('thruster', x, y, true);
-	newModule.cube.body.moveLeft(newModuleSpeed);
-  },
-  addSP: function (x, y) {
-	var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
-	newModule.cube.body.moveLeft(newModuleSpeed);
-  },
-  addHack: function (x, y) {
-	var newModule = this.moduleBuilder.build('hacker', x, y, true);
-	newModule.cube.body.moveLeft(newModuleSpeed);
-  },
-  addGun: function (x, y) {
-	var newModule = this.moduleBuilder.build('gun', x, y, true);
-	newModule.cube.body.moveLeft(newModuleSpeed);
-  },
+	//Functions that add cubes to the game
+	addCore: function (x, y) { 
+		var newModule = this.moduleBuilder.build('core', x, y, true);
+	},
+	addShield: function (x, y) {
+		var newModule = this.moduleBuilder.build('shield', x, y, true);
+		newModule.cube.body.moveLeft(newModuleSpeed);
+	},
+	addThruster: function (x, y) {
+		var newModule = this.moduleBuilder.build('thruster', x, y, true);
+		newModule.cube.body.moveLeft(newModuleSpeed);
+	},
+	addSP: function (x, y) {
+		var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
+		newModule.cube.body.moveLeft(newModuleSpeed);
+	},
+	addHack: function (x, y) {
+		var newModule = this.moduleBuilder.build('hacker', x, y, true);
+		newModule.cube.body.moveLeft(newModuleSpeed);
+	},
+	addGun: function (x, y) {
+		var newModule = this.moduleBuilder.build('gun', x, y, true);
+		newModule.cube.body.moveLeft(newModuleSpeed);
+	},
   
+   //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
 	addMoney: function() {
 		this.money += 100;
 		this.moneyText.text = this.money;

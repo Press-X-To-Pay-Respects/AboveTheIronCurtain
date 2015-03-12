@@ -14,7 +14,8 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
 	this.hackBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x2020CC);
 	this.hackBar.hackable = this;
 	this.hackBar.onEvent = function() {
-		this.hackable.frame = 1;
+		this.hackable.animations.stop();
+		this.hackable.animations.play('hacked');
 		this.hackable.isHacked = true;
 		this.destroy();
 	};
@@ -24,6 +25,8 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
    this.scale.x = scale;
    this.scale.y = scale;
    this.anchor.setTo(0.5, 0.5);
+   this.animations.add('hackable', [0,1,2,3,4], 10, true);
+   this.animations.add('hacked', [5,6,7,8,9], 10, true);
    
    //Set up physics body for 'hackable' sprite
    gameState.game.physics.p2.enable(this);
@@ -44,6 +47,7 @@ Hackable.prototype.update = function() {
 	this.hackBar.setLocation(this.x, this.y - 70);
 	//check if getting hacked
 	if(!this.isHacked) {
+		this.animations.play('hackable');
 		if(this.gameState.player.activeHackerModules.length > 0) {
 			var dist;
 			var hacker;
@@ -53,7 +57,7 @@ Hackable.prototype.update = function() {
 				dist = Math.sqrt( Math.pow(this.x - hacker.cube.x, 2) + Math.pow(this.y - hacker.cube.y, 2) );
 				if(dist < this.hackDistance) {
 					//If hacker is in range, increase hack value and try to emit binary particle
-					this.hackBar.addValue(0.05);
+					this.hackBar.addValue(0.1);
 					hacker.count++;
 					hacker.cube.animations.play('hacker');
 					if(hacker.count >= hacker.cycle) {
@@ -66,6 +70,10 @@ Hackable.prototype.update = function() {
 				}
 			}
 		}
+	}
+	else {
+		//this.animations.stop();
+		
 	}
 };
 

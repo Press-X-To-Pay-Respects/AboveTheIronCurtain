@@ -68,7 +68,7 @@ Cube.prototype.update = function() {
 			}
             this.group.destroyCube(this);
          } else {
-			if(this.key === 'core') {
+			if(this.key === 'core' && this.tag === 'module') {
 				this.kill();
 				this.gameState.restartLevel();
 			}
