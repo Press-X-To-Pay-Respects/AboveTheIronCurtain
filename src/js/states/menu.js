@@ -4,12 +4,17 @@ var Menu = function () {
 
 module.exports = Menu;
 
+var menuSong;
+
 Menu.prototype = {
 	
   pos: [-25, 25, 75],
   create: function () {
     var x = this.game.width / 2;
     var y = this.game.height / 2;
+	
+	menuSong = this.game.add.audio('menuSong');
+	menuSong.play('',0,1,true,true);
     
     this.title = this.add.image(this.world.centerX, this.world.centerY - 95, 'menu_title');
     this.title.anchor.setTo(0.5, 0.5);
@@ -32,6 +37,7 @@ Menu.prototype = {
   },
   
   changeToGame: function(){
+	menuSong.stop();
   	this.game.state.start('Game');
   },  
   

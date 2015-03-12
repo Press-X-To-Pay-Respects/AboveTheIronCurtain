@@ -523,7 +523,11 @@ CubeGroup.prototype.destroyCube = function(cube) {
   // remove cube from group
   this.remove(cube);
   // destroy cube
-  cube.kill(true);
+  if(cube.key === 'core') {
+	cube.kill();
+	this.game.restartLevel();
+  }
+  cube.destroy(true);
 };
 
 CubeGroup.prototype.remove = function(cube) {

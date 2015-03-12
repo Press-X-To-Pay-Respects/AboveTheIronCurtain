@@ -14,6 +14,7 @@ var Emitter = require('../effects/Emitter');
 var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
 
+var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
 var numRoids;
 var maxRoids = 100;
@@ -70,7 +71,9 @@ Game.prototype = {
 	//create ModuleBuilder and store it in this game state object
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
-	this.coreModule = this.moduleBuilder.build('core', 1200, 1200, true);
+	this.coreModule = this.moduleBuilder.build('core', playerStartX, playerStartY, true);
+	this.game.camera.x = playerStartX;
+	this.game.camera.y = playerStartY;
 	this.cubeWidth = this.coreModule.cube.width;
 	this.cubeBuffer = 2;
 	this.testVar = 7;
@@ -165,7 +168,6 @@ Game.prototype = {
 	hackButton.kill();
 	hackButton.onInputOver.add(this.playHoverClick, this);
 	hackButton.onInputDown.add(this.playDownClick, this);
-	this.game.camera.follow(this.coreModule.cube);
 	this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.playHoverClick, this);
 	this.shopButton.onInputDown.add(this.playDownClick, this);

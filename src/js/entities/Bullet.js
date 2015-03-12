@@ -19,10 +19,16 @@ var Bullet = function(gameState, x, y, direction, inhertitSpeed, tag) {
 	//Set proper collision function by determining type from 'tag'
 	if(this.tag === 'enemyBullet') {
 		this.collision = function(other) {
-			if(other.sprite.tag === 'module') {
-				other.sprite.takeDamage(0.5);
+			if(other) {
+				if(other.sprite){
+					if(other.sprite.tag) {
+						if(other.sprite.tag === 'module') {
+							other.sprite.takeDamage(0.5);
+						}
+						this.destroy();
+					}
+				}
 			}
-			this.destroy();
 		};
 	}
 	else if(this.tag === 'playerBullet') {

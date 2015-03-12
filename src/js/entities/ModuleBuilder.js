@@ -119,8 +119,8 @@ function gunUpdate() {
       var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
-               direction, speed, 'playerBullet');
-      this.timer = 600;
+               direction, speed, this.tag + 'Bullet');
+      this.timer = 300;
    } else {
       this.timer -= this.gameState.game.time.elapsed;
    }
@@ -198,17 +198,18 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 
 	//Gun module events
 	if(type === 'gun') {
-		// newModule.fire = gunFire;
-      newModule.update = gunUpdate;
       if (forPlayer) {
+	     newModule.tag = 'player';
          var actKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
          this.gameState.input.keyboard.addKeyCapture([actKey]);
          actKey.onDown.add(beginAct, newModule);
          actKey.onUp.add(endAct, newModule);
       } else {
+		 newModule.tag = 'enemy';
          newModule.beginAct = beginAct;
          newModule.endAct = endAct;
       }
+	  newModule.update = gunUpdate;
 	}
 	
 	//Return the module object

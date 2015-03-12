@@ -69,7 +69,7 @@ Preloader.prototype = {
 	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
 	
 	//Load Music
-	//this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
+	this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
 	this.load.audio('mainSong', 'assets/sound/Top (down) Night.ogg');
 
   },
