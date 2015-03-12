@@ -46,6 +46,10 @@ if (this === target || !this.cube.group || !target.cube.group || this.cube.group
 		else if(target.type === 'hacker') {
 			ourGroup.activeHackerModules.push(target);
 		}
+		//If this is one of the powerable types, switch the frame from 'greyed' to 'active'
+		if(target.type === 'gun' || target.type === 'hacker' || target.type === 'thruster') {
+			target.cube.frame = 1;
+		}
 	}
 }
 
@@ -73,21 +77,21 @@ function beginAct() {
 
 function endAct() {
    this.act = false;
-   this.cube.frame = 0;
+   this.cube.frame = 1;
 }
 
 function thrusterUpdate() {
    if (this.haltTime && this.haltTime > 0) {
       this.haltTime -= this.cube.game.time.elapsed;
-      this.cube.frame = 0;
+      this.cube.frame = 1;
    } else if (this.act && this.cube.myConnection) {
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
 	  if(this.cube.frame === 1) {
-		this.cube.frame = 2;
+		this.cube.frame = 3;
 	  }
 	  else {
-		this.cube.frame = 1;
+		this.cube.frame = 2;
 	  }
    }
 }
