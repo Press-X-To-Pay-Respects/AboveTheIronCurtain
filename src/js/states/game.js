@@ -108,6 +108,8 @@ Game.prototype = {
 	
 	this.shopKey = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
 	this.shopKey.onDown.add(this.useShopButton, this);
+	this.pauseKey = this.game.input.keyboard.addKey(27);
+	this.pauseKey.onDown.add(this.pauseMenu, this);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	// Module debug buttons are broken and obsolete with the purchasing menu
@@ -193,6 +195,15 @@ Game.prototype = {
 	this.mainSong.stop();
 	this.game.state.start(playerState.currentLevel);
   },
+  
+	pauseMenu: function() {
+		if(this.game.paused === false) {
+			this.game.paused = true;
+		}
+		else {
+			this.game.paused = false;
+		}
+	},
   
   loadData: function() {
       var myLevel = this.levelData['level_one'];
