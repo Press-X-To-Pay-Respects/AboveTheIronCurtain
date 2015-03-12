@@ -75,19 +75,9 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-<<<<<<< HEAD
    if (!this.group || !this.group.isPlayer || !other || !other.sprite || other.sprite.tag !== 'module' ||
        (other.group && other.group === this.group) || (other.group && other.group.isPlayer) ||
          other.prototype !== this.prototype) {
-=======
-   /*if (this.group && this.group.isPlayer) {
-      console.log('PLAYER');
-   } else {
-      console.log('OTHER');
-   }*/
-   if (!this.group || !other || !other.sprite || other.sprite.tag !== 'module') {
-      // console.log('bad collision cube: ', this.group, other, other.sprite, other.sprite.tag);
->>>>>>> origin/gh-pages
       return;
    }
 	this.group.handleCollision(this, other.sprite);

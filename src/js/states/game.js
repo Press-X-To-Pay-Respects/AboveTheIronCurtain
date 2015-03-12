@@ -107,7 +107,7 @@ Game.prototype = {
 	this.shopKey.onDown.add(this.useShopButton, this);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
-	/* Module debug buttons are broken and obsolete with the purchasing menu
+	// Module debug buttons are broken and obsolete with the purchasing menu
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
 	this.placeCoreKey.onDown.add(this.debugAddCore, this);
@@ -125,12 +125,7 @@ Game.prototype = {
 	this.placeHackKey.onDown.add(this.debugAddHack, this);
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
-<<<<<<< HEAD
     this.placeGunKey.onDown.add(this.debugAddGun, this);
-=======
-    this.placeGunKey.onDown.add(this.addGun, this);
-	*/
->>>>>>> origin/gh-pages
 	//reset game
 	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
     this.resetKey.onDown.add(this.restartLevel, this);
@@ -396,26 +391,10 @@ Game.prototype = {
 	gunButton.y = this.game.camera.y + 70 + (86 * 3);
 	hackButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	hackButton.y = this.game.camera.y + 70 + (86 * 4);
-<<<<<<< HEAD
-=======
 	this.moneyText.x = this.shopButton.x - 16;
 	this.moneyText.y = this.shopButton.y + 48;
 	this.be.x = this.moneyText.x + this.moneyText.width + 8;
 	this.be.y = this.moneyText.y;
-   
-   ////
-   if (this.player.root) {
-      for (var i = 0; i < this.lineTargets.length; i++) {
-         if (!this.lineTargets[i]) {
-            continue;
-         }
-         var pointA = new Phaser.Point(this.player.root.x, this.player.root.y);
-         var pointB = new Phaser.Point(this.lineTargets[i].x, this.lineTargets[i].y);
-         this.lines[i].setTo(pointA.x, pointA.y, pointB.x, pointB.y);
-      }
-   }
-   ////
->>>>>>> origin/gh-pages
   },
   
   render: function () {
@@ -504,26 +483,18 @@ Game.prototype = {
   },
   addThruster: function (x, y) {
 	var newModule = this.moduleBuilder.build('thruster', x, y, true);
-	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
-	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
   addSP: function (x, y) {
 	var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
-	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
-	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
   addHack: function (x, y) {
 	var newModule = this.moduleBuilder.build('hacker', x, y, true);
-	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
-	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
   addGun: function (x, y) {
 	var newModule = this.moduleBuilder.build('gun', x, y, true);
-	//newModule.cube.body.setCollisionGroup(this.collisionGroup);
-	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
   

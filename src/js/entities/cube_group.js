@@ -96,18 +96,8 @@ CubeGroup.prototype.add = function(cube, point) {
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
-<<<<<<< HEAD
    if (this.debug) console.log('handleCollision() start:', origin.module.type, other.module.type); // jshint ignore:line
    if (this.debug) { this.displayCubes(); }
-=======
-   //console.log('collision event group');
-   //this.displayCubes();
-   // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype) {
-      return;
-   }
-   // if (other.group && other.group !== this && origin.ramDelay <= 0) {
->>>>>>> origin/gh-pages
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
       //console.log('collision');
@@ -117,10 +107,6 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
-<<<<<<< HEAD
-=======
-      //console.log('continuing collision event group');
->>>>>>> origin/gh-pages
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       // var adjustDir = this.relativeSide(this.root.body, other.body);
@@ -130,7 +116,6 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       this.set(other, otherLoc);
       otherLoc = this.find(other); // update position since set can shift grid
       if (!otherLoc) {
-<<<<<<< HEAD
          if (this.debug) {
             console.log('handleCollision(): otherLoc DNE', '---------------------');
             this.displayCubes();
@@ -188,89 +173,6 @@ CubeGroup.prototype.calcPos = function(origin, relSide) {
       } else if (relSide === 3) {
          output.y--;
       }
-=======
-         console.log('handleCollision(): otherLoc DOE');
-         //this.displayCubes();
-         return;
-      }
-      //console.log(relSide, originLoc.x, originLoc.y, otherLoc.x, otherLoc.y);
-      var otherRelSide = this.relativeSide(other.body, origin.body);
-      var constraintAngle = this.decideConstraintAngle(relSide, otherRelSide);
-      this.createConstraints(other, otherLoc, constraintAngle);
-      //this.displayCubes();
-   }
-};
-
-CubeGroup.prototype.decideConstraintAngle = function(sideA, sideB) {
-  if (sideA === 0) {
-     if (sideB === 0) {
-        return Math.PI;
-     } else if (sideB === 1) {
-         return Math.PI / 2;
-     } else if (sideB === 2) {
-         return 0;
-     } else if (sideB === 3) {
-         return 3 / 2 * Math.PI;
-     }
-  } else if (sideA === 1) {
-     if (sideB === 0) {
-        return 3 / 2 * Math.PI;
-     } else if (sideB === 1) {
-         return Math.PI;
-     } else if (sideB === 2) {
-         return 1 / 2 * Math.PI;
-     } else if (sideB === 3) {
-         return 0;
-     }
-  } else if (sideA === 2) {
-      if (sideB === 0) {
-        return 0;
-     } else if (sideB === 1) {
-         return 3 / 2 * Math.PI;
-     } else if (sideB === 2) {
-         return Math.PI;
-     } else if (sideB === 3) {
-         return 1 / 2 * Math.PI;
-     }
-  } else if (sideA === 3) {
-     if (sideB === 0) {
-        return 1 / 2 * Math.PI;
-     } else if (sideB === 1) {
-         return 0;
-     } else if (sideB === 2) {
-         return 3 / 2 * Math.PI;
-     } else if (sideB === 3) {
-         return Math.PI;
-     }
-  }
-};
-
-CubeGroup.prototype.createConstraints = function(me, point, angle) {
-   var myNorth = this.get(this.adjust(point, this.DIR.NORTH));
-   var myEast = this.get(this.adjust(point, this.DIR.EAST));
-   var mySouth = this.get(this.adjust(point, this.DIR.SOUTH));
-   var myWest = this.get(this.adjust(point, this.DIR.WEST));
-   var constraint;
-   if (myNorth) {
-      constraint = this.game.physics.p2.createLockConstraint(myNorth.body, me.body, [0, -(me.width + this.offset)], angle); // north - me
-      me.constraints.push(constraint);
-      myNorth.constraints.push(constraint);
-   }
-   if (myEast) {
-      constraint = this.game.physics.p2.createLockConstraint(myEast.body, me.body, [me.width + this.offset, 0], angle); // east - me
-      me.constraints.push(constraint);
-      myEast.constraints.push(constraint);
-   }
-   if (mySouth) {
-      constraint = this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset], angle); // south - me
-      me.constraints.push(constraint);
-      mySouth.constraints.push(constraint);
-   }
-   if (myWest) {
-      constraint = this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0], angle); // west - me
-      me.constraints.push(constraint);
-      myWest.constraints.push(constraint);
->>>>>>> origin/gh-pages
    }
    return output;
 };
@@ -283,12 +185,7 @@ CubeGroup.prototype.angleToDir = function(angle) {
      angle %= 2 * Math.PI;
      angle *= -1;
   }
-<<<<<<< HEAD
   if ((angle >= -1 / 4 * Math.PI && angle < 1 / 4 * Math.PI) || angle > 7 / 4 * Math.PI) {
-=======
-  //console.log(thisPoint, otherPoint, angleToOther, thisBody.rotation, diffAngle);
-   if ((diffAngle >= -1 / 4 * Math.PI && diffAngle < 1 / 4 * Math.PI) || diffAngle > 7 / 4 * Math.PI) { // north
->>>>>>> origin/gh-pages
      return this.DIR.NORTH;
   } else if (angle >= 1 / 4 * Math.PI && angle < 3 / 4 * Math.PI) {
      return this.DIR.EAST;
@@ -464,7 +361,6 @@ CubeGroup.prototype.set = function(cube, point) {
       return;
    }
    if (point.x < 0) {
-<<<<<<< HEAD
       if (this.debug) { console.log('add left col'); }
       this.addLeftCol();
       point.x = 0;
@@ -478,26 +374,10 @@ CubeGroup.prototype.set = function(cube, point) {
       point.y = 0;
    } else if (point.y >= this.cubesHeight()) {
       if (this.debug) { console.log('add top row'); }
-=======
-      //console.log('add left col');
-      this.addLeftCol();
-      point.x = 0;
-   } else if (point.x >= this.cubesWidth()) {
-      //console.log('add right col');
-      this.addRightCol();
-      point.x = this.cubesWidth() - 1;
-   } else if (point.y < 0) {
-      //console.log('add bot row');
-      this.addBotRow();
-      point.y = 0;
-   } else if (point.y >= this.cubesHeight()) {
-      //console.log('add top row');
->>>>>>> origin/gh-pages
       this.addTopRow();
       point.y = this.cubesHeight() - 1;
    }
    if (this.get(point)) {
-      // console.log('tried to set to filled position');
       return;
    }
    this.cubes[point.x][point.y] = cube;
