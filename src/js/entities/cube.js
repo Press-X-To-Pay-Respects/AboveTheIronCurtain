@@ -97,8 +97,13 @@ Cube.prototype.toString = function() {
 Cube.prototype.concat = function(string, val) {
    return string + ': ' + val + '\n';
 };
+
 Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
+};
+
+Cube.prototype.hideIndicator = function() {
+  this.cIndicator.alpha = 0; 
 };
 
 Cube.prototype.takeDamage = function(amt) {

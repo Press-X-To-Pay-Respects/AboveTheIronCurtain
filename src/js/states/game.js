@@ -59,7 +59,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.simplify = false; // prevents things that get in the way of debugging
+   this.simplify = true; // prevents things that get in the way of debugging
 	
 	this.mouse = new Mouse(this.game, this.input);
    

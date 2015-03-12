@@ -446,6 +446,7 @@ CubeGroup.prototype.displayCubes = function() {
 };
 
 CubeGroup.prototype.displayConnection = function(connection) {
+   this.hideOtherConnections(connection);
    var graph = new Astar.Graph(this.cubesToGraph());
    var startPoint = this.find(connection.start);
    var endPoint = this.find(connection.end);
@@ -540,6 +541,17 @@ CubeGroup.prototype.manageIndicator = function(indicator, prevDir, nextDir) {
          }
       }
    } 
+};
+
+CubeGroup.prototype.hideOtherConnections = function(exception) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube.myConnection && cube.myConnection !== exception) {
+            cube.hideIndicator();
+         }
+      }
+   }
 };
 
 CubeGroup.prototype.cubesToGraph = function() {
