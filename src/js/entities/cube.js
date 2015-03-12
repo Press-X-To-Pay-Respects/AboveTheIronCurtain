@@ -13,6 +13,7 @@ var Cube = function (gameState, x, y, sprite) {
     this.healthBar = gameState.uiBuilder.buildProgressBar('shrinking', 0, 0, 20, 4, 3);
 	this.healthBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x20CC20);
 	this.healthBar.cube = this;
+   this.healthBarFade = 0.02;
 	//set update function of health bar
 	this.healthBar.update = function() {
 		this.setLocation(this.cube.x, this.cube.y+10);
@@ -40,6 +41,9 @@ Cube.prototype.update = function() {
    if (this.module.update) {
       this.module.update();
    }
+   if (this.healthBar.graphics.alpha > 0) {
+      this.healthBar.graphics.alpha -= this.healthBarFade * this.game.time.elapsed;
+   }
    if (this.dying) {
       this.life -= this.game.time.elapsed;
       if (this.life < 0) {
@@ -55,13 +59,9 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (this.group && this.group.isPlayer) {
-      console.log('PLAYER');
-   } else {
-      console.log('OTHER');
-   }
-   if (!this.group || !other || !other.sprite || other.sprite.tag !== 'module') {
-      // console.log('bad collision cube: ', this.group, other, other.sprite, other.sprite.tag);
+   if (!this.group || !this.group.isPlayer || !other || !other.sprite || other.sprite.tag !== 'module' ||
+       (other.group && other.group === this.group) || (other.group && other.group.isPlayer) ||
+         other.prototype !== this.prototype) {
       return;
    }
 	this.group.handleCollision(this, other.sprite);
