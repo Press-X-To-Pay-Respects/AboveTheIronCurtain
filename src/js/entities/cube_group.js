@@ -107,10 +107,9 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
+      // console.log('origin-other:', this.relativeSide(origin.body, other.body), 'other-origin:', this.relativeSide(other.body, origin.body));
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
-      // var adjustDir = this.relativeSide(this.root.body, other.body);
-      // var otherLoc = this.adjust(originLoc, adjustDir);
       var otherLoc = this.calcPos(origin, relSide);
       if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
       this.set(other, otherLoc);
@@ -185,21 +184,30 @@ CubeGroup.prototype.angleToDir = function(angle) {
      angle %= 2 * Math.PI;
      angle *= -1;
   }
+  if (this.debug) { console.log('angleToDir():', 'angle:', angle.toPrecision(4)); }
   if ((angle >= -1 / 4 * Math.PI && angle < 1 / 4 * Math.PI) || angle > 7 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case one NORTH'); }
      return this.DIR.NORTH;
   } else if (angle >= 1 / 4 * Math.PI && angle < 3 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case two EAST'); }
      return this.DIR.EAST;
   } else if (angle >= 3 / 4 * Math.PI && angle < 5 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case three SOUTH'); }
      return this.DIR.SOUTH;
   } else if (angle >= 5 / 4 * Math.PI && angle < 7 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case four WEST'); }
      return this.DIR.WEST;
   } else if (angle >= -3 / 4 * Math.PI && angle < -1 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case five WEST'); }
      return this.DIR.WEST;
   } else if (angle >= -5 / 4 * Math.PI && angle < -3 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case six SOUTH'); }
      return this.DIR.SOUTH;
   } else if (angle >= -7 / 4 * Math.PI && angle < -5 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case seven EAST'); }
      return this.DIR.EAST;
   } else if (angle < -7 / 4 * Math.PI) {
+     if (this.debug) { console.log('angleToDir() case eight NORTH'); }
      return this.DIR.NORTH;
   }
 };
@@ -263,7 +271,9 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   var otherPoint = new Phaser.Point(otherBody.x, otherBody.y);
   var angleToOther = this.angleBetweenPoints(thisPoint, otherPoint);
   var diffAngle = angleToOther - thisBody.rotation;
-  return this.angleToDir(diffAngle);
+  var returnDir = this.angleToDir(diffAngle);
+  if (this.debug) { console.log('relativeSide():', 'angleToOther:', angleToOther.toPrecision(4), 'thisBody.rotation:', thisBody.rotation.toPrecision(4), 'diffAngle:', diffAngle.toPrecision(4), 'returnDir:', returnDir); }
+  return returnDir;
 };
 
 CubeGroup.prototype.angleBetweenPoints = function(thisPoint, otherPoint) {
@@ -450,31 +460,41 @@ CubeGroup.prototype.displayConnection = function(connection) {
    var previous;
    for(var i = 0; i < result.length; i++) {
       var curPoint = new Phaser.Point(result[i].x, result[i].y);
-      var cur = this.get(curPoint);
-      var indicator = cur.cIndicator;
-      var dir;
+      var curCube = this.get(curPoint);
+      var indicator = curCube.cIndicator;
+      // var dir;
       var prevPoint;
       var nextPoint;
       if (!previous) {
          indicator.animations.play('end');
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         dir = this.dirBetween(curPoint, nextPoint);
-         indicator.rotation = this.dirToAngle(dir);
+         // dir = this.dirBetween(curPoint, nextPoint);
+         // indicator.rotation = this.dirToAngle(dir);
+         
+         var nextCube = this.get(nextPoint);
+         var side = this.relativeSide(curCube.body, nextCube.body);
+         indicator.rotation = this.dirToAngle(side);
       } else if (i === result.length - 1) {
          indicator.animations.play('end');
          prevPoint = new Phaser.Point(previous.x, previous.y);
-         dir = this.dirBetween(curPoint, prevPoint);
-         indicator.rotation = this.dirToAngle(dir);
+         // dir = this.dirBetween(curPoint, prevPoint);
+         // indicator.rotation = this.dirToAngle(dir);
+         var prevCube = this.get(prevPoint);
+         var side = this.relativeSide(curCube.body, prevCube.body);
+         indicator.rotation = this.dirToAngle(side);
+         // console.log('side:', side, 'indicator.rotation:', indicator.rotation, 'curCube.body.rotation:', curCube.body.rotation);
       } else {
+         /*
          indicator.animations.play('line');
          prevPoint = new Phaser.Point(previous.x, previous.y);
          var prevDir = this.dirBetween(curPoint, prevPoint);
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
          var nextDir = this.dirBetween(curPoint, nextPoint);
          this.manageIndicator(indicator, prevDir, nextDir);
+         */
       }
       previous = result[i];
-      cur.displayIndicator();
+      curCube.displayIndicator();
     }
 };
 
