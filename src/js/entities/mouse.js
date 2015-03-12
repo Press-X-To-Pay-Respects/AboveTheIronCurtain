@@ -29,11 +29,12 @@ Mouse.prototype.update = function() {
    if (this.grabbed) {
       var angle = Math.atan2(this.grabbed.sprite.y - (this.input.position.y + this.game.camera.y), this.grabbed.sprite.x - (this.input.position.x+ this.game.camera.x)) + Math.PI;
       var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
-      if(this.grabbed.sprite.key === 'asteroid') {
-	  var weight = 1;
+      var weight;
+	  if(this.grabbed.sprite.key === 'asteroid') {
+		weight = 1;
 	  }
 	  else {
-	  var weight = 10;
+		weight = 10;
 	  }
 	  if (!this.grabbed.sprite.group) {
          this.grabbed.force.x = Math.cos(angle) * dist * weight;

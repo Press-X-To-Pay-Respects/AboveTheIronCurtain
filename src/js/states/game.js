@@ -39,6 +39,7 @@ Game.prototype = {
 	
 	numRoids = 0;
 	diff = 0;
+	this.money = 500;
 	
 	//Create the two background images
     bg = this.game.add.sprite(0, 0, 'earthNight');
@@ -49,6 +50,7 @@ Game.prototype = {
 	this.downClick = this.game.add.audio('downClick');
 	this.cashRegister = this.game.add.audio('cashRegister');
 	this.cashRegister.allowMultiple = true;
+	this.error = this.game.add.audio('error');
 	
 	//Set up physics
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
@@ -101,7 +103,11 @@ Game.prototype = {
 	ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 	
+	this.shopKey = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
+	this.shopKey.onDown.add(this.useShopButton, this);
+	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
+	/* Module debug buttons are broken and obsolete with the purchasing menu
 	//core
 	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
 	this.placeCoreKey.onDown.add(this.debugAddCore, this);
@@ -119,10 +125,18 @@ Game.prototype = {
 	this.placeHackKey.onDown.add(this.debugAddHack, this);
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
+<<<<<<< HEAD
     this.placeGunKey.onDown.add(this.debugAddGun, this);
+=======
+    this.placeGunKey.onDown.add(this.addGun, this);
+	*/
+>>>>>>> origin/gh-pages
 	//reset game
 	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
     this.resetKey.onDown.add(this.restartLevel, this);
+	//add money
+	this.addMoneyKey = this.game.input.keyboard.addKey(Phaser.Keyboard.K);
+	this.addMoneyKey.onDown.add(this.addMoney, this);
 	//END
     
     // Debug controller
@@ -132,6 +146,7 @@ Game.prototype = {
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
     
+	//Buttons & Button Events
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
 	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {state: this, key: 'shield'}, 1, 0, 2);
@@ -166,6 +181,12 @@ Game.prototype = {
 	this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
+	
+	this.moneyText = this.game.add.text(this.shopButton.x - 8, this.shopButton.y + 48, this.money);
+    this.moneyText.font = 'VT323';
+    this.moneyText.fontSize = 24;
+    this.moneyText.fill = '#ffffff';
+	this.be = this.game.add.image(this.moneyText.x + this.moneyText.width + 8, this.moneyText.y, 'be');
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
 	this.mainSong.play('',0,1,true,true);
@@ -235,25 +256,56 @@ Game.prototype = {
 	purchaseModule: function() {
 		var randY = this.state.game.rnd.integerInRange(100, this.state.game.camera.height - 100);
 		if(this.key === 'shield' && this.state.mouse.x > shieldButton.x && this.state.mouse.x < shieldButton.x + 256 && this.state.mouse.y > shieldButton.y && this.state.mouse.y < shieldButton.y + 82) {
-			this.state.addShield(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
-			this.state.cashRegister.play();
+			if(this.state.money >= 45) {
+				this.state.addShield(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+				this.state.money -= 45;
+				this.state.cashRegister.play();
+			}
+			else {
+				this.state.error.play();
+			}
 		}
 		else if(this.key === 'solarPanel' && this.state.mouse.x > solarPanelButton.x && this.state.mouse.x < solarPanelButton.x + 256 && this.state.mouse.y > solarPanelButton.y && this.state.mouse.y < solarPanelButton.y + 82) {
-			this.state.addSP(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
-			this.state.cashRegister.play();
+			if(this.state.money >= 105) {
+				this.state.addSP(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+				this.state.money -= 105;
+				this.state.cashRegister.play();
+			}
+			else {
+				this.state.error.play();
+			}
 		}
 		else if(this.key === 'thruster' && this.state.mouse.x > thrusterButton.x && this.state.mouse.x < thrusterButton.x + 256 && this.state.mouse.y > thrusterButton.y && this.state.mouse.y < thrusterButton.y + 82) {
-			this.state.addThruster(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
-			this.state.cashRegister.play();
+			if(this.state.money >= 90) {
+				this.state.addThruster(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+				this.state.money -= 90;
+				this.state.cashRegister.play();
+			}
+			else {
+				this.state.error.play();
+			}
 		}
 		else if(this.key === 'gun' && this.state.mouse.x > gunButton.x && this.state.mouse.x < gunButton.x + 256 && this.state.mouse.y > gunButton.y && this.state.mouse.y < gunButton.y + 82) {
-			this.state.addGun(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
-			this.state.cashRegister.play();
+			if(this.state.money >= 120) {
+				this.state.addGun(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+				this.state.money -= 120;
+				this.state.cashRegister.play();
+			}
+			else {
+				this.state.error.play();
+			}
 		}
 		else if(this.key === 'hack' && this.state.mouse.x > hackButton.x && this.state.mouse.x < hackButton.x + 256 && this.state.mouse.y > hackButton.y && this.state.mouse.y < hackButton.y + 82) {
-			this.state.addHack(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
-			this.state.cashRegister.play();
+			if(this.state.money >= 200) {
+				this.state.addHack(this.state.game.camera.x + this.state.game.camera.width + 80, this.state.game.camera.y + randY);
+				this.state.money -= 200;
+				this.state.cashRegister.play();
+			}
+			else {
+				this.state.error.play();
+			}
 		}
+		this.state.moneyText.text = this.state.money;
 	},
 
   update: function () {
@@ -327,6 +379,7 @@ Game.prototype = {
 			shopMenuClosing = false;
 		}
 	}
+	//Position Updates
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
 	this.helpButton.x = this.game.camera.x + 16;
@@ -343,6 +396,26 @@ Game.prototype = {
 	gunButton.y = this.game.camera.y + 70 + (86 * 3);
 	hackButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	hackButton.y = this.game.camera.y + 70 + (86 * 4);
+<<<<<<< HEAD
+=======
+	this.moneyText.x = this.shopButton.x - 16;
+	this.moneyText.y = this.shopButton.y + 48;
+	this.be.x = this.moneyText.x + this.moneyText.width + 8;
+	this.be.y = this.moneyText.y;
+   
+   ////
+   if (this.player.root) {
+      for (var i = 0; i < this.lineTargets.length; i++) {
+         if (!this.lineTargets[i]) {
+            continue;
+         }
+         var pointA = new Phaser.Point(this.player.root.x, this.player.root.y);
+         var pointB = new Phaser.Point(this.lineTargets[i].x, this.lineTargets[i].y);
+         this.lines[i].setTo(pointA.x, pointA.y, pointB.x, pointB.y);
+      }
+   }
+   ////
+>>>>>>> origin/gh-pages
   },
   
   render: function () {
@@ -453,6 +526,12 @@ Game.prototype = {
 	//newModule.cube.body.collides(this.collisionGroup);
 	newModule.cube.body.moveLeft(newModuleSpeed);
   },
+  
+	addMoney: function() {
+		this.money += 100;
+		this.moneyText.text = this.money;
+		this.cashRegister.play();
+	},
   
   debug: function () {
      
