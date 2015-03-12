@@ -621,6 +621,22 @@ CubeGroup.prototype.remove = function(cube) {
          }
       }
    }
+   //If this is an active module, splice it from the active list
+   if(cube.module.isActive){
+	   if(cube.module.type === 'hacker') {
+			var hackIndex = this.activeHackerModules.indexOf(cube.module);
+			this.activeHackerModules.splice(hackIndex, 1);
+	   }
+	   if(cube.module.type === 'gun') {
+			var gunIndex = this.activeGuns.indexOf(cube.module);
+			this.activeHackerModules.splice(gunIndex, 1);
+	   }
+	   cube.module.isActive = false;
+   }
+   //set sprite of cube to greyed if necisarry
+   if(cube.module.type === 'thruster' || cube.module.type === 'gun' || cube.module.type === 'hacker') {
+		cube.frame = 0;
+   }
    // remove constraints from cube
    this.removeConstraints(cube);
    cube.group = undefined;
