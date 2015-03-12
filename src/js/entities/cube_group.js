@@ -95,8 +95,8 @@ CubeGroup.prototype.add = function(cube, point) {
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
-   console.log('collision event group');
-   this.displayCubes();
+   //console.log('collision event group');
+   //this.displayCubes();
    // stop if other does not exist, either is not a cube, both are in same group
    if (other === null || origin.prototype !== other.prototype) {
       return;
@@ -104,14 +104,14 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
    // if (other.group && other.group !== this && origin.ramDelay <= 0) {
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
-      console.log('collision');
+      //console.log('collision');
       if (this.game.juicy) {
          this.game.juicy.shake();
       }
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
-      console.log('continuing collision event group');
+      //console.log('continuing collision event group');
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       var otherLoc = this.adjust(originLoc, relSide);
@@ -119,14 +119,14 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       otherLoc = this.find(other); // update position since set can shift grid
       if (!otherLoc) {
          console.log('handleCollision(): otherLoc DOE');
-         this.displayCubes();
+         //this.displayCubes();
          return;
       }
-      console.log(relSide, originLoc.x, originLoc.y, otherLoc.x, otherLoc.y);
+      //console.log(relSide, originLoc.x, originLoc.y, otherLoc.x, otherLoc.y);
       var otherRelSide = this.relativeSide(other.body, origin.body);
       var constraintAngle = this.decideConstraintAngle(relSide, otherRelSide);
       this.createConstraints(other, otherLoc, constraintAngle);
-      this.displayCubes();
+      //this.displayCubes();
    }
 };
 
@@ -214,7 +214,7 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
      diffAngle %= 2 * Math.PI;
      diffAngle *= -1;
   }
-  console.log(thisPoint, otherPoint, angleToOther, thisBody.rotation, diffAngle);
+  //console.log(thisPoint, otherPoint, angleToOther, thisBody.rotation, diffAngle);
    if ((diffAngle >= -1 / 4 * Math.PI && diffAngle < 1 / 4 * Math.PI) || diffAngle > 7 / 4 * Math.PI) { // north
      return this.DIR.NORTH;
   } else if (diffAngle >= 1 / 4 * Math.PI && diffAngle < 3 / 4 * Math.PI) { // east
@@ -331,19 +331,19 @@ CubeGroup.prototype.set = function(cube, point) {
       return;
    }
    if (point.x < 0) {
-      console.log('add left col');
+      //console.log('add left col');
       this.addLeftCol();
       point.x = 0;
    } else if (point.x >= this.cubesWidth()) {
-      console.log('add right col');
+      //console.log('add right col');
       this.addRightCol();
       point.x = this.cubesWidth() - 1;
    } else if (point.y < 0) {
-      console.log('add bot row');
+      //console.log('add bot row');
       this.addBotRow();
       point.y = 0;
    } else if (point.y >= this.cubesHeight()) {
-      console.log('add top row');
+      //console.log('add top row');
       this.addTopRow();
       point.y = this.cubesHeight() - 1;
    }

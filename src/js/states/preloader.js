@@ -36,6 +36,7 @@ Preloader.prototype = {
 	this.load.image('asteroid', 'assets/images/asteroid.png');
 	this.load.image('shopPanel', 'assets/images/shopBackPanel.png');
 	this.load.image('warning', 'assets/images/warning.png');
+	this.load.image('be', 'assets/images/be.png');
     
 	//Load Fonts
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -53,8 +54,10 @@ Preloader.prototype = {
 	//Load Sound Effects
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');
-   this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
-   this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+	this.load.audio('error', 'assets/sound/error.ogg');
+	
+	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
+	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
 	//menu buttons

@@ -6,6 +6,7 @@ var Cube = function (gameState, x, y, sprite) {
     Phaser.Sprite.call(this, gameState.game, x, y, sprite);
 	 this.tag = 'module';	//tag is used to detect object type during collision checking
     this.game = gameState.game;
+	this.gameState = gameState;
     this.game.add.existing(this);
     this.group = undefined;
     this.module = undefined;
@@ -46,6 +47,21 @@ Cube.prototype.update = function() {
          this.dying = false;
          this.healthBar.destroy();
          if (this.group) {
+			if(this.tag === 'enemy_module') {
+				if(this.key === 'thruster') {
+					this.gameState.money += 35;
+				}
+				else if(this.key === 'shield') {
+					this.gameState.money += 10;
+				}
+				else if(this.key === 'gun') {
+					this.gameState.money += 50;
+				}
+				else if(this.key === 'solarPanel') {
+					this.gameState.money += 25;
+				}
+				this.gameState.moneyText.text = this.gameState.money;
+			}
             this.group.destroyCube(this);
          } else {
             this.destroy();
@@ -55,11 +71,11 @@ Cube.prototype.update = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (this.group && this.group.isPlayer) {
+   /*if (this.group && this.group.isPlayer) {
       console.log('PLAYER');
    } else {
       console.log('OTHER');
-   }
+   }*/
    if (!this.group || !other || !other.sprite || other.sprite.tag !== 'module') {
       // console.log('bad collision cube: ', this.group, other, other.sprite, other.sprite.tag);
       return;
