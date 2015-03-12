@@ -68,6 +68,7 @@ Mouse.prototype.click = function(pointer) {
    if (bodies.length)
    {
      var temp = bodies[0].parent;
+     // console.log('rotation:', temp.rotation);
      this.grabbed = temp;
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
        this.grabbed.sprite.module.mouseDown();
@@ -92,7 +93,7 @@ Mouse.prototype.click = function(pointer) {
      this.grabbed = undefined;
    }
 };
-  
+
 Mouse.prototype.move = function(pointer) {
    // p2 uses different coordinate system, so convert the pointer position to p2's coordinate system
    this.body.position[0] = this.game.physics.p2.pxmi(pointer.position.x);

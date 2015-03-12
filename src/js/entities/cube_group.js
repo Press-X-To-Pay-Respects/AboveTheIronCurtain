@@ -23,6 +23,7 @@ var CubeGroup = function (game, root) {
    this.numCubes = 1;
    this.bounceBackForce = 30;
    this.minRamVel = 300;
+   this.debug = false;
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -95,13 +96,8 @@ CubeGroup.prototype.add = function(cube, point) {
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
-   //console.log('collision event group');
-   //this.displayCubes();
-   // stop if other does not exist, either is not a cube, both are in same group
-   if (other === null || origin.prototype !== other.prototype) {
-      return;
-   }
-   // if (other.group && other.group !== this && origin.ramDelay <= 0) {
+   if (this.debug) console.log('handleCollision() start:', origin.module.type, other.module.type); // jshint ignore:line
+   if (this.debug) { this.displayCubes(); }
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
       //console.log('collision');
@@ -111,94 +107,154 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
-      //console.log('continuing collision event group');
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
-      var otherLoc = this.adjust(originLoc, relSide);
+      // var adjustDir = this.relativeSide(this.root.body, other.body);
+      // var otherLoc = this.adjust(originLoc, adjustDir);
+      var otherLoc = this.calcPos(origin, relSide);
+      if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
       this.set(other, otherLoc);
       otherLoc = this.find(other); // update position since set can shift grid
       if (!otherLoc) {
-         console.log('handleCollision(): otherLoc DOE');
-         //this.displayCubes();
+         if (this.debug) {
+            console.log('handleCollision(): otherLoc DNE', '---------------------');
+            this.displayCubes();
+         }
          return;
       }
-      //console.log(relSide, originLoc.x, originLoc.y, otherLoc.x, otherLoc.y);
-      var otherRelSide = this.relativeSide(other.body, origin.body);
-      var constraintAngle = this.decideConstraintAngle(relSide, otherRelSide);
-      this.createConstraints(other, otherLoc, constraintAngle);
-      //this.displayCubes();
+      if (this.debug) console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
+      this.createConstraints(other, otherLoc);
+      if (this.debug) this.displayCubes(); // jshint ignore:line
    }
+   if (this.debug) { console.log('handleCollision() end:', '------------------------------'); }
 };
 
-CubeGroup.prototype.decideConstraintAngle = function(sideA, sideB) {
-  if (sideA === 0) {
-     if (sideB === 0) {
-        return Math.PI;
-     } else if (sideB === 1) {
-         return Math.PI / 2;
-     } else if (sideB === 2) {
-         return 0;
-     } else if (sideB === 3) {
-         return 3 / 2 * Math.PI;
-     }
-  } else if (sideA === 1) {
-     if (sideB === 0) {
-        return 3 / 2 * Math.PI;
-     } else if (sideB === 1) {
-         return Math.PI;
-     } else if (sideB === 2) {
-         return 1 / 2 * Math.PI;
-     } else if (sideB === 3) {
-         return 0;
-     }
-  } else if (sideA === 2) {
-      if (sideB === 0) {
-        return 0;
-     } else if (sideB === 1) {
-         return 3 / 2 * Math.PI;
-     } else if (sideB === 2) {
-         return Math.PI;
-     } else if (sideB === 3) {
-         return 1 / 2 * Math.PI;
-     }
-  } else if (sideA === 3) {
-     if (sideB === 0) {
-        return 1 / 2 * Math.PI;
-     } else if (sideB === 1) {
-         return 0;
-     } else if (sideB === 2) {
-         return 3 / 2 * Math.PI;
-     } else if (sideB === 3) {
-         return Math.PI;
-     }
+CubeGroup.prototype.calcPos = function(origin, relSide) {
+   var diffAngle = origin.body.rotation - this.root.body.rotation;
+   var relative = this.angleToDir(diffAngle);
+   var output = this.find(origin);
+   if (relative === 0) { // north relative to the root
+      if (relSide === 0) {
+         output.y++;
+      } else if (relSide === 1) {
+         output.x++;
+      } else if (relSide === 2) {
+         output.y--;
+      } else if (relSide === 3) {
+         output.x--;
+      }
+   } else if (relative === 1) { // east relative to root
+      if (relSide === 0) {
+         output.x++;
+      } else if (relSide === 1) {
+         output.y--;
+      } else if (relSide === 2) {
+         output.x--;
+      } else if (relSide === 3) {
+         output.y++;
+      }
+   } else if (relative === 2) { // south relative to root
+      if (relSide === 0) {
+         output.y--;
+      } else if (relSide === 1) {
+         output.x--;
+      } else if (relSide === 2) {
+         output.y++;
+      } else if (relSide === 3) {
+         output.x++;
+      }
+   } else if (relative === 3) { // west relative to root
+      if (relSide === 0) {
+         output.x--;
+      } else if (relSide === 1) {
+         output.y++;
+      } else if (relSide === 2) {
+         output.x++;
+      } else if (relSide === 3) {
+         output.y--;
+      }
+   }
+   return output;
+};
+
+CubeGroup.prototype.angleToDir = function(angle) {
+   if (angle >= 0) {
+     angle %= 2 * Math.PI;
+  } else {
+     angle *= -1;
+     angle %= 2 * Math.PI;
+     angle *= -1;
+  }
+  if ((angle >= -1 / 4 * Math.PI && angle < 1 / 4 * Math.PI) || angle > 7 / 4 * Math.PI) {
+     return this.DIR.NORTH;
+  } else if (angle >= 1 / 4 * Math.PI && angle < 3 / 4 * Math.PI) {
+     return this.DIR.EAST;
+  } else if (angle >= 3 / 4 * Math.PI && angle < 5 / 4 * Math.PI) {
+     return this.DIR.SOUTH;
+  } else if (angle >= 5 / 4 * Math.PI && angle < 7 / 4 * Math.PI) {
+     return this.DIR.WEST;
+  } else if (angle >= -3 / 4 * Math.PI && angle < -1 / 4 * Math.PI) {
+     return this.DIR.WEST;
+  } else if (angle >= -5 / 4 * Math.PI && angle < -3 / 4 * Math.PI) {
+     return this.DIR.SOUTH;
+  } else if (angle >= -7 / 4 * Math.PI && angle < -5 / 4 * Math.PI) {
+     return this.DIR.EAST;
+  } else if (angle < -7 / 4 * Math.PI) {
+     return this.DIR.NORTH;
   }
 };
 
-CubeGroup.prototype.createConstraints = function(me, point, angle) {
-   var myNorth = this.get(this.adjust(point, this.DIR.NORTH));
-   var myEast = this.get(this.adjust(point, this.DIR.EAST));
-   var mySouth = this.get(this.adjust(point, this.DIR.SOUTH));
-   var myWest = this.get(this.adjust(point, this.DIR.WEST));
-   var constraint;
-   if (myNorth) {
-      constraint = this.game.physics.p2.createLockConstraint(myNorth.body, me.body, [0, -(me.width + this.offset)], angle); // north - me
-      me.constraints.push(constraint);
-      myNorth.constraints.push(constraint);
-   }
-   if (myEast) {
-      constraint = this.game.physics.p2.createLockConstraint(myEast.body, me.body, [me.width + this.offset, 0], angle); // east - me
-      me.constraints.push(constraint);
-      myEast.constraints.push(constraint);
-   }
-   if (mySouth) {
-      constraint = this.game.physics.p2.createLockConstraint(mySouth.body, me.body, [0, me.width + this.offset], angle); // south - me
-      me.constraints.push(constraint);
-      mySouth.constraints.push(constraint);
-   }
-   if (myWest) {
-      constraint = this.game.physics.p2.createLockConstraint(myWest.body, me.body, [-me.width - this.offset, 0], angle); // west - me
-      me.constraints.push(constraint);
-      myWest.constraints.push(constraint);
+CubeGroup.prototype.createConstraints = function(me, point) {
+   var neighbors = this.getNeighbors(me);
+   for (var i = 0; i < neighbors.length; i++) {
+      var neighbor = neighbors[i];
+      var mySide = this.relativeSide(me.body, neighbor.body);
+      var neighborSide = this.relativeSide(neighbor.body, me.body);
+      var constraint;
+      var offset = me.width + this.offset;
+      if (mySide === 0) {
+        if (neighborSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], Math.PI);
+        } else if (neighborSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 1 / 2 * Math.PI);
+        } else if (neighborSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 0);
+        } else if (neighborSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 3 / 2 * Math.PI);
+        }
+     } else if (mySide === 1) {
+        if (neighborSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], -1 / 2 * Math.PI);
+        } else if (neighborSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], Math.PI);
+        } else if (neighborSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], 1 / 2 * Math.PI);
+        } else if (neighborSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], 0);
+        }
+     } else if (mySide === 2) {
+         if (neighborSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 0);
+        } else if (neighborSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 3 / 2 * Math.PI);
+        } else if (neighborSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], Math.PI);
+        } else if (neighborSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 1 / 2 * Math.PI);
+        }
+     } else if (mySide === 3) {
+        if (neighborSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], 1 / 2 * Math.PI);
+        } else if (neighborSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], 0);
+        } else if (neighborSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], -1 / 2 * Math.PI);
+        } else if (neighborSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], Math.PI);
+        }
+     }
+     me.constraints.push(constraint);
+     neighbor.constraints.push(constraint);
    }
 };
 
@@ -207,31 +263,7 @@ CubeGroup.prototype.relativeSide = function(thisBody, otherBody) {
   var otherPoint = new Phaser.Point(otherBody.x, otherBody.y);
   var angleToOther = this.angleBetweenPoints(thisPoint, otherPoint);
   var diffAngle = angleToOther - thisBody.rotation;
-  if (diffAngle >= 0) {
-     diffAngle %= 2 * Math.PI;
-  } else {
-     diffAngle *= -1;
-     diffAngle %= 2 * Math.PI;
-     diffAngle *= -1;
-  }
-  //console.log(thisPoint, otherPoint, angleToOther, thisBody.rotation, diffAngle);
-   if ((diffAngle >= -1 / 4 * Math.PI && diffAngle < 1 / 4 * Math.PI) || diffAngle > 7 / 4 * Math.PI) { // north
-     return this.DIR.NORTH;
-  } else if (diffAngle >= 1 / 4 * Math.PI && diffAngle < 3 / 4 * Math.PI) { // east
-     return this.DIR.EAST;
-  } else if (diffAngle >= 3 / 4 * Math.PI && diffAngle < 5 / 4 * Math.PI) { // south
-     return this.DIR.SOUTH;
-  } else if (diffAngle >= 5 / 4 * Math.PI && diffAngle < 7 / 4 * Math.PI) { // west
-     return this.DIR.WEST;
-  } else if (diffAngle >= -3 / 4 * Math.PI && diffAngle < -1 / 4 * Math.PI) {
-     return this.DIR.WEST;
-  } else if (diffAngle >= -5 / 4 * Math.PI && diffAngle < -3 / 4 * Math.PI) {
-     return this.DIR.SOUTH;
-  } else if (diffAngle >= -7 / 4 * Math.PI && diffAngle < -5 / 4 * Math.PI) {
-     return this.DIR.EAST;
-  } else if (diffAngle < -7 / 4 * Math.PI) {
-     return this.DIR.NORTH;
-  }
+  return this.angleToDir(diffAngle);
 };
 
 CubeGroup.prototype.angleBetweenPoints = function(thisPoint, otherPoint) {
@@ -306,7 +338,6 @@ CubeGroup.prototype.adjust = function(point, dir) {
      return;
   }
   var newPoint = new Phaser.Point(point.x, point.y);
-  // console.log('ADJUST IN: ', newPoint.x, newPoint.y, dir);
   switch (dir) {
       case this.DIR.NORTH:
       newPoint.y++;
@@ -321,7 +352,6 @@ CubeGroup.prototype.adjust = function(point, dir) {
       newPoint.x--;
       break;
    }
-   // console.log('ADJUST OUT: ', newPoint.x, newPoint.y);
    return newPoint;
 };
 
@@ -331,24 +361,23 @@ CubeGroup.prototype.set = function(cube, point) {
       return;
    }
    if (point.x < 0) {
-      //console.log('add left col');
+      if (this.debug) { console.log('add left col'); }
       this.addLeftCol();
       point.x = 0;
    } else if (point.x >= this.cubesWidth()) {
-      //console.log('add right col');
+      if (this.debug) { console.log('add right col'); }
       this.addRightCol();
       point.x = this.cubesWidth() - 1;
    } else if (point.y < 0) {
-      //console.log('add bot row');
+      if (this.debug) { console.log('add bot row'); }
       this.addBotRow();
       point.y = 0;
    } else if (point.y >= this.cubesHeight()) {
-      //console.log('add top row');
+      if (this.debug) { console.log('add top row'); }
       this.addTopRow();
       point.y = this.cubesHeight() - 1;
    }
    if (this.get(point)) {
-      // console.log('tried to set to filled position');
       return;
    }
    this.cubes[point.x][point.y] = cube;
@@ -367,15 +396,33 @@ CubeGroup.prototype.outOfBounds = function(point) {
 };
 
 CubeGroup.prototype.displayCubes = function() {
-   console.log('================');
-   var output = 'Display Cubes\n';
+   var output = 'displayCubes():\n';
    var row = 0;
    var col = this.cubesHeight() - 1;
    while (col >= 0) {
       while (row < this.cubesWidth()) {
          var cube = this.cubes[row][col];
          if (cube) {
-            output += '# ';
+            switch (cube.module.type) {
+               case 'shield':
+               output += 'S ';
+               break;
+               case 'core':
+               output += 'C ';
+               break;
+               case 'thruster':
+               output += 'T ';
+               break;
+               case 'solarPanel':
+               output += 'P ';
+               break;
+               case 'hacker':
+               output += 'H ';
+               break;
+               case 'gun':
+               output += 'G ';
+               break;
+            }
          } else {
             output += '_ ';
          }
@@ -386,7 +433,6 @@ CubeGroup.prototype.displayCubes = function() {
       output += '\n';
    }
    console.log(output);
-   console.log('---------------');
 };
 
 CubeGroup.prototype.displayConnection = function(connection) {
@@ -531,7 +577,7 @@ CubeGroup.prototype.destroyCube = function(cube) {
 };
 
 CubeGroup.prototype.remove = function(cube) {
-   // console.log('remove');
+   console.log('remove()');
    if (this.root === cube) {
       return;
    }
@@ -561,7 +607,7 @@ CubeGroup.prototype.remove = function(cube) {
          }
       }
    }
-   // this.displayCubes();
+   if (this.debug) { this.displayCubes(); }
 };
 
 CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {
