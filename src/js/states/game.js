@@ -59,6 +59,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
+   this.simplify = true;
 	
 	this.mouse = new Mouse(this.game, this.input);
    
@@ -95,7 +96,7 @@ Game.prototype = {
 	asteroids.enableBody = true;
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	asteroidList = new Phaser.ArraySet();
-	this.generateAsteroids();
+	if (!this.simplify) { this.generateAsteroids(); }
 	
 	timer = this.game.time.create(false);
 	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
@@ -190,7 +191,7 @@ Game.prototype = {
 	this.be = this.game.add.image(this.moneyText.x + this.moneyText.width + 8, this.moneyText.y, 'be');
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
-	this.mainSong.play('',0,1,true,true);
+	if (!this.simplify) { this.mainSong.play('',0,1,true,true); }
   },
   
   restartLevel: function() {

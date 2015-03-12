@@ -56,13 +56,19 @@ function solarPanelMouseOver() {
    this.cube.group.displayConnection(this.cube.myConnection);
 }
 
-function solarPanelOnRemove() {
-   if (!this.cube.myConnection || !this.cube.myConnection.end) {
-      console.log('solarPanelOnRemove() had an error');
+function genericOnRemove() {
+   if (!this.cube.myConnection) {
       return;
    }
-   this.cube.myConnection.end.myConnection = undefined;
-   this.cube.myConnection = undefined;
+   if (this.cube.myConnection.start === this.cube) {
+      this.cube.myConnection.end.myConnection = undefined;
+      this.cube.myConnection = undefined;
+   } else if (this.cube.myConnection.end === this.cube) {
+      this.cube.myConnection.start.myConnection = undefined;
+      this.cube.myConnection = undefined;
+   } else {
+      console.log('genericOnRemove() had an error');
+   }
 }
 
 
@@ -95,18 +101,6 @@ function thrusterUpdate() {
 function thrusterHalt() {
    this.haltTime = 1500;
 }
-
-/*
-function gunFire(){
-	var angle = this.cube.body.rotation % (2*Math.PI);
-	var direction = [Math.sin(angle), -Math.cos(angle)];
-	//var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
-	var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
-	var speed = deltaDist * 50;
-	new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
-			   direction, speed, 'playerBullet');
-}
-*/
 
 function gunUpdate() {
    if (!this.cube.myConnection || !this.act) {
@@ -178,7 +172,6 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
-      newModule.onRemove = solarPanelOnRemove;
    }
    
    //Thruster module events
@@ -213,6 +206,9 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       }
 	  newModule.update = gunUpdate;
 	}
+   
+   // applied to all
+   newModule.onRemove = genericOnRemove;
 	
 	//Return the module object
 	return newModule;

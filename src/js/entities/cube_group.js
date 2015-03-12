@@ -577,7 +577,7 @@ CubeGroup.prototype.destroyCube = function(cube) {
 };
 
 CubeGroup.prototype.remove = function(cube) {
-   console.log('remove()');
+   if (this.debug) { console.log('remove()'); }
    if (this.root === cube) {
       return;
    }
