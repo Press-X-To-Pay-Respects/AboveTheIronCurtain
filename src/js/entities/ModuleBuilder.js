@@ -41,9 +41,6 @@ function solarPanelGiveTarget(target) {
 		//Activate the module
 		target.isActive = true;
 		this.modulePower.play();
-		if(target.type === 'gun') {
-			ourGroup.activeGuns.push(target);
-		}
 		if(target.type === 'hacker') {
 			ourGroup.activeHackerModules.push(target);
 		}
