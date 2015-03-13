@@ -9,6 +9,12 @@ module.exports = Game;
 
 Game.prototype = {
 	
+  init: function(params){
+  	
+  	this.levelSong = this.game.add.audio(params[0]);
+	this.levelSong.play('',params[1],params[2],true,true);
+  },
+	
   create: function () {
    this.levelSetup = new LevelSetup(this, 'level_one');
   },

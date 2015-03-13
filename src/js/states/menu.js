@@ -31,21 +31,21 @@ Menu.prototype = {
   },
 
   addButton: function(button, img, func){
-    return this.add.button(this.world.centerX, this.world.centerY + this.pos[button - 1], img, func);
+    return this.add.button(this.world.centerX, this.world.centerY + this.pos[button - 1], img, func, this);
   },
   
   draw: function(){
   },
   
   changeToGame: function(){
-	menuSong.stop();
+	this.menuSong.stop();
 	var params = ['mainSong', 0, this.menuSong.volume];
-  	this.game.state.start('Game');
+  	this.game.state.start('Game', true, false, params);
   },  
   
   changeToMenu: function(){
   	var params = ['menuSong', this.menuSong.position, this.menuSong.volume];
-  	this.game.state.start('Menu');
+  	this.game.state.start('Menu', true, false, params);
   },  
   /*
   changeState: function(state){
