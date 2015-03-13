@@ -78,7 +78,6 @@ Mouse.prototype.click = function(pointer) {
    if (bodies.length)
    {
      var temp = bodies[0].parent;
-     // console.log('rotation:', temp.rotation);
      this.grabbed = temp;
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
        this.grabbed.sprite.module.mouseDown();

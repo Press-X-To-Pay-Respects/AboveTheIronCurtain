@@ -40,9 +40,11 @@ var Shop = function(state) {
 	this.formatButton(this.gunButton);
 	this.hackButton = this.game.add.button(this.cam.x + this.cam.width - this.diff, this.cam.y + 52 + (88 * 5), 'hackButton', this.purchaseModule, {state: this, key: 'hacker'}, 1, 0, 2);
 	this.formatButton(this.hackButton);
+   /*
 	this.shopButton = this.game.add.button(this.cam.x + this.cam.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.sm.playHoverClick, this.sm);
 	this.shopButton.onInputDown.add(this.sm.playDownClick, this.sm);
+   */
 };
 
 Shop.prototype.constructor = Shop;
@@ -185,25 +187,6 @@ module.exports = Shop;
 
 
 
-
-
-// //Shop Movement Code
-	// if(shopMenuOpening === true) {	
-		// // diff += 4;
-      // diff += this.shopSpeed * this.game.time.elapsed;
-		// if(diff >= 276) {
-			// shopMenuOpening = false;
-			// this.addShopButtons();
-		// }
-	// }
-	// else if(shopMenuClosing === true) {
-		// // diff -= 4;
-      // diff -= this.shopSpeed * this.game.time.elapsed;
-		// if(diff <= 0) {
-			// shopPanel.kill();
-			// shopMenuClosing = false;
-		// }
-	// }
 
 
 

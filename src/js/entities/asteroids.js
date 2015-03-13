@@ -11,7 +11,6 @@ var Asteroids = function(state, simplify) {
 	this.asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	this.asteroidList = new Phaser.ArraySet();
 	if (!this.simplify) { this.generateAsteroids(); }
-   this.generateAsteroids();
 };
 
 Asteroids.prototype.constructor = Asteroids;

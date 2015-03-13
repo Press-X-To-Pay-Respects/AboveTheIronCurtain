@@ -20,8 +20,6 @@ var Warning = require('../entities/warning');
 var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
 var leftKey, rightKey;
-// var warning;
-// var timer;
 
 var Game = function () { };
 
@@ -42,7 +40,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.simplify = false; // prevents things that get in the way of debugging
+   this.simplify = true; // prevents things that get in the way of debugging
    
 	this.updateDependents = [];
 
@@ -61,16 +59,9 @@ Game.prototype = {
 	this.updateDependents.push(playerGroup);
 	this.player = playerGroup;
 	this.player.isPlayer = true;
-   
-	this.mouse = new Mouse(this.game, this.input, playerGroup);
-	this.player.isPlayer = true;
 	
 	//Create the emitter for the binary particle effects
 	this.BinaryEmitter = new Emitter(this);
-	
-	// timer = this.game.time.create(false);
-	// warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
-	// warning.kill();
 	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -87,7 +78,7 @@ Game.prototype = {
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
 	if (!this.simplify) { this.mainSong.play('',0,1,true,true); }
    
-   this.mouse = new Mouse(this.game, this.input);
+   this.mouse = new Mouse(this.game, this.input, this.player);
    this.updateDependents.push(this.mouse);
    this.soundManager = new SoundManager(this);
    this.shop = new Shop(this);
@@ -163,27 +154,6 @@ Game.prototype = {
 			this.updateDependents[i].update();
 		}
 	}
-	// //Warning Code
-	// if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
-	// this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
-	// this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
-	// this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
-		// if(timer.length === 0) {
-			// warning.revive();
-			// timer.loop(Phaser.Timer.SECOND * 5, this.resetPlayer, this);
-			// timer.start();
-		// }
-	// }
-	// else {
-		// if(warning.alive === true) {
-			// warning.kill();
-		// }
-		// if(timer.length > 0) {
-			// timer.stop(true);
-		// }
-	// }
-	// warning.x = this.game.camera.x;
-	// warning.y = this.game.camera.y;
   },
   
   render: function () {
@@ -200,22 +170,7 @@ Game.prototype = {
 		if(bg2.x >= 8000) {
 			bg2.x = 0;
 		}
-	},
-	
-	resetPlayer: function() {
-		if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000) {
-			this.coreModule.cube.body.moveLeft(this.player.numCubes * 750);
-		}
-		if(this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
-			this.coreModule.cube.body.moveRight(this.player.numCubes * 750);
-		}
-		if(this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000) {
-			this.coreModule.cube.body.moveUp(this.player.numCubes * 750);
-		}
-		else if(this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
-			this.coreModule.cube.body.moveDown(this.player.numCubes * 750);
-		}
-	},
+	}
 };
 
 
