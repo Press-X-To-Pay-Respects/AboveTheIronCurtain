@@ -41,7 +41,6 @@ var ProgressBar = function(setType, setMaxValue, setGraphics, setRenderables) {
 				this.onEvent();
 			}
 		};
-	//}
 	}
 };
 

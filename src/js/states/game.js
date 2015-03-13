@@ -90,7 +90,7 @@ Game.prototype = {
 	this.BinaryEmitter = new Emitter(this);
 	
 	//test hackable object
-	this.testHack = new Hackable(this, 1600, 1200, 'hackable1', 400);
+	// this.testHack = new Hackable(this, 1600, 1200, 'hackable1', 400);
 	
 	asteroids = this.game.add.group();
 	asteroids.enableBody = true;
@@ -132,6 +132,9 @@ Game.prototype = {
 	//gun
 	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
     this.placeGunKey.onDown.add(this.debugAddGun, this);
+	//hackable
+	this.placeHackableKey = this.game.input.keyboard.addKey(Phaser.Keyboard.L);
+   this.placeHackableKey.onDown.add(this.debugAddHackable, this);
 	
 	//reset game
 	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
@@ -180,7 +183,7 @@ Game.prototype = {
    this.game.camera.follow(this.coreModule.cube);
     
 	this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
-	this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
+	this.helpButton = this.game.add.button(this.game.camera.x - 100, this.game.camera.y - 100, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
 	
@@ -231,11 +234,13 @@ Game.prototype = {
                for (var row = 0; row < blueprint.length; row++) {
                   for (var col = 0; col < blueprint[row].length; col++) {
                      var type = blueprint[row][col];
-                     var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
-                     enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
-                     newModule.cube.tag = 'enemy_module';
-                     var point = new Phaser.Point(row, col);
-                     enemyGroup.add(newModule.cube, point);
+                     if (type !== 'none') {
+                        var newModule = this.moduleBuilder.build(type, enemyX + row * (this.cubeWidth + this.cubeBuffer),
+                        enemyY - col * (this.cubeWidth + this.cubeBuffer), false);
+                        newModule.cube.tag = 'enemy_module';
+                        var point = new Phaser.Point(row, col);
+                        enemyGroup.add(newModule.cube, point);
+                     }
                   }
                }
                var aiType = element['type'];
@@ -404,8 +409,8 @@ Game.prototype = {
 	//Position Updates
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
-	this.helpButton.x = this.game.camera.x + 16;
-	this.helpButton.y = this.game.camera.y + 16;
+   this.helpButton.x = this.game.camera.x + 16;
+   this.helpButton.y = this.game.camera.y + 16;
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
 	shieldButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
@@ -554,6 +559,9 @@ Game.prototype = {
   debugAddGun: function () {
 	this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
   },
+  debugAddHackable: function () {
+   this.moduleBuilder.build('hackable', this.mouse.x, this.mouse.y, true);
+  }
 };
 
 

@@ -54,41 +54,72 @@ Cube.prototype.update = function() {
          this.dying = false;
          this.healthBar.destroy();
          if (this.group) {
-			if(this.tag === 'enemy_module') {
-				if(this.key === 'thruster') {
-					this.gameState.money += 35;
-				}
-				else if(this.key === 'shield') {
-					this.gameState.money += 10;
-				}
-				else if(this.key === 'gun') {
-					this.gameState.money += 50;
-				}
-				else if(this.key === 'solarPanel') {
-					this.gameState.money += 25;
-				}
-				this.gameState.moneyText.text = this.gameState.money;
-			}
+            if(this.tag === 'enemy_module') {
+               if(this.key === 'thruster') {
+                  this.gameState.money += 35;
+               }
+               else if(this.key === 'shield') {
+                  this.gameState.money += 10;
+               }
+               else if(this.key === 'gun') {
+                  this.gameState.money += 50;
+               }
+               else if(this.key === 'solarPanel') {
+                  this.gameState.money += 25;
+               }
+               this.gameState.moneyText.text = this.gameState.money;
+            }
             this.group.destroyCube(this);
          } else {
-			if(this.key === 'core' && this.tag === 'module') {
-				this.kill();
-				this.gameState.restartLevel();
-			}
-			this.destroy();
+            if(this.key === 'core' && this.tag === 'module') {
+               this.kill();
+               this.gameState.restartLevel();
+            }
+            this.destroy();
          }
       }
    }
 };
 
+Cube.prototype.loseConnection = function() {
+  if (!this.myConnection) {
+    return;
+  }  
+  if (this.myConnection.start === this) {
+      var endModule = this.myConnection.end.module;
+      if (endModule.hasOwnProperty('onLoseConnection')) {
+         endModule.onLoseConnection();
+      }
+      this.myConnection.end.myConnection = undefined;
+      this.myConnection = undefined;
+   } else if (this.myConnection.end === this) {
+      var startModule = this.myConnection.end.module;
+      if (startModule.hasOwnProperty('onLoseConnection')) {
+         startModule.onLoseConnection();
+      }
+      this.myConnection.start.myConnection = undefined;
+      this.myConnection = undefined;
+   }
+};
+
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !this.group.isPlayer || !other || !other.sprite || other.sprite.tag !== 'module' ||
-       (other.group && other.group === this.group) || (other.group && other.group.isPlayer) ||
-         other.prototype !== this.prototype) {
+   // floating cube, bad collision, collision with non-sprite, collision with non-cube
+   if (!this.group || !other || !other.sprite || other.prototype !== this.prototype) {
       return;
    }
-	this.group.handleCollision(this, other.sprite);
-	this.group.countCubes();
+   if (other.group && this.group === other.group) {// if cubes in same group
+      return;
+   }
+   if (this.group.isPlayer) { // player
+      if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
+         this.group.handleRamming(this, other.sprite);
+      } else if (other.sprite.tag === 'module') { // collision with floating, attatching
+         this.group.handleAttatch(this, other.sprite);
+      }
+   } else {// enemy
+      this.group.handleRamming(this, other.sprite); // enemies only ram on collision
+   }
+   this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {
@@ -100,14 +131,24 @@ Cube.prototype.toString = function() {
 Cube.prototype.concat = function(string, val) {
    return string + ': ' + val + '\n';
 };
+
 Cube.prototype.displayIndicator = function() {
   this.cIndicator.alpha = 1; 
+};
+
+Cube.prototype.hideIndicator = function() {
+  this.cIndicator.alpha = 0; 
 };
 
 Cube.prototype.takeDamage = function(amt) {
    this.impact.play();
    this.healthBar.addValue(-amt);
    this.healthBar.graphics.alpha = 1;
+};
+
+Cube.prototype.dieQuick = function() {
+  this.dying = true;
+  this.life = 0;
 };
 
 Cube.prototype.remove = function() {

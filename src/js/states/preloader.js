@@ -25,7 +25,7 @@ Preloader.prototype = {
 	this.load.spritesheet('thrusterButton', 'assets/images/thrusterButtonSheet.png', 256, 82);
 	this.load.spritesheet('gunButton', 'assets/images/gunButtonSheet.png', 256, 82);
 	this.load.spritesheet('hackButton', 'assets/images/hackButtonSheet.png', 256, 82);
-	this.load.spritesheet('hackable1', 'assets/images/hackableSheet.png', 64, 64);
+	this.load.spritesheet('hackable', 'assets/images/hackableSheet.png', 64, 64);
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
 	
 	//Load Images
@@ -64,7 +64,7 @@ Preloader.prototype = {
 	this.load.audio('thrusterLoop', 'assets/sound/thrusterLoop.ogg');
 	
 	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
-	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+	// this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
 	//menu buttons

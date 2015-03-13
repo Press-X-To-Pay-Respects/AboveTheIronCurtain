@@ -1,3 +1,5 @@
+// DEPRECATED
+
 /*
 Defines a hackable object.
 */

@@ -28,15 +28,15 @@ ModuleBuilder.prototype.existingReference = null;
 
 /** Module functions **/
 function solarPanelGiveTarget(target) {
-if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group) {
+   if (this === target || !this.cube.group || !target.cube.group || this.cube.group !== target.cube.group) {
       return;
    }
+   this.cube.loseConnection();
    var ourGroup = this.cube.group;
    var newConnection = {start: this.cube, end: target.cube};
    this.cube.myConnection = newConnection;
    target.cube.myConnection = newConnection;
    ourGroup.displayConnection(this.cube.myConnection);
-   
 	if(!target.isActive) {
 		//Activate the module
 		target.isActive = true;
@@ -44,7 +44,7 @@ if (this === target || !this.cube.group || !target.cube.group || this.cube.group
 		if(target.type === 'gun') {
 			ourGroup.activeGuns.push(target);
 		}
-		else if(target.type === 'hacker') {
+		if(target.type === 'hacker') {
 			ourGroup.activeHackerModules.push(target);
 		}
 		//If this is one of the powerable types, switch the frame from 'greyed' to 'active'
@@ -62,20 +62,14 @@ function solarPanelMouseOver() {
 }
 
 function genericOnRemove() {
-   if (!this.cube.myConnection) {
-      return;
-   }
-   if (this.cube.myConnection.start === this.cube) {
-      this.cube.myConnection.end.myConnection = undefined;
-      this.cube.myConnection = undefined;
-   } else if (this.cube.myConnection.end === this.cube) {
-      this.cube.myConnection.start.myConnection = undefined;
-      this.cube.myConnection = undefined;
-   } else {
-      console.log('genericOnRemove() had an error');
-   }
+   this.cube.loseConnection();
 }
 
+function hackerOnLoseConnection() {
+   var hackIndex = this.gameState.player.activeHackerModules.indexOf(this);
+   this.gameState.player.activeHackerModules.splice(hackIndex, 1);
+   this.isActive = false;
+}
 
 function beginAct() {
    this.timer = 0;
@@ -129,10 +123,8 @@ function gunUpdate() {
 	  return;
    }
    if (this.timer <= 0) {
-	  //this.cube.animations.play('gun');
       var angle = this.cube.body.rotation % (2*Math.PI);
       var direction = [Math.sin(angle), -Math.cos(angle)];
-      //var delta = [this.cube.x-this.cube.body.prev.x, this.cube.y - this.cube.body.prev.y];
       var deltaDist = Math.sqrt(Math.pow(this.cube.deltaX, 2) + Math.pow(this.cube.deltaY, 2));
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
@@ -142,6 +134,73 @@ function gunUpdate() {
    } else {
       this.timer -= this.gameState.game.time.elapsed;
    }
+}
+
+function hackableUpdate() {
+   this.hackBar.setLocation(this.cube.x, this.cube.y - 25);
+   if (this.barFadeDelay <= 0 && this.hackBar.graphics.alpha > 0) {
+      this.hackBar.graphics.alpha -= this.gameState.time.elapsed * this.barFade;
+   } else if (this.barFadeDelay > 0) {
+      this.barFadeDelay -= this.gameState.time.elapsed;
+   }
+	//check if getting hacked
+	if(!this.isHacked) {
+		this.cube.animations.play('hackable');
+		if(this.gameState.player.activeHackerModules.length > 0) {
+			var dist;
+			var hacker;
+			//Loop through all hacker modules on the player's cubsat
+			for(var i = 0; i < this.gameState.player.activeHackerModules.length; i++) {
+				hacker = this.gameState.player.activeHackerModules[i];
+				dist = Math.sqrt( Math.pow(this.cube.x - hacker.cube.x, 2) + Math.pow(this.cube.y - hacker.cube.y, 2) );
+				if(dist < this.hackDistance) {
+					//If hacker is in range, increase hack value and try to emit binary particle
+               if (this.beingHacked) {
+                  this.beingHackedPrev = true;
+               }
+               this.beingHacked = true;
+					this.hackBar.addValue(0.1);
+					hacker.count++;
+					if(hacker.count >= hacker.cycle) {
+                  this.hackBar.graphics.alpha = 1;
+                  this.barFadeDelay = this.barFadeMaxDelay;
+						hacker.count = 0;
+						this.gameState.BinaryEmitter.emitBinary(this.cube, hacker.cube.x, hacker.cube.y, 60);
+						if(hacker.cube.frame === 5) {
+							hacker.cube.frame = 0;
+						}
+						hacker.cube.frame++;
+						
+					}
+				}
+				else {
+					hacker.cube.animations.stop();
+               if(!this.beingHacked) {
+						this.beingHackedPrev = false;
+					}
+					this.beingHacked = false;
+				}
+			}
+		}
+	} else if (this.delay < 0) {
+      this.hacking.stop();
+      this.hackBar.destroy();
+      this.cube.dieQuick();
+   } else {
+      this.hacking.stop();
+      this.delay -= this.gameState.time.elapsed;
+   }
+   if(this.beingHacked === true && this.beingHackedPrev === false) {
+		if(this.hacking.paused === true) {
+			this.hacking.resume();
+		}
+		else {
+			this.hacking.play();
+		}
+	}
+	else if(this.beingHacked === false && this.beingHackedPrev === true){
+		this.hacking.pause();
+	}
 }
 /** End module functions **/
 
@@ -161,8 +220,8 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	newCube.body.setCollisionGroup(this.gameState.collisionGroup);
 	newCube.body.collides(this.gameState.collisionGroup);
 	newCube.body.onBeginContact.add(newCube.cubeCollide, newCube);
-    newCube.body.damping = 0.9;
-    newCube.body.angularDamping = 0.9;
+   newCube.body.damping = 0.9;
+   newCube.body.angularDamping = 0.9;
  
    var cIndicator = this.gameState.add.sprite(0, 0, 'connections', 'connection_line.png');
    cIndicator.anchor.setTo(0.5, 0.5);
@@ -181,6 +240,9 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 		newModule.cycle = 6;
 		newModule.count = 0;
 		newModule.cube.animations.add('hacker', [0,1,2,3,4], 10, true);
+      newModule.onRemove = genericOnRemove;
+      newModule.onLoseConnection = hackerOnLoseConnection;
+      newModule.powerable = true;
 	}
 	
 	//Store module if it is core
@@ -190,12 +252,15 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 		newModule.cube.animations.play('core');
 		this.core = newModule;
 		this.coreExists = true;
+      newModule.onRemove = genericOnRemove;
 	}
+   
    // solar panel testing
    if (type === 'solarPanel') {
 	  newModule.modulePower = this.gameState.add.audio('modulePower', 0.5);
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
+      newModule.onRemove = genericOnRemove;
    }
    
    //Thruster module events
@@ -216,6 +281,8 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       }
       newModule.update = thrusterUpdate;
       newModule.thrusterHalt = thrusterHalt;
+      newModule.onRemove = genericOnRemove;
+      newModule.powerable = true;
 	}
 
 	//Gun module events
@@ -235,11 +302,36 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
          newModule.endAct = endAct;
       }
 	  newModule.update = gunUpdate;
+     newModule.onRemove = genericOnRemove;
+     newModule.powerable = true;
 	}
    
-   // applied to all
-   newModule.onRemove = genericOnRemove;
-	
+   if (type === 'hackable') {
+      // set values
+      newModule.isHacked = false;
+      newModule.hackDistance = 400;
+      newModule.cube.animations.add('hackable', [0,1,2,3,4], 10, true);
+      newModule.cube.animations.add('hacked', [5,6,7,8,9], 10, true);
+      newModule.barFade = 0.001;
+      newModule.barFadeMaxDelay = 200;
+      newModule.barFadeDelay = 0;
+      newModule.delay = 1600;
+      newModule.beingHacked = false;
+      newModule.beingHackedPrev = false;
+      newModule.hacking = this.gameState.add.audio('hacking', 1, true);
+      // give progress bar
+      newModule.hackBar = this.gameState.uiBuilder.buildProgressBar('growing', 1500, 1200, 100, 10,  200);
+      newModule.hackBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x2020CC);
+      newModule.hackBar.hackable = newModule.cube;
+      newModule.hackBar.onEvent = function() {
+         this.hackable.animations.stop();
+         this.hackable.animations.play('hacked');
+         this.hackable.module.isHacked = true;
+      };
+      // add functions
+      newModule.update = hackableUpdate;
+      newModule.onRemove = genericOnRemove;
+   }
 	//Return the module object
 	return newModule;
 };
