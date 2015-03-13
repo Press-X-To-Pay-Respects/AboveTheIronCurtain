@@ -28,7 +28,7 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.hideBuffer = -50;
    this.hideHeight = -this.height - this.hideBuffer;
    this.y = this.cam.y - this.cam.height / 2 - this.hideHeight;
-   this.slideY = 0;
+   this.slideY = this.hideHeight;
    this.goalY = this.y;
    this.slideRate = 0.2;
    this.visible = false;
@@ -46,6 +46,7 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.group.add(this.leftButton);
    this.addTexts();
    this.game.world.bringToTop(this.group);
+   this.debug = false;
 };
 
 Banner.prototype.constructor = Banner;
@@ -66,6 +67,7 @@ Banner.prototype.update = function() {
       this.goalY = this.hideHeight;
    }
    this.slideY = Utils.lerp(this.slideY, this.goalY, this.slideRate);
+   if (this.debug) { console.log('this.cam.y:', this.cam.y, 'this.slideY:', this.slideY, 'this.y:', this.y); }
    this.y = this.cam.y + this.slideY;
    // text pos
    var curText = this.textObjs[this.index];

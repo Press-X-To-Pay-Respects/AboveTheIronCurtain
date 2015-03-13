@@ -183,7 +183,7 @@ Game.prototype = {
    this.game.camera.follow(this.coreModule.cube);
     
 	this.helpBanner = this.uiBuilder.buildBanner(0.5, 0.5, 'tutorial_text');
-	this.helpButton = this.game.add.button(0, 0, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
+	this.helpButton = this.game.add.button(this.game.camera.x - 100, this.game.camera.y - 100, 'helpButton', this.helpBanner.toggle, this.helpBanner, 1, 0, 2);
 	this.helpButton.onInputOver.add(this.playHoverClick, this);
 	this.helpButton.onInputDown.add(this.playDownClick, this);
 	
@@ -400,8 +400,8 @@ Game.prototype = {
 	//Position Updates
 	this.shopButton.x = this.game.camera.x + this.game.camera.width - 48 - diff;
 	this.shopButton.y = this.game.camera.y + 16;
-	this.helpButton.x = this.game.camera.x + 16;
-	this.helpButton.y = this.game.camera.y + 16;
+   this.helpButton.x = this.game.camera.x + 16;
+   this.helpButton.y = this.game.camera.y + 16;
 	shopPanel.x = this.game.camera.x + this.game.camera.width + 16 - diff;
 	shopPanel.y = this.game.camera.y + 16;
 	shieldButton.x = this.game.camera.x + this.game.camera.width + 16 - diff;
