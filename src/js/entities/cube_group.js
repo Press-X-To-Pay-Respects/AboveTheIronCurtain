@@ -5,8 +5,9 @@ var EnemyAI = require('./enemy_ai');
 Defines a cube group.
 */
 
-var CubeGroup = function (game, root) {
-   this.game = game;
+var CubeGroup = function (state, root) {
+   this.state = state;
+   this.game = this.state.game;
    this.root = root;
    this.cubes = [];
    var col = [];
@@ -18,8 +19,6 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
 	this.activeHackerModules = [];	//list of hacker modules in this group
-	// this.activeGuns = [];
-
    this.numCubes = 1;
    this.bounceBackForce = 30;
    this.minRamVel = 300;
@@ -247,7 +246,7 @@ CubeGroup.prototype.angleToDir = function(angle) {
   }
 };
 
-CubeGroup.prototype.createConstraints = function(me, point) {
+CubeGroup.prototype.createConstraints = function(me) {
    var neighbors = this.getNeighbors(me);
    for (var i = 0; i < neighbors.length; i++) {
       var neighbor = neighbors[i];
@@ -646,7 +645,7 @@ CubeGroup.prototype.destroyCube = function(cube) {
   // destroy cube
   if(cube.key === 'core' && cube.tag === 'module') {
 	cube.kill();
-	this.game.restartLevel();
+	this.state.levelSetup.restartLevel();
   }
   cube.destroy(true);
 };

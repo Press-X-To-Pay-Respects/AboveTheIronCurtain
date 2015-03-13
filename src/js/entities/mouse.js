@@ -13,7 +13,7 @@ var Mouse = function(game, input, playerGroup) {
    this.grabbed = undefined;
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
-   this.removeThreshold = 100; // time distance you must pull to remove module
+   this.removeThreshold = 50; // distance you must pull to remove module
    this.removeDist = 0; // distance you are pulling
    this.playerGroup = playerGroup;
    // keys
