@@ -95,8 +95,60 @@ CubeGroup.prototype.add = function(cube, point) {
   }
   cube.group = this;
   this.set(cube, point);
-  this.createConstraints(cube, point);
+  this.createConstraintsSpecial(cube, point);
 };
+
+/*
+CubeGroup.prototype.createFromBlueprint = function (blueprint, x, y) {
+  var rootPoint;
+  for (var row = 0; row < blueprint.length; row++) {
+      for (var col = 0; col < blueprint[row].length; col++) {
+         if (blueprint[row][col] === 'core') {
+            rootPoint = new Phaser.Point(row, col);
+            var newModule = this.state.moduleBuilder.build(blueprint[rootPoint.x][rootPoint.y], x + rootPoint.x * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer),
+            y - rootPoint.y * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer), false);
+            newModule.cube.tag = 'enemy_module';
+            newModule.cube.group = this;
+            this.set(newModule.cube, rootPoint);
+            break;
+         }
+      }
+      if (rootPoint) {
+         break;
+      }
+  }  
+  var created = [];
+  var tempPoint = rootPoint;
+  for (; tempPoint.y < blueprint[0].length; tempPoint.y++) {
+     if (blueprint[tempPoint.x][tempPoint.y] !== 'none') {
+         var newModule = this.state.moduleBuilder.build(blueprint[tempPoint.x][tempPoint.y], x + tempPoint.x * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer),
+         y - tempPoint.y * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer), false);
+         newModule.cube.tag = 'enemy_module';
+         newModule.cube.group = this;
+         this.set(newModule.cube, tempPoint);
+         this.createConstraints(newModule.cube, tempPoint);
+         created.push(tempPoint);
+     }
+  }
+  this.recursiveAdd(blueprint, rootPoint, created, -1);
+};
+
+CubeGroup.prototype.recursiveAdd = function(blueprint, point, created, dir) {
+  var flag = false;
+  for (var i = 0; i < created.length; i++) {
+      if (created[i] === point) {
+         flag = true;
+         continue;
+      }
+  }
+  if (!flag && blueprint[point.x][point.y] === 'none') {
+     flag = true;
+  }
+  if (!flag) {
+     
+  }
+};
+*/
 
 CubeGroup.prototype.handleAttatch = function(origin, other) {
    if (this.debugHandleAttatch) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
@@ -326,11 +378,66 @@ CubeGroup.prototype.createConstraints = function(me, myPoint, relativeNorth) {
    for (var i = 0; i < neighbours.length; i++) {
       var neighbour = neighbours[i];
       var neighbourPoint = this.find(neighbour);
-      // var dirToNeighbourRelative = this.dirToNeighbourRelative(myPoint, neighbourPoint); // direction to neighbour relative to root
       var neighbourRelativeNorth = this.relativeNorth(neighbour);
       var mySide = this.decideSideRelative(myPoint, neighbourPoint, relativeNorth);
       var neighbourSide = this.decideSideRelative(neighbourPoint, myPoint, neighbourRelativeNorth);
       if (this.debugCreateConstraints) { console.log('createConstraints():', 'mySide:', mySide, 'neighbourSide:', neighbourSide); }
+      var constraint;
+      var offset = me.width + this.offset;
+      if (mySide === 0) {
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 0);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 3 / 2 * Math.PI);
+        }
+     } else if (mySide === 1) {
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], -1 / 2 * Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], 0);
+        }
+     } else if (mySide === 2) {
+         if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 0);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 3 / 2 * Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 1 / 2 * Math.PI);
+        }
+     } else if (mySide === 3) {
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], 0);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], -1 / 2 * Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], Math.PI);
+        }
+     }
+     me.constraints.push(constraint);
+     neighbour.constraints.push(constraint);
+   }
+};
+
+CubeGroup.prototype.createConstraintsSpecial = function(me, myPoint, relativeNorth) {
+   var neighbours = this.getNeighbours(me);
+   for (var i = 0; i < neighbours.length; i++) {
+      var neighbour = neighbours[i];
+      var neighbourPoint = this.find(neighbour);
+      var mySide = this.relativeSide(me.body, neighbour.body);
+      var neighbourSide = this.relativeSide(neighbour.body, me.body);
+      if (this.debugCreateConstraints) { console.log('createConstraintsSpecial():', 'mySide:', mySide, 'neighbourSide:', neighbourSide); }
       var constraint;
       var offset = me.width + this.offset;
       if (mySide === 0) {

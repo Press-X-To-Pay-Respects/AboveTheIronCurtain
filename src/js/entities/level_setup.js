@@ -17,7 +17,7 @@ var LevelSetup = function(state, level) {
    this.game = this.state.game;
    this.level = level;
    // simplify
-   this.simplify = true;
+   this.simplify = false;
    // setup
    this.game.world.setBounds(0, 0, 8000, 4000);
    this.bg = this.game.add.sprite(0, 0, 'earthNight');
