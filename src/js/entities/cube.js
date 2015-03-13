@@ -102,23 +102,24 @@ Cube.prototype.loseConnection = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   // floating cube, bad collision, collision with non-sprite, collision with non-cube
-   if (!this.group || !other || !other.sprite || other.prototype !== this.prototype) {
+   // bad collision, collision with non-sprite, collision with non-cube
+   if (!other || !other.sprite || other.prototype !== this.prototype) {
       return;
    }
-   if (other.group && this.group === other.group) {// if cubes in same group
-      return;
-   }
-   if (this.group.isPlayer) { // player
-      if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
-         this.group.handleRamming(this, other.sprite);
-      } else if (other.sprite.tag === 'module') { // collision with floating, attatching
-         this.group.handleAttatch(this, other.sprite);
+   if (!this.group && other.sprite.group && other.sprite.group.isPlayer) { // floating hitting player
+      other.sprite.group.handleAttatch(other.sprite, this);
+   } else if (other.group && this.group === other.group) {// if cubes in same group
+      // magic conch, what should we do here?
+   } else if (this.group) {
+      if (this.group.isPlayer) { // player
+         if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
+            this.group.handleRamming(this, other.sprite);
+         }
+      } else {// enemy
+         this.group.handleRamming(this, other.sprite); // enemies only ram on collision
       }
-   } else {// enemy
-      this.group.handleRamming(this, other.sprite); // enemies only ram on collision
+      this.group.countCubes();
    }
-   this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {

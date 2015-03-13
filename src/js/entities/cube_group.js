@@ -25,6 +25,8 @@ var CubeGroup = function (state, root) {
    this.bounceBackForce = 30;
    this.minRamVel = 300;
    this.debug = false;
+   this.debugHandleAttatch = false;
+   this.debugCreateConstraints = false;
 };
 
 CubeGroup.prototype.constructor = CubeGroup;
@@ -97,24 +99,29 @@ CubeGroup.prototype.add = function(cube, point) {
 };
 
 CubeGroup.prototype.handleAttatch = function(origin, other) {
-   if (this.debug) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
-   if (this.debug) { this.displayCubes(); }
+   if (this.debugHandleAttatch) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
+   if (this.debugHandleAttatch) { this.displayCubes(); }
+   if (this.get(other)) {
+      console.log('handleAttatch() was given a member');
+      return;
+   }
    var relSide = this.relativeSide(origin.body, other.body);
    var originLoc = this.find(origin);
    var otherLoc = this.calcPos(origin, relSide);
    this.moduleConnect.play();
-   if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
+   if (this.debugHandleAttatch) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
    this.set(other, otherLoc);
    otherLoc = this.find(other); // update position since set can shift grid
    if (!otherLoc) {
-      if (this.debug) {
+      if (this.debugHandleAttatch) {
          console.log('handleCollision(): otherLoc DNE', '---------------------');
          this.displayCubes();
       }
       return;
    }
-   if (this.debug) console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
-   this.createConstraints(other, otherLoc);
+   var relativeNorth = this.relativeNorth(other); // other's north points this dir relative to the root
+   if (this.debugHandleAttatch) { console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y), 'relativeNorth:', relativeNorth); }
+   this.createConstraints(other, otherLoc, relativeNorth);
    if (other.module.type === 'solarPanel') {
       this.createConnectionFrom(other);
    } else if (other.module.powerable) {
@@ -123,8 +130,14 @@ CubeGroup.prototype.handleAttatch = function(origin, other) {
          spareSolarPanel.giveTarget(other.module);
       }
    }
-   if (this.debug) { this.displayCubes(); }
-   if (this.debug) { console.log('handleCollision() end:', '------------------------------'); }
+   if (this.debugHandleAttatch) { this.displayCubes(); }
+   if (this.debugHandleAttatch) { console.log('handleCollision() end:', '------------------------------'); }
+};
+
+CubeGroup.prototype.relativeNorth = function(cube) {
+   var diffAngle = cube.body.rotation - this.root.body.rotation;
+   var relative = this.angleToDir(diffAngle);
+   return relative;
 };
 
 CubeGroup.prototype.createConnectionFrom = function(panel) {
@@ -169,6 +182,9 @@ CubeGroup.prototype.calcPos = function(origin, relSide) {
    var diffAngle = origin.body.rotation - this.root.body.rotation;
    var relative = this.angleToDir(diffAngle);
    var output = this.find(origin);
+   if (!output) {
+      return;
+   }
    if (relative === 0) { // north relative to the root
       if (relSide === 0) {
          output.y++;
@@ -249,57 +265,117 @@ CubeGroup.prototype.angleToDir = function(angle) {
   }
 };
 
-CubeGroup.prototype.createConstraints = function(me) {
-   var neighbors = this.getNeighbors(me);
-   for (var i = 0; i < neighbors.length; i++) {
-      var neighbor = neighbors[i];
-      var mySide = this.relativeSide(me.body, neighbor.body);
-      var neighborSide = this.relativeSide(neighbor.body, me.body);
+CubeGroup.prototype.dirToNeighbourRelative = function(pointA, pointB) {
+  if (pointA.x > pointB.x) { // neighbour is to the left
+      return this.DIR.WEST;
+  } else if (pointA.x < pointB.x) { // neighbour is to the right
+      return this.DIR.EAST;
+  } else if (pointA.y > pointB.y) { // neighbour is to below
+     return this.DIR.SOUTH;
+  } else { // neighbour is above
+     return this.DIR.NORTH;
+  }
+};
+
+CubeGroup.prototype.decideSideRelative = function(pointA, pointB, relativeNorth) {
+  if (pointA.x > pointB.x) { // neighbour is to the left
+   if (relativeNorth === this.DIR.NORTH) {
+      return this.DIR.WEST;
+   } else if (relativeNorth === this.DIR.EAST) {
+      return this.DIR.SOUTH;
+   } else if (relativeNorth === this.DIR.SOUTH) {
+      return this.DIR.EAST;
+   } else if (relativeNorth === this.DIR.WEST) {
+      return this.DIR.NORTH;
+   }
+  } else if (pointA.x < pointB.x) { // neighbour is to the right
+      if (relativeNorth === this.DIR.NORTH) {
+         return this.DIR.EAST;
+      } else if (relativeNorth === this.DIR.EAST) {
+         return this.DIR.NORTH;
+      } else if (relativeNorth === this.DIR.SOUTH) {
+         return this.DIR.WEST;
+      } else if (relativeNorth === this.DIR.WEST) {
+         return this.DIR.SOUTH;
+      }
+  } else if (pointA.y > pointB.y) { // neighbour is to below
+     if (relativeNorth === this.DIR.NORTH) {
+         return this.DIR.SOUTH;
+      } else if (relativeNorth === this.DIR.EAST) {
+         return this.DIR.EAST;
+      } else if (relativeNorth === this.DIR.SOUTH) {
+         return this.DIR.NORTH;
+      } else if (relativeNorth === this.DIR.WEST) {
+         return this.DIR.WEST;
+      }
+  } else { // neighbour is above
+     if (relativeNorth === this.DIR.NORTH) {
+         return this.DIR.NORTH;
+      } else if (relativeNorth === this.DIR.EAST) {
+         return this.DIR.WEST;
+      } else if (relativeNorth === this.DIR.SOUTH) {
+         return this.DIR.SOUTH;
+      } else if (relativeNorth === this.DIR.WEST) {
+         return this.DIR.EAST;
+      }
+  }
+};
+
+CubeGroup.prototype.createConstraints = function(me, myPoint, relativeNorth) {
+   var neighbours = this.getNeighbours(me);
+   for (var i = 0; i < neighbours.length; i++) {
+      var neighbour = neighbours[i];
+      var neighbourPoint = this.find(neighbour);
+      // var dirToNeighbourRelative = this.dirToNeighbourRelative(myPoint, neighbourPoint); // direction to neighbour relative to root
+      var neighbourRelativeNorth = this.relativeNorth(neighbour);
+      var mySide = this.decideSideRelative(myPoint, neighbourPoint, relativeNorth);
+      var neighbourSide = this.decideSideRelative(neighbourPoint, myPoint, neighbourRelativeNorth);
+      if (this.debugCreateConstraints) { console.log('createConstraints():', 'mySide:', mySide, 'neighbourSide:', neighbourSide); }
       var constraint;
       var offset = me.width + this.offset;
       if (mySide === 0) {
-        if (neighborSide === 0) {
-           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], Math.PI);
-        } else if (neighborSide === 1) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 1 / 2 * Math.PI);
-        } else if (neighborSide === 2) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 0);
-        } else if (neighborSide === 3) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, offset], 3 / 2 * Math.PI);
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 0);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, offset], 3 / 2 * Math.PI);
         }
      } else if (mySide === 1) {
-        if (neighborSide === 0) {
-           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], -1 / 2 * Math.PI);
-        } else if (neighborSide === 1) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], Math.PI);
-        } else if (neighborSide === 2) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], 1 / 2 * Math.PI);
-        } else if (neighborSide === 3) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [-offset, 0], 0);
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], -1 / 2 * Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [-offset, 0], 0);
         }
      } else if (mySide === 2) {
-         if (neighborSide === 0) {
-           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 0);
-        } else if (neighborSide === 1) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 3 / 2 * Math.PI);
-        } else if (neighborSide === 2) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], Math.PI);
-        } else if (neighborSide === 3) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [0, -offset], 1 / 2 * Math.PI);
+         if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 0);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 3 / 2 * Math.PI);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [0, -offset], 1 / 2 * Math.PI);
         }
      } else if (mySide === 3) {
-        if (neighborSide === 0) {
-           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], 1 / 2 * Math.PI);
-        } else if (neighborSide === 1) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], 0);
-        } else if (neighborSide === 2) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], -1 / 2 * Math.PI);
-        } else if (neighborSide === 3) {
-            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbor.body, [offset, 0], Math.PI);
+        if (neighbourSide === 0) {
+           constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], 1 / 2 * Math.PI);
+        } else if (neighbourSide === 1) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], 0);
+        } else if (neighbourSide === 2) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], -1 / 2 * Math.PI);
+        } else if (neighbourSide === 3) {
+            constraint = this.game.physics.p2.createLockConstraint(me.body, neighbour.body, [offset, 0], Math.PI);
         }
      }
      me.constraints.push(constraint);
-     neighbor.constraints.push(constraint);
+     neighbour.constraints.push(constraint);
    }
 };
 
@@ -700,45 +776,45 @@ CubeGroup.prototype.remove = function(cube) {
    if (this.debug) { this.displayCubes(); }
 };
 
-CubeGroup.prototype.removeNeighborsConstraint = function(constraint, cube) {
-   // console.log('removeNeighborsConstraint');
-   var neighbors = this.getNeighbors(cube);
-   for (var i = 0; i < neighbors.length; i++) {
-      var neighbor = neighbors[i];
-      for (var j = 0; j < neighbor.constraints.length; j++) {
-         if (neighbor.constraints[j] === constraint) {
-            neighbor.constraints.splice(j, 1);
+CubeGroup.prototype.removeneighboursConstraint = function(constraint, cube) {
+   // console.log('removeneighboursConstraint');
+   var neighbours = this.getNeighbours(cube);
+   for (var i = 0; i < neighbours.length; i++) {
+      var neighbour = neighbours[i];
+      for (var j = 0; j < neighbour.constraints.length; j++) {
+         if (neighbour.constraints[j] === constraint) {
+            neighbour.constraints.splice(j, 1);
          }
       }
    }
 };
 
-CubeGroup.prototype.getNeighbors = function(cube) {
+CubeGroup.prototype.getNeighbours = function(cube) {
    var loc = this.find(cube);
    var north = this.get(this.adjust(loc, this.DIR.NORTH));
    var east = this.get(this.adjust(loc, this.DIR.EAST));
    var south = this.get(this.adjust(loc, this.DIR.SOUTH));
    var west = this.get(this.adjust(loc, this.DIR.WEST));
-   var neighbors = [];
+   var neighbours = [];
    if (north) {
-      neighbors.push(north);
+      neighbours.push(north);
    }
    if (east) {
-      neighbors.push(east);
+      neighbours.push(east);
    }
    if (south) {
-      neighbors.push(south);
+      neighbours.push(south);
    }
    if (west) {
-      neighbors.push(west);
+      neighbours.push(west);
    }
-   return neighbors;
+   return neighbours;
 };
 
 CubeGroup.prototype.removeConstraints = function(cube) {
    // console.log('removeConstraints');
    while (cube.constraints.length > 0) {
-      this.removeNeighborsConstraint(cube.constraints[0], cube);
+      this.removeneighboursConstraint(cube.constraints[0], cube);
       this.game.physics.p2.removeConstraint(cube.constraints[0]);
       cube.constraints.splice(0, 1);
    }

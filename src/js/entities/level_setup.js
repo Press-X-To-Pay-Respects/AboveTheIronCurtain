@@ -40,7 +40,7 @@ var LevelSetup = function(state, level) {
    this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
    this.levelData = JSON.parse(this.game.cache.getText(this.level));
-   this.loadLevel();
+   if (!this.simplify) { this.loadLevel(); }
    this.game.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this.state));
    this.game.camera.follow(this.state.coreModule.cube);
    this.mainSong = this.game.add.audio('mainSong', 1, true);
