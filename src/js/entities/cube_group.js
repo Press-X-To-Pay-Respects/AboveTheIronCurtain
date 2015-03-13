@@ -19,13 +19,8 @@ var CubeGroup = function (state, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
 	this.activeHackerModules = [];	//list of hacker modules in this group
-<<<<<<< HEAD
-=======
-	//this.activeGuns = [];
 	this.moduleConnect = this.game.add.audio('moduleConnect');
 	this.moduleConnect.allowMultiple = true;
-
->>>>>>> origin/gh-pages
    this.numCubes = 1;
    this.bounceBackForce = 30;
    this.minRamVel = 300;
