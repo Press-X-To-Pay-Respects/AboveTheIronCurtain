@@ -13,8 +13,9 @@ var Emitter = require('../effects/Emitter');
 // var mouseBody; // physics body for mouse
 var Mouse = require('../entities/mouse');
 var Bullet = require('../entities/Bullet');
-var Shop = require('../ui/shop');
 var SoundManager = require('../entities/sound_manager');
+var Shop = require('../ui/shop');
+var Helper = require('../entities/helper');
 
 var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
@@ -203,6 +204,9 @@ Game.prototype = {
    
    this.soundManager = new SoundManager(this);
    this.shop = new Shop(this);
+   this.updateDependents.push(this.shop);
+   this.helper = new Helper(this);
+   this.updateDependents.push(this.helper);
   },
   
   restartLevel: function() {
@@ -426,7 +430,6 @@ Game.prototype = {
 	// this.moneyText.y = this.shopButton.y + 48;
 	// this.be.x = this.moneyText.x + this.moneyText.width + 8;
 	// this.be.y = this.moneyText.y;
-   this.shop.update();
   },
   
   render: function () {
