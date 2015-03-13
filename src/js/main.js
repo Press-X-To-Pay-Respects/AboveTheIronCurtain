@@ -16,6 +16,8 @@ game.state.add('Boot', require('./states/boot'));
 game.state.add('Splash', require('./states/splash'));
 game.state.add('Preloader', require('./states/preloader'));
 game.state.add('Menu', require('./states/menu'));
-game.state.add('Game', require('./states/game'));
+game.state.add('levelOne', require('./states/levelOne'));
+game.state.add('levelTwo', require('./states/levelTwo'));
+game.state.add('levelThree', require('./states/levelThree'));
 
 game.state.start('Boot');

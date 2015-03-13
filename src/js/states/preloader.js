@@ -51,8 +51,11 @@ Preloader.prototype = {
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
 	this.load.physics('module_physics', 'assets/json/module_physics.json');
 	this.load.physics('asteroidPolygon', 'assets/json/asteroidPolygon.json');
-	this.load.text('level_one', 'assets/json/level_one.json');
 	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
+	//Load Level JSON Files
+	this.load.text('level_one', 'assets/json/level_one.json');
+	this.load.text('level_two', 'assets/json/level_two.json');
+	this.load.text('level_three', 'assets/json/level_three.json');
 	
 	//Load Sound Effects
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
@@ -70,10 +73,15 @@ Preloader.prototype = {
 	// this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
-	//menu buttons
+	
+	//Menu Images & Sheets
 	this.load.spritesheet('startGameButton', 'assets/images/startGameButtonSheet.png', 256, 82);
 	this.load.spritesheet('missionSelectButton', 'assets/images/missionSelectButtonSheet.png', 256, 82);
 	this.load.spritesheet('creditsButton', 'assets/images/creditsButtonSheet.png', 256, 82);
+	this.load.spritesheet('level1Button', 'assets/images/level1ButtonSheet.png', 256, 82);
+	this.load.spritesheet('level2Button', 'assets/images/level2ButtonSheet.png', 256, 82);
+	this.load.spritesheet('level3Button', 'assets/images/level3ButtonSheet.png', 256, 82);
+	this.load.spritesheet('backButton', 'assets/images/backButtonSheet.png', 256, 82);
 	this.load.image('title', 'assets/images/title.png');
 
 	

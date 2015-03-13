@@ -16,24 +16,44 @@ Menu.prototype = {
   
   create: function () {
 	this.diff = 768;
+	this.butDiff = 0;
 	this.creditsSpeed = 16;
+	this.butSpeed = 32;
 	this.creditsOpening = false;
 	this.creditsClosing = false;
+	this.buttonsLeaving = false;
+	this.buttonsComing = false;
+	this.mainButtonsUp = true;
+	
 	this.bg = this.game.add.sprite(-4500, -500, 'earthNight');
 	this.bg2 = this.game.add.sprite(-12500, -500, 'earthNight');
     
+	//Main Screen
     this.title = this.add.image(this.world.centerX, this.world.centerY + 32, 'title');
     this.title.anchor.setTo(0.5, 0.5);
     
     this.startButton = this.addButton(0, 'startGameButton', this.changeToGame, this);
 	this.formatButton(this.startButton);
   	
-  	this.missionSelectButton = this.addButton(1, 'missionSelectButton', this.changeToMenu, this);
+  	this.missionSelectButton = this.addButton(1, 'missionSelectButton', this.switchButtons, this);
 	this.formatButton(this.missionSelectButton);
   	
   	this.creditsButton = this.addButton(2, 'creditsButton', this.doCredits, {game: this, button: 'creditsButton'});
 	this.formatButton(this.creditsButton);
 	
+	//Level Select
+	this.level1Button = this.addButton(-1, 'level1Button', this.changeToLevel1, this);
+	this.formatButton(this.level1Button);
+  	
+	this.level2Button = this.addButton(0, 'level2Button', this.changeToLevel2, this);
+	this.formatButton(this.level2Button);
+	
+	this.level3Button = this.addButton(1, 'level3Button', this.changeToLevel3, this);
+	this.formatButton(this.level3Button);
+	
+	this.backButton = this.addButton(2, 'backButton', this.switchButtons, this);
+	this.formatButton(this.backButton);
+
 	this.credits = this.add.image(this.world.centerX - 360, this.world.centerY - 256 + this.diff, 'credits');
 	this.credits.kill();
 	this.creditsCloseButton = this.addButton(10, 'closeButton', this.doCredits, {game: this, button: 'closeCreditsButton'});
@@ -51,15 +71,33 @@ Menu.prototype = {
   draw: function(){
   },
   
-  changeToGame: function(){
+  changeToLevel1: function(){
 	if(!this.credits.alive) {
 		this.menuSong.destroy();
 		var params = ['mainSong', 0, 0.75];
 		this.playDownClick();
-		this.game.state.start('Game', true, false, params);
+		this.game.state.start('levelOne', true, false, params);
 	}
-  },  
+  },
   
+  changeToLevel2: function(){
+	if(!this.credits.alive) {
+		this.menuSong.destroy();
+		var params = ['mainSong', 0, 0.75];
+		this.playDownClick();
+		this.game.state.start('levelTwo', true, false, params);
+	}
+  }, 
+  
+  changeToLevel3: function(){
+	if(!this.credits.alive) {
+		this.menuSong.destroy();
+		var params = ['mainSong', 0, 0.75];
+		this.playDownClick();
+		this.game.state.start('levelThree', true, false, params);
+	}
+  }, 
+/* 
   changeToMenu: function(){
 	if(!this.credits.alive) {
 		this.menuSong.destroy();
@@ -67,7 +105,7 @@ Menu.prototype = {
 		this.game.state.start('Menu');
 	}
   },
-  
+*/ 
   doCredits: function() {
 	this.game.playDownClick();
 	if(!this.game.credits.alive && !this.game.creditsOpening && !this.game.creditsClosing && this.button === 'creditsButton') {
@@ -97,6 +135,17 @@ Menu.prototype = {
 		this.startButton.revive();
 		this.missionSelectButton.revive();
 		this.creditsButton.revive();
+	}
+  },
+  
+  switchButtons: function() {
+	this.playDownClick();
+	if(!this.buttonsLeaving && this.mainButtonsUp === true) {
+		this.butDiff = 0;
+		this.buttonsLeaving = true;
+	}
+	else if(!this.buttonsComing && this.mainButtonsUp === false) {
+		this.buttonsComing = true;
 	}
   },
   
@@ -140,6 +189,29 @@ Menu.prototype = {
 		this.credits.y = this.world.centerY - 256 + this.diff;
 		this.creditsCloseButton.x = this.credits.x + this.credits.width - 32;
 		this.creditsCloseButton.y = this.credits.y;
+		
+		if(this.buttonsLeaving === true) {
+			this.butDiff -= this.butSpeed;
+			if(this.butDiff <= -768) {
+				this.buttonsLeaving = false;
+				this.mainButtonsUp = false;
+			}
+		}
+		else if(this.buttonsComing === true) {
+			this.butDiff += this.butSpeed;
+			if(this.butDiff >= 0) {
+				this.buttonsComing = false;
+				this.mainButtonsUp = true;
+			}
+		}
+		this.startButton.x = this.world.centerX + this.butDiff;
+		this.missionSelectButton.x = this.world.centerX + this.butDiff;
+		this.creditsButton.x = this.world.centerX + this.butDiff;
+		this.level1Button.x = this.startButton.x + 768;
+		this.level2Button.x = this.startButton.x + 768;
+		this.level3Button.x = this.startButton.x + 768;
+		this.backButton.x = this.startButton.x + 768;
+		
 	},
 	
 	playHoverClick: function() {
