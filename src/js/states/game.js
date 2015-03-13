@@ -15,16 +15,13 @@ var Shop = require('../ui/shop');
 var Helper = require('../entities/helper');
 var Cheating = require('../entities/cheating');
 var Asteroids = require('../entities/asteroids');
+var Warning = require('../entities/warning');
 
 var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
-// var numRoids;
-// var maxRoids = 100;
-// var newModuleSpeed = 1000;
-// var asteroids, asteroidList;
 var leftKey, rightKey;
-var warning;
-var timer;
+// var warning;
+// var timer;
 
 var Game = function () { };
 
@@ -34,8 +31,7 @@ Game.prototype = {
 	
   create: function () {
 	this.game.world.setBounds(0, 0, 8000, 4000);
-	
-	numRoids = 0;
+   
 	//Create the two background images
    bg = this.game.add.sprite(0, 0, 'earthNight');
 	bg2 = this.game.add.sprite(-8000, 0, 'earthNight');
@@ -47,8 +43,6 @@ Game.prototype = {
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
    this.simplify = false; // prevents things that get in the way of debugging
-	
-	this.mouse = new Mouse(this.game, this.input);
    
 	this.updateDependents = [];
 
@@ -60,8 +54,6 @@ Game.prototype = {
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', playerStartX, playerStartY, true);
-	// this.game.camera.x = playerStartX;
-	// this.game.camera.y = playerStartY;
 	this.cubeWidth = this.coreModule.cube.width;
 	this.cubeBuffer = 2;
 	this.testVar = 7;
@@ -76,18 +68,9 @@ Game.prototype = {
 	//Create the emitter for the binary particle effects
 	this.BinaryEmitter = new Emitter(this);
 	
-	//test hackable object
-	// this.testHack = new Hackable(this, 1600, 1200, 'hackable1', 400);
-	
-	// asteroids = this.game.add.group();
-	// asteroids.enableBody = true;
-	// asteroids.physicsBodyType = Phaser.Physics.P2JS;
-	// asteroidList = new Phaser.ArraySet();
-	// if (!this.simplify) { this.generateAsteroids(); }
-	
-	timer = this.game.time.create(false);
-	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
-	warning.kill();
+	// timer = this.game.time.create(false);
+	// warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
+	// warning.kill();
 	
 	leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -104,6 +87,8 @@ Game.prototype = {
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
 	if (!this.simplify) { this.mainSong.play('',0,1,true,true); }
    
+   this.mouse = new Mouse(this.game, this.input);
+   this.updateDependents.push(this.mouse);
    this.soundManager = new SoundManager(this);
    this.shop = new Shop(this);
    this.updateDependents.push(this.shop);
@@ -112,6 +97,8 @@ Game.prototype = {
    this.cheating = new Cheating(this);
    this.asteroids = new Asteroids(this, this.simplify);
    this.updateDependents.push(this.asteroids);
+   this.warning = new Warning(this);
+   this.updateDependents.push(this.warning);
   },
   
   restartLevel: function() {
@@ -169,7 +156,6 @@ Game.prototype = {
 			this.coreModule.cube.body.angularForce += 7.5 * Math.pow(this.player.numCubes, 1.65);
 		}
 	}
-	this.mouse.update();
 	this.scrollBG();
  
 	for (var i = 0; i < this.updateDependents.length; i++) {
@@ -177,27 +163,27 @@ Game.prototype = {
 			this.updateDependents[i].update();
 		}
 	}
-	//Warning Code
-	if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
-	this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
-	this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
-	this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
-		if(timer.length === 0) {
-			warning.revive();
-			timer.loop(Phaser.Timer.SECOND * 5, this.resetPlayer, this);
-			timer.start();
-		}
-	}
-	else {
-		if(warning.alive === true) {
-			warning.kill();
-		}
-		if(timer.length > 0) {
-			timer.stop(true);
-		}
-	}
-	warning.x = this.game.camera.x;
-	warning.y = this.game.camera.y;
+	// //Warning Code
+	// if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000 ||
+	// this.coreModule.cube.x - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0 ||
+	// this.coreModule.cube.y + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 4000 ||
+	// this.coreModule.cube.y - (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) < 0) {
+		// if(timer.length === 0) {
+			// warning.revive();
+			// timer.loop(Phaser.Timer.SECOND * 5, this.resetPlayer, this);
+			// timer.start();
+		// }
+	// }
+	// else {
+		// if(warning.alive === true) {
+			// warning.kill();
+		// }
+		// if(timer.length > 0) {
+			// timer.stop(true);
+		// }
+	// }
+	// warning.x = this.game.camera.x;
+	// warning.y = this.game.camera.y;
   },
   
   render: function () {
@@ -215,51 +201,6 @@ Game.prototype = {
 			bg2.x = 0;
 		}
 	},
-	
-	// generateAsteroids: function() {
-		// for(;numRoids < maxRoids; numRoids++) {
-			// var randX = this.game.rnd.integerInRange(0, this.game.world.width);
-			// var randY = this.game.rnd.integerInRange(0, this.game.world.height);
-			
-			// while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
-			// randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
-				// randX = this.game.rnd.integerInRange(0, this.game.world.width);
-				// randY = this.game.rnd.integerInRange(0, this.game.world.height);
-			// }
-			
-			// var asteroid = asteroids.create(randX, randY, 'asteroid');
-			
-			// asteroid.body.clearShapes(); 
-			// asteroid.body.loadPolygon('asteroidPolygon', 'asteroid'); //Change the collision detection from an AABB to a polygon
-			// asteroid.body.damping = this.game.rnd.realInRange(0, 0.3) * this.game.rnd.integerInRange(0, 1) * this.game.rnd.integerInRange(0, 1);
-			// asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
-			// asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
-			// asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-			// asteroid.body.setCollisionGroup(this.collisionGroup);
-			// asteroid.body.collides(this.collisionGroup);
-			// asteroid.body.collideWorldBounds = false;
-			// asteroid.autoCull = true;
-			// asteroid.checkWorldBounds = true;
-			// asteroid.events.onOutOfBounds.add(this.resetAsteroid, {roid: asteroid, coreModule: this.coreModule, player: this.player, game: this.game});
-			// asteroidList.add(asteroid);
-		// }
-	// },
-	
-	// resetAsteroid: function() {
-		// var randX = this.game.rnd.integerInRange(0, this.game.world.width);
-		// var randY = this.game.rnd.integerInRange(0, this.game.world.height);
-			
-		// while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
-			// randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
-				// randX = this.game.rnd.integerInRange(0, this.game.world.width);
-				// randY = this.game.rnd.integerInRange(0, this.game.world.height);
-		// }
-		// this.roid.x = randX;
-		// this.roid.y = randY;
-		// this.roid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
-		// this.roid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
-		// this.roid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-	// },
 	
 	resetPlayer: function() {
 		if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000) {
