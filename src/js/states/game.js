@@ -189,7 +189,7 @@ Game.prototype = {
 	this.be = this.game.add.image(this.moneyText.x + this.moneyText.width + 8, this.moneyText.y, 'be');
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
-	this.mainSong.play('',0,1,true,true);
+	//this.mainSong.play('',0,1,true,true);
   },
   
   restartLevel: function() {

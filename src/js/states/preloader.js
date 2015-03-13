@@ -55,6 +55,9 @@ Preloader.prototype = {
 	this.load.audio('downClick', 'assets/sound/downClick.ogg');
 	this.load.audio('hoverClick', 'assets/sound/hoverClick.ogg');
 	this.load.audio('error', 'assets/sound/error.ogg');
+	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
+	this.load.audio('gun', 'assets/sound/gun.ogg');
+	this.load.audio('hacking', 'assets/sound/hacking.ogg');
 	
 	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -66,7 +69,7 @@ Preloader.prototype = {
 	this.load.image('menu_manual', 'assets/images/atic_menu_manualT.png');
 	this.load.image('menu_credits', 'assets/images/atic_menu_creditsT.png');
 
-	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
+	
 	
 	//Load Music
 	this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
