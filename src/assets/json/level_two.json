@@ -1,0 +1,44 @@
+{
+    "level_two": {
+		"enemy_one": {
+         "x_pos": 300,
+         "y_pos": 1100,
+         "type": "ram",
+			"blueprint": [
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
+         ]
+        },
+       "enemy_two": {
+         "x_pos": 2300,
+         "y_pos": 1800,
+         "type": "shoot",
+			"blueprint": [
+         ["shield", "shield", "solarPanel", "gun"],
+         ["shield", "core", "shield", "shield"],
+         ["shield", "shield", "solarPanel", "gun"]
+         ]
+        },
+       "enemy_three": {
+         "x_pos": 300,
+         "y_pos": 1800,
+         "type": "ram",
+			"blueprint": [
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["shield", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"]
+         ]
+        },
+       "hackable_enemy": {
+         "x_pos": 1300,
+         "y_pos": 1800,
+         "type": "ram",
+			"blueprint": [
+         ["shield", "shield", "solarPanel", "shield", "none", "none", "none"],
+         ["shield", "core", "shield", "shield", "shield", "hackable", "shield"],
+         ["shield", "shield", "solarPanel", "shield", "none", "none", "none"]
+         ]
+        }
+    }
+}
