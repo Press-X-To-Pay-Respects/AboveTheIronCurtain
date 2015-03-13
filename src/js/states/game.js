@@ -16,6 +16,7 @@ var Bullet = require('../entities/Bullet');
 var SoundManager = require('../entities/sound_manager');
 var Shop = require('../ui/shop');
 var Helper = require('../entities/helper');
+var Cheating = require('../entities/cheating');
 
 var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
@@ -31,7 +32,7 @@ var diff;
 // var shieldButton, solarPanelButton, thrusterButton, gunButton, hackButton;
 
 var Game = function () {
-  this.testentity = null;
+  // this.testentity = null;
 };
 
 module.exports = Game;
@@ -42,8 +43,8 @@ Game.prototype = {
 	this.game.world.setBounds(0, 0, 8000, 4000);
 	
 	numRoids = 0;
-	diff = 0;
-	this.money = 500;
+	// diff = 0;
+	// this.money = 500;
 	
 	//Create the two background images
    bg = this.game.add.sprite(0, 0, 'earthNight');
@@ -116,33 +117,33 @@ Game.prototype = {
 	/*this.pauseKey = this.game.input.keyboard.addKey(27);
 	this.pauseKey.onDown.add(this.pauseMenu, this);*/
 	
-	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
-	//Module debug buttons are broken and obsolete with the purchasing menu
-	//core
-	this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
-	this.placeCoreKey.onDown.add(this.debugAddCore, this);
-	//shield
-	this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
-    this.placeShieldKey.onDown.add(this.debugAddShield, this);
-	//thruster
-	this.placeThrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
-    this.placeThrusterKey.onDown.add(this.debugAddThruster, this);
-	//solarPanel
-	this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
-    this.placeSPKey.onDown.add(this.debugAddSP, this);
-	//hacker
-	this.placeHackKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
-	this.placeHackKey.onDown.add(this.debugAddHack, this);
-	//gun
-	this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
-    this.placeGunKey.onDown.add(this.debugAddGun, this);
-	//hackable
-	this.placeHackableKey = this.game.input.keyboard.addKey(Phaser.Keyboard.L);
-   this.placeHackableKey.onDown.add(this.debugAddHackable, this);
+	// //DEBUGGING LISTENERS- allow you to create modules by pressing keys
+	// //Module debug buttons are broken and obsolete with the purchasing menu
+	// //core
+	// this.placeCoreKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+	// this.placeCoreKey.onDown.add(this.debugAddCore, this);
+	// //shield
+	// this.placeShieldKey = this.game.input.keyboard.addKey(Phaser.Keyboard.O);
+    // this.placeShieldKey.onDown.add(this.debugAddShield, this);
+	// //thruster
+	// this.placeThrusterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
+    // this.placeThrusterKey.onDown.add(this.debugAddThruster, this);
+	// //solarPanel
+	// this.placeSPKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
+    // this.placeSPKey.onDown.add(this.debugAddSP, this);
+	// //hacker
+	// this.placeHackKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Y);
+	// this.placeHackKey.onDown.add(this.debugAddHack, this);
+	// //gun
+	// this.placeGunKey = this.game.input.keyboard.addKey(Phaser.Keyboard.T);
+    // this.placeGunKey.onDown.add(this.debugAddGun, this);
+	// //hackable
+	// this.placeHackableKey = this.game.input.keyboard.addKey(Phaser.Keyboard.L);
+   // this.placeHackableKey.onDown.add(this.debugAddHackable, this);
 	
-	//reset game
-	this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
-    this.resetKey.onDown.add(this.restartLevel, this);
+	// //reset game
+	// this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
+    // this.resetKey.onDown.add(this.restartLevel, this);
     
 	// //add money
 	// this.addMoneyKey = this.game.input.keyboard.addKey(Phaser.Keyboard.K);
@@ -150,9 +151,9 @@ Game.prototype = {
    
 	//END
     
-    // Debug controller
-    this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
-    this.debugKey.onDown.add(this.debug, this);
+    // // Debug controller
+    // this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
+    // this.debugKey.onDown.add(this.debug, this);
 
     this.levelData = JSON.parse(this.game.cache.getText('level_one'));
     this.loadData();
@@ -207,6 +208,7 @@ Game.prototype = {
    this.updateDependents.push(this.shop);
    this.helper = new Helper(this);
    this.updateDependents.push(this.helper);
+   this.cheating = new Cheating(this);
   },
   
   restartLevel: function() {
@@ -508,30 +510,30 @@ Game.prototype = {
 		}
 	},
 	
-	//Functions that add cubes to the game
-	addCore: function (x, y) { 
-		var newModule = this.moduleBuilder.build('core', x, y, true);
-	},
-	addShield: function (x, y) {
-		var newModule = this.moduleBuilder.build('shield', x, y, true);
-		newModule.cube.body.moveLeft(newModuleSpeed);
-	},
-	addThruster: function (x, y) {
-		var newModule = this.moduleBuilder.build('thruster', x, y, true);
-		newModule.cube.body.moveLeft(newModuleSpeed);
-	},
-	addSP: function (x, y) {
-		var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
-		newModule.cube.body.moveLeft(newModuleSpeed);
-	},
-	addHack: function (x, y) {
-		var newModule = this.moduleBuilder.build('hacker', x, y, true);
-		newModule.cube.body.moveLeft(newModuleSpeed);
-	},
-	addGun: function (x, y) {
-		var newModule = this.moduleBuilder.build('gun', x, y, true);
-		newModule.cube.body.moveLeft(newModuleSpeed);
-	},
+	// //Functions that add cubes to the game
+	// addCore: function (x, y) { 
+		// var newModule = this.moduleBuilder.build('core', x, y, true);
+	// },
+	// addShield: function (x, y) {
+		// var newModule = this.moduleBuilder.build('shield', x, y, true);
+		// newModule.cube.body.moveLeft(newModuleSpeed);
+	// },
+	// addThruster: function (x, y) {
+		// var newModule = this.moduleBuilder.build('thruster', x, y, true);
+		// newModule.cube.body.moveLeft(newModuleSpeed);
+	// },
+	// addSP: function (x, y) {
+		// var newModule = this.moduleBuilder.build('solarPanel', x, y, true);
+		// newModule.cube.body.moveLeft(newModuleSpeed);
+	// },
+	// addHack: function (x, y) {
+		// var newModule = this.moduleBuilder.build('hacker', x, y, true);
+		// newModule.cube.body.moveLeft(newModuleSpeed);
+	// },
+	// addGun: function (x, y) {
+		// var newModule = this.moduleBuilder.build('gun', x, y, true);
+		// newModule.cube.body.moveLeft(newModuleSpeed);
+	// },
   
    // //DEBUG FUNCTIONS- event functions called from listeners that allow you to create modules with key presses
 	// addMoney: function() {
@@ -540,31 +542,31 @@ Game.prototype = {
 		// this.cashRegister.play();
 	// },
   
-  debug: function () {
+  // debug: function () {
      
-  },
+  // },
   
-  debugAddCore: function () { 
-	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddShield: function () {
-	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddThruster: function () {
-	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddSP: function () {
-	this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddHack: function () {
-	this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddGun: function () {
-	this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
-  },
-  debugAddHackable: function () {
-   this.moduleBuilder.build('hackable', this.mouse.x, this.mouse.y, true);
-  }
+  // debugAddCore: function () { 
+	// this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddShield: function () {
+	// this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddThruster: function () {
+	// this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddSP: function () {
+	// this.moduleBuilder.build('solarPanel', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddHack: function () {
+	// this.moduleBuilder.build('hacker', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddGun: function () {
+	// this.moduleBuilder.build('gun', this.mouse.x, this.mouse.y, true);
+  // },
+  // debugAddHackable: function () {
+   // this.moduleBuilder.build('hackable', this.mouse.x, this.mouse.y, true);
+  // }
 };
 
 
