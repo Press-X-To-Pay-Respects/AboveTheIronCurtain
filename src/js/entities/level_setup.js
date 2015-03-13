@@ -10,6 +10,7 @@ var Helper = require('../entities/helper');
 var Cheating = require('../entities/cheating');
 var Asteroids = require('../entities/asteroids');
 var Warning = require('../entities/warning');
+var MissionPrompt = require('../ui/MissionPrompt');
 
 var LevelSetup = function(state, level) {
 	// initialise
@@ -55,6 +56,7 @@ var LevelSetup = function(state, level) {
    this.updateDependents.push(this.asteroids);
    this.warning = new Warning(this.state);
    this.updateDependents.push(this.warning);
+   this.missionPrompt = new MissionPrompt(this.state);
 };
 
 LevelSetup.prototype.constructor = LevelSetup;

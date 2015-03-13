@@ -41,6 +41,7 @@ Preloader.prototype = {
 	this.load.image('be', 'assets/images/be.png');
 	this.load.image('selected', 'assets/images/selected.png');
 	this.load.image('pauseMenu', 'assets/images/pauseMenu.png');
+	this.load.image('missionPrompt', 'assets/images/missionPrompt.png');
     
 	//Load Fonts
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
