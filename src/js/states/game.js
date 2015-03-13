@@ -14,13 +14,14 @@ var SoundManager = require('../entities/sound_manager');
 var Shop = require('../ui/shop');
 var Helper = require('../entities/helper');
 var Cheating = require('../entities/cheating');
+var Asteroids = require('../entities/asteroids');
 
 var playerStartX = 1200, playerStartY = 1200;
 var bg, bg2;
-var numRoids;
-var maxRoids = 100;
-var newModuleSpeed = 1000;
-var asteroids, asteroidList;
+// var numRoids;
+// var maxRoids = 100;
+// var newModuleSpeed = 1000;
+// var asteroids, asteroidList;
 var leftKey, rightKey;
 var warning;
 var timer;
@@ -45,7 +46,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.simplify = true; // prevents things that get in the way of debugging
+   this.simplify = false; // prevents things that get in the way of debugging
 	
 	this.mouse = new Mouse(this.game, this.input);
    
@@ -59,8 +60,8 @@ Game.prototype = {
 	this.moduleBuilder = new ModuleBuilder(this);
 	//create and store the core module
 	this.coreModule = this.moduleBuilder.build('core', playerStartX, playerStartY, true);
-	this.game.camera.x = playerStartX;
-	this.game.camera.y = playerStartY;
+	// this.game.camera.x = playerStartX;
+	// this.game.camera.y = playerStartY;
 	this.cubeWidth = this.coreModule.cube.width;
 	this.cubeBuffer = 2;
 	this.testVar = 7;
@@ -78,11 +79,11 @@ Game.prototype = {
 	//test hackable object
 	// this.testHack = new Hackable(this, 1600, 1200, 'hackable1', 400);
 	
-	asteroids = this.game.add.group();
-	asteroids.enableBody = true;
-	asteroids.physicsBodyType = Phaser.Physics.P2JS;
-	asteroidList = new Phaser.ArraySet();
-	if (!this.simplify) { this.generateAsteroids(); }
+	// asteroids = this.game.add.group();
+	// asteroids.enableBody = true;
+	// asteroids.physicsBodyType = Phaser.Physics.P2JS;
+	// asteroidList = new Phaser.ArraySet();
+	// if (!this.simplify) { this.generateAsteroids(); }
 	
 	timer = this.game.time.create(false);
 	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
@@ -109,6 +110,8 @@ Game.prototype = {
    this.helper = new Helper(this);
    this.updateDependents.push(this.helper);
    this.cheating = new Cheating(this);
+   this.asteroids = new Asteroids(this, this.simplify);
+   this.updateDependents.push(this.asteroids);
   },
   
   restartLevel: function() {
@@ -213,50 +216,50 @@ Game.prototype = {
 		}
 	},
 	
-	generateAsteroids: function() {
-		for(;numRoids < maxRoids; numRoids++) {
-			var randX = this.game.rnd.integerInRange(0, this.game.world.width);
-			var randY = this.game.rnd.integerInRange(0, this.game.world.height);
+	// generateAsteroids: function() {
+		// for(;numRoids < maxRoids; numRoids++) {
+			// var randX = this.game.rnd.integerInRange(0, this.game.world.width);
+			// var randY = this.game.rnd.integerInRange(0, this.game.world.height);
 			
-			while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
-			randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
-				randX = this.game.rnd.integerInRange(0, this.game.world.width);
-				randY = this.game.rnd.integerInRange(0, this.game.world.height);
-			}
+			// while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
+			// randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
+				// randX = this.game.rnd.integerInRange(0, this.game.world.width);
+				// randY = this.game.rnd.integerInRange(0, this.game.world.height);
+			// }
 			
-			var asteroid = asteroids.create(randX, randY, 'asteroid');
+			// var asteroid = asteroids.create(randX, randY, 'asteroid');
 			
-			asteroid.body.clearShapes(); 
-			asteroid.body.loadPolygon('asteroidPolygon', 'asteroid'); //Change the collision detection from an AABB to a polygon
-			asteroid.body.damping = this.game.rnd.realInRange(0, 0.3) * this.game.rnd.integerInRange(0, 1) * this.game.rnd.integerInRange(0, 1);
-			asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
-			asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
-			asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-			asteroid.body.setCollisionGroup(this.collisionGroup);
-			asteroid.body.collides(this.collisionGroup);
-			asteroid.body.collideWorldBounds = false;
-			asteroid.autoCull = true;
-			asteroid.checkWorldBounds = true;
-			asteroid.events.onOutOfBounds.add(this.resetAsteroid, {roid: asteroid, coreModule: this.coreModule, player: this.player, game: this.game});
-			asteroidList.add(asteroid);
-		}
-	},
+			// asteroid.body.clearShapes(); 
+			// asteroid.body.loadPolygon('asteroidPolygon', 'asteroid'); //Change the collision detection from an AABB to a polygon
+			// asteroid.body.damping = this.game.rnd.realInRange(0, 0.3) * this.game.rnd.integerInRange(0, 1) * this.game.rnd.integerInRange(0, 1);
+			// asteroid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
+			// asteroid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
+			// asteroid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
+			// asteroid.body.setCollisionGroup(this.collisionGroup);
+			// asteroid.body.collides(this.collisionGroup);
+			// asteroid.body.collideWorldBounds = false;
+			// asteroid.autoCull = true;
+			// asteroid.checkWorldBounds = true;
+			// asteroid.events.onOutOfBounds.add(this.resetAsteroid, {roid: asteroid, coreModule: this.coreModule, player: this.player, game: this.game});
+			// asteroidList.add(asteroid);
+		// }
+	// },
 	
-	resetAsteroid: function() {
-		var randX = this.game.rnd.integerInRange(0, this.game.world.width);
-		var randY = this.game.rnd.integerInRange(0, this.game.world.height);
+	// resetAsteroid: function() {
+		// var randX = this.game.rnd.integerInRange(0, this.game.world.width);
+		// var randY = this.game.rnd.integerInRange(0, this.game.world.height);
 			
-		while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
-			randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
-				randX = this.game.rnd.integerInRange(0, this.game.world.width);
-				randY = this.game.rnd.integerInRange(0, this.game.world.height);
-		}
-		this.roid.x = randX;
-		this.roid.y = randY;
-		this.roid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
-		this.roid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
-		this.roid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
-	},
+		// while(randX < this.coreModule.cube.x - (this.player.cubesWidth() / 2 + 100) && randX > this.coreModule.cube.x + (this.player.cubesWidth() / 2 + 100) &&
+			// randY < this.coreModule.cube.y - (this.player.cubesHeight() / 2 + 100) && randY > this.coreModule.cube.y + (this.player.cubesHeight() / 2 + 100)) {
+				// randX = this.game.rnd.integerInRange(0, this.game.world.width);
+				// randY = this.game.rnd.integerInRange(0, this.game.world.height);
+		// }
+		// this.roid.x = randX;
+		// this.roid.y = randY;
+		// this.roid.body.rotation = this.game.rnd.realInRange(0, 2 * Math.PI);
+		// this.roid.body.force.x = this.game.rnd.integerInRange(-10, 10) * 750;
+		// this.roid.body.force.y = this.game.rnd.integerInRange(-10, 10) * 750;
+	// },
 	
 	resetPlayer: function() {
 		if(this.coreModule.cube.x + (Math.max(this.player.cubesWidth(), this.player.cubesHeight()) / 2 * 64) > 8000) {
