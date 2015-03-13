@@ -1,14 +1,24 @@
 Creative Commons Attribution-NonCommercial 3.0 (http://creativecommons.org/licenses/by-nc/3.0/)
 - click1.wav by annabloom (http://freesound.org/people/annabloom/sounds/219069/)
-	* Converted to .ogg format
+   * Converted to .ogg format
+-door_open_close by primeval_polypod (http://freesound.org/people/primeval_polypod/sounds/156507/)
+   * Edited
+   * Converted to .ogg
 	
 Creative Commons Attribution 3.0 (http://creativecommons.org/licenses/by/3.0/)
 - Cash Register by kiddpark (http://freesound.org/people/kiddpark/sounds/201159/)
    * Converted to .ogg format
-- dialup.wav by lintphishx ()
+- poubelle_{B548CCC7-8849-4FB1-862A-09EAC3D25E7F}.wav by laurent (http://freesound.org/people/laurent/sounds/20686/)
    * Edited
    * Converted to .ogg
+-  COKE CANS DISPOSAL C617 007.wav by sandyrb (http://freesound.org/people/sandyrb/sounds/93173/)
+   * Edited
+   * Converted to .ogg
+- Boom.wav by DJ Chronos (http://freesound.org/people/DJ%20Chronos/sounds/33380/)
+   * Edited
+   * Converted to .ogg
+
 - Yet Another by Corcote (https://soundcloud.com/corcote/yet-another)
 - Top (down) Night by effoharkay (https://soundcloud.com/effoharkay/top-down-night)
-   * Converted to .ogg format
-   * Edited
+  * Edited 
+  * Converted to .ogg format
