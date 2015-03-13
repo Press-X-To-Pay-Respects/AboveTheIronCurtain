@@ -2,16 +2,16 @@
 Defines a cube.
 */
 
-var Cube = function (gameState, x, y, sprite) {
-    Phaser.Sprite.call(this, gameState.game, x, y, sprite);
+var Cube = function (state, x, y, sprite) {
+    Phaser.Sprite.call(this, state.game, x, y, sprite);
 	 this.tag = 'module';	//tag is used to detect object type during collision checking
-    this.game = gameState.game;
-	this.gameState = gameState;
+	 this.state = state;
+    this.game = this.state.game;
     this.game.add.existing(this);
     this.group = undefined;
     this.module = undefined;
     this.indicatorFade = 0.02;
-    this.healthBar = gameState.uiBuilder.buildProgressBar('shrinking', 0, 0, 20, 4, 3);
+    this.healthBar = this.state.uiBuilder.buildProgressBar('shrinking', 0, 0, 20, 4, 3);
 	this.healthBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x20CC20);
 	this.healthBar.cube = this;
 	this.healthBarFade = 0.0008;
@@ -56,24 +56,23 @@ Cube.prototype.update = function() {
          if (this.group) {
             if(this.tag === 'enemy_module') {
                if(this.key === 'thruster') {
-                  this.gameState.money += 35;
+                  this.state.shop.addMoney(35);
                }
                else if(this.key === 'shield') {
-                  this.gameState.money += 10;
+                  this.state.shop.addMoney(10);
                }
                else if(this.key === 'gun') {
-                  this.gameState.money += 50;
+                  this.state.shop.addMoney(50);
                }
                else if(this.key === 'solarPanel') {
-                  this.gameState.money += 25;
+                  this.state.shop.addMoney(25);
                }
-               this.gameState.moneyText.text = this.gameState.money;
             }
             this.group.destroyCube(this);
          } else {
             if(this.key === 'core' && this.tag === 'module') {
                this.kill();
-               this.gameState.restartLevel();
+               this.state.restartLevel();
             }
             this.destroy();
          }
@@ -103,23 +102,24 @@ Cube.prototype.loseConnection = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   // floating cube, bad collision, collision with non-sprite, collision with non-cube
-   if (!this.group || !other || !other.sprite || other.prototype !== this.prototype) {
+   // bad collision, collision with non-sprite, collision with non-cube
+   if (!other || !other.sprite || other.prototype !== this.prototype) {
       return;
    }
-   if (other.group && this.group === other.group) {// if cubes in same group
-      return;
-   }
-   if (this.group.isPlayer) { // player
-      if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
-         this.group.handleRamming(this, other.sprite);
-      } else if (other.sprite.tag === 'module') { // collision with floating, attatching
-         this.group.handleAttatch(this, other.sprite);
+   if (!this.group && other.sprite.group && other.sprite.group.isPlayer) { // floating hitting player
+      other.sprite.group.handleAttatch(other.sprite, this);
+   } else if (other.group && this.group === other.group) {// if cubes in same group
+      // magic conch, what should we do here?
+   } else if (this.group) {
+      if (this.group.isPlayer) { // player
+         if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
+            this.group.handleRamming(this, other.sprite);
+         }
+      } else {// enemy
+         this.group.handleRamming(this, other.sprite); // enemies only ram on collision
       }
-   } else {// enemy
-      this.group.handleRamming(this, other.sprite); // enemies only ram on collision
+      this.group.countCubes();
    }
-   this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {

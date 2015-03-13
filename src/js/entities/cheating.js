@@ -26,12 +26,19 @@ var Cheating = function(state) {
 	//hackable
 	this.placeHackableKey = this.game.input.keyboard.addKey(Phaser.Keyboard.L);
    this.placeHackableKey.onDown.add(this.debugAddModule, {caller: this, key: 'hackable'});
+   // reseting
+   this.resetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.M);
+   this.resetKey.onDown.add(this.reset, this);
 };
 
 Cheating.prototype.constructor = Cheating;
 
 Cheating.prototype.debugAddModule = function() {
    this.caller.state.moduleBuilder.build(this.key, this.caller.mouse.x, this.caller.mouse.y, true);
+};
+
+Cheating.prototype.reset = function() {
+  this.state.levelSetup.restartLevel(); 
 };
 
 module.exports = Cheating;

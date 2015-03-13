@@ -13,7 +13,7 @@ var Mouse = function(game, input, playerGroup) {
    this.grabbed = undefined;
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
-   this.removeThreshold = 100; // time distance you must pull to remove module
+   this.removeThreshold = 50; // distance you must pull to remove module
    this.removeDist = 0; // distance you are pulling
    this.playerGroup = playerGroup;
    // keys
@@ -78,7 +78,6 @@ Mouse.prototype.click = function(pointer) {
    if (bodies.length)
    {
      var temp = bodies[0].parent;
-     // console.log('rotation:', temp.rotation);
      this.grabbed = temp;
      if (this.grabbed.sprite.module && this.grabbed.sprite.module.hasOwnProperty('mouseDown')) {
        this.grabbed.sprite.module.mouseDown();
@@ -95,11 +94,23 @@ Mouse.prototype.click = function(pointer) {
      }
      this.lastClicked = temp;
    }
+   
+   //create sprite overlay to show selection
+   if(this.grabbed) {
+		this.selected = this.game.add.sprite(0, 0, 'selected');
+		this.grabbed.sprite.addChild(this.selected);
+		this.selected.x = 0 - this.grabbed.sprite.width;
+		this.selected.y = 0 - this.grabbed.sprite.height;
+		this.selected.bringToTop();
+   }
 };
   
  Mouse.prototype.release = function() {
    if (this.grabbed) {
-     this.grabbed = undefined;
+		//destroy selected sprite
+		this.grabbed.sprite.removeChild(this.selected);
+		this.selected.destroy();
+		this.grabbed = undefined;
    }
 };
 
