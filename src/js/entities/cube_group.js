@@ -95,17 +95,10 @@ CubeGroup.prototype.add = function(cube, point) {
   this.createConstraints(cube, point);
 };
 
-CubeGroup.prototype.handleCollision = function(origin, other) {
+CubeGroup.prototype.handleAttatch = function(origin, other) {
    if (this.debug) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
    if (this.debug) { this.displayCubes(); }
-   var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
-   if (other.group && other.group !== this && sumVel >= this.minRamVel) {
-      if (this.game.juicy) {
-         this.game.juicy.shake();
-      }
-      other.takeDamage(3);
-      this.call('thrusterHalt');
-   } else if (!other.group && this.isPlayer) {
+   if (!other.group && this.isPlayer) {
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       var otherLoc = this.calcPos(origin, relSide);
@@ -124,6 +117,22 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       if (this.debug) { this.displayCubes(); }
    }
    if (this.debug) { console.log('handleCollision() end:', '------------------------------'); }
+};
+
+CubeGroup.prototype.handleRamming = function(origin, other) {
+   console.log('handleRamming()');
+   if (!other.group || other.group === this) {
+      return;
+   }
+   var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
+   console.log('handleRamming():', 'sumVel:', sumVel.toPrecision(4));
+   if (sumVel >= this.minRamVel) {
+      if (this.game.juicy) {
+         this.game.juicy.shake();
+      }
+      other.takeDamage(3);
+      this.call('thrusterHalt');
+   }
 };
 
 CubeGroup.prototype.calcPos = function(origin, relSide) {
@@ -464,27 +473,27 @@ CubeGroup.prototype.displayConnection = function(connection) {
       // var dir;
       var prevPoint;
       var nextPoint;
+      var side;
+      var prevCube;
+      var nextCube;
       if (!previous) {
          indicator.animations.play('end');
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         var nextCube = this.get(nextPoint);
-         var side = this.relativeSide(curCube.body, nextCube.body);
+         nextCube = this.get(nextPoint);
+         side = this.relativeSide(curCube.body, nextCube.body);
          indicator.rotation = this.dirToAngle(side);
       } else if (i === result.length - 1) {
          indicator.animations.play('end');
          prevPoint = new Phaser.Point(previous.x, previous.y);
-         var prevCube = this.get(prevPoint);
-         var side = this.relativeSide(curCube.body, prevCube.body);
+         prevCube = this.get(prevPoint);
+         side = this.relativeSide(curCube.body, prevCube.body);
          indicator.rotation = this.dirToAngle(side);
       } else {
          indicator.animations.play('line');
          prevPoint = new Phaser.Point(previous.x, previous.y);
-         // var prevDir = this.dirBetween(curPoint, prevPoint);
          nextPoint = new Phaser.Point(result[i+1].x, result[i+1].y);
-         // var nextDir = this.dirBetween(curPoint, nextPoint);
-         // this.manageIndicator(indicator, prevDir, nextDir);
-         var prevCube = this.get(prevPoint);
-         var nextCube = this.get(nextPoint);
+         prevCube = this.get(prevPoint);
+         nextCube = this.get(nextPoint);
          var prevSide = this.relativeSide(curCube.body, prevCube.body);
          var nextSide = this.relativeSide(curCube.body, nextCube.body);
          this.manageIndicator(indicator, prevSide, nextSide);

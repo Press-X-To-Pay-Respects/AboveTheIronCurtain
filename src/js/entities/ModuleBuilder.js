@@ -135,6 +135,10 @@ function hackableUpdate() {
 				dist = Math.sqrt( Math.pow(this.cube.x - hacker.cube.x, 2) + Math.pow(this.cube.y - hacker.cube.y, 2) );
 				if(dist < this.hackDistance) {
 					//If hacker is in range, increase hack value and try to emit binary particle
+               if (this.beingHacked) {
+                  this.beingHackedPrev = true;
+               }
+               this.beingHacked = true;
 					this.hackBar.addValue(0.1);
 					hacker.count++;
 					if(hacker.count >= hacker.cycle) {
@@ -151,15 +155,32 @@ function hackableUpdate() {
 				}
 				else {
 					hacker.cube.animations.stop();
+               if(!this.beingHacked) {
+						this.beingHackedPrev = false;
+					}
+					this.beingHacked = false;
 				}
 			}
 		}
 	} else if (this.delay < 0) {
+      this.hacking.stop();
       this.hackBar.destroy();
       this.cube.dieQuick();
    } else {
+      this.hacking.stop();
       this.delay -= this.gameState.time.elapsed;
    }
+   if(this.beingHacked === true && this.beingHackedPrev === false) {
+		if(this.hacking.paused === true) {
+			this.hacking.resume();
+		}
+		else {
+			this.hacking.play();
+		}
+	}
+	else if(this.beingHacked === false && this.beingHackedPrev === true){
+		this.hacking.pause();
+	}
 }
 /** End module functions **/
 
@@ -266,6 +287,9 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       newModule.barFadeMaxDelay = 200;
       newModule.barFadeDelay = 0;
       newModule.delay = 1600;
+      newModule.beingHacked = false;
+      newModule.beingHackedPrev = false;
+      newModule.hacking = this.gameState.add.audio('hacking', 1, true);
       // give progress bar
       newModule.hackBar = this.gameState.uiBuilder.buildProgressBar('growing', 1500, 1200, 100, 10,  200);
       newModule.hackBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x2020CC);

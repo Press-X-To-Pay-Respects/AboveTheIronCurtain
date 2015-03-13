@@ -100,12 +100,16 @@ Cube.prototype.loseConnection = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !this.group.isPlayer || !other || !other.sprite || other.sprite.tag !== 'module' ||
+   if (!this.group || !this.group.isPlayer || !other || !other.sprite ||
        (other.group && other.group === this.group) || (other.group && other.group.isPlayer) ||
          other.prototype !== this.prototype) {
       return;
    }
-	this.group.handleCollision(this, other.sprite);
+   if (other.sprite.tag === 'enemy_module') {
+      this.group.handleRamming(this, other.sprite);
+   } else if (other.sprite.tag === 'module') {
+      this.group.handleAttatch(this, other.sprite);
+   }
 	this.group.countCubes();
 };
 
