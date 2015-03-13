@@ -40,6 +40,7 @@ function solarPanelGiveTarget(target) {
 	if(!target.isActive) {
 		//Activate the module
 		target.isActive = true;
+		this.modulePower.play();
 		if(target.type === 'hacker') {
 			ourGroup.activeHackerModules.push(target);
 		}
@@ -82,6 +83,10 @@ function thrusterUpdate() {
       this.haltTime -= this.cube.game.time.elapsed;
       this.cube.frame = 1;
    } else if (this.act && this.cube.myConnection) {
+	  if(this.isThrust === true) {
+		this.isThrustPrev = true;
+	  }
+	  this.isThrust = true;
       this.cube.body.force.x = thrustAmt * Math.cos(this.cube.rotation - Math.PI / 2);
       this.cube.body.force.y = thrustAmt * Math.sin(this.cube.rotation - Math.PI / 2);
 	  if(this.cube.frame === 1) {
@@ -89,6 +94,18 @@ function thrusterUpdate() {
 	  }
 	  else {
 		this.cube.frame = 2;
+	  }
+	  if(this.isThrust === true && this.isThrustPrev === false) {
+		this.thrusterLoop.play();
+	  }
+   }
+   else if(!this.act) {
+	  if(this.isThrust === false) {
+		this.isThrustPrev = false;
+	  }
+	  this.isThrust = false;
+	  if(this.isThrust === false && this.isThrustPrev === true) {
+		this.thrusterLoop.stop();
 	  }
    }
 }
@@ -237,6 +254,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    
    // solar panel testing
    if (type === 'solarPanel') {
+	  newModule.modulePower = this.gameState.add.audio('modulePower', 0.5);
       newModule.giveTarget = solarPanelGiveTarget;
       newModule.mouseOver = solarPanelMouseOver;
       newModule.onRemove = genericOnRemove;
@@ -244,6 +262,10 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
    
    //Thruster module events
 	if(type === 'thruster') {
+	  newModule.isThrust = false;
+	  newModule.isThrustPrev = false;
+	  newModule.thrusterLoop = this.gameState.add.audio('thrusterLoop', 1, true);
+	  newModule.thrusterLoop.allowMultiple = true;
       if (forPlayer) {
          var thrusterKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.W); 
          this.gameState.input.keyboard.addKeyCapture([thrusterKey]);
