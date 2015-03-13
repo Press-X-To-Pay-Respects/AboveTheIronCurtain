@@ -5,22 +5,20 @@ var Mouse = function(game, input, playerGroup) {
    this.input = input;
 	this.body = new p2.Body(); // jshint ignore:line
    this.game.physics.p2.world.addBody(this.body);
-   // this.game.physics.p2.enable(this);
-   
    this.input.onDown.add(this.click, this);
    this.input.onUp.add(this.release, this);
    this.input.addMoveCallback(this.move, this);
    this.x = 0;
    this.y = 0;
-   
    this.grabbed = undefined;
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
-   
    this.removeThreshold = 100; // time distance you must pull to remove module
    this.removeDist = 0; // distance you are pulling
-   
    this.playerGroup = playerGroup;
+   // keys
+   this.ccwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
+	this.cwKey = this.game.input.keyboard.addKey(Phaser.Keyboard.E);
 };
 
 Mouse.prototype.constructor = Mouse;
@@ -61,6 +59,17 @@ Mouse.prototype.update = function() {
            hover.sprite.module.mouseOver();
         }
     }
+    // rotate
+   if(this.ccwKey.isDown) {
+		if(this.grabbed !== undefined && this.grabbed.sprite.group === undefined) {
+			this.grabbed.angularForce += -5;
+		}
+	}
+	if(this.cwKey.isDown) {
+		if(this.grabbed !== undefined && this.grabbed.sprite.group === undefined) {
+			this.grabbed.angularForce += 5;
+		}
+	}
 };
 
 Mouse.prototype.click = function(pointer) {
@@ -86,11 +95,23 @@ Mouse.prototype.click = function(pointer) {
      }
      this.lastClicked = temp;
    }
+   
+   //create sprite overlay to show selection
+   if(this.grabbed) {
+		this.selected = this.game.add.sprite(0, 0, 'selected');
+		this.grabbed.sprite.addChild(this.selected);
+		this.selected.x = 0 - this.grabbed.sprite.width;
+		this.selected.y = 0 - this.grabbed.sprite.height;
+		this.selected.bringToTop();
+   }
 };
   
  Mouse.prototype.release = function() {
    if (this.grabbed) {
-     this.grabbed = undefined;
+		//destroy selected sprite
+		this.grabbed.sprite.removeChild(this.selected);
+		this.selected.destroy();
+		this.grabbed = undefined;
    }
 };
 

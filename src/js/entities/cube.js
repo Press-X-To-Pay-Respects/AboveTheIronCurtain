@@ -14,7 +14,10 @@ var Cube = function (gameState, x, y, sprite) {
     this.healthBar = gameState.uiBuilder.buildProgressBar('shrinking', 0, 0, 20, 4, 3);
 	this.healthBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x20CC20);
 	this.healthBar.cube = this;
-   this.healthBarFade = 0.0008;
+	this.healthBarFade = 0.0008;
+	this.impact = this.game.add.audio('moduleImpact');
+	this.impact.volume = 0.25;
+	this.impact.allowMultiple = true;
 	//set update function of health bar
 	this.healthBar.update = function() {
 		this.setLocation(this.cube.x, this.cube.y+10);
@@ -138,6 +141,7 @@ Cube.prototype.hideIndicator = function() {
 };
 
 Cube.prototype.takeDamage = function(amt) {
+   this.impact.play();
    this.healthBar.addValue(-amt);
    this.healthBar.graphics.alpha = 1;
 };

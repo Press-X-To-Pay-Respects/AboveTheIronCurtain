@@ -18,7 +18,9 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
 	this.activeHackerModules = [];	//list of hacker modules in this group
-	// this.activeGuns = [];
+	//this.activeGuns = [];
+	this.moduleConnect = this.game.add.audio('moduleConnect');
+	this.moduleConnect.allowMultiple = true;
 
    this.numCubes = 1;
    this.bounceBackForce = 30;
@@ -101,6 +103,7 @@ CubeGroup.prototype.handleAttatch = function(origin, other) {
    var relSide = this.relativeSide(origin.body, other.body);
    var originLoc = this.find(origin);
    var otherLoc = this.calcPos(origin, relSide);
+   this.moduleConnect.play();
    if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
    this.set(other, otherLoc);
    otherLoc = this.find(other); // update position since set can shift grid
