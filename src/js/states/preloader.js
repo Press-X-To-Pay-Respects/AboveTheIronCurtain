@@ -27,9 +27,11 @@ Preloader.prototype = {
 	this.load.spritesheet('hackButton', 'assets/images/hackButtonSheet.png', 256, 82);
 	this.load.spritesheet('hackable', 'assets/images/hackableSheet.png', 64, 64);
 	this.load.spritesheet('shopButton', 'assets/images/shopButtonSheet.png', 32, 32);
+	this.load.spritesheet('closeButton', 'assets/images/closeButtonSheet.png', 32, 32);
 	
 	//Load Images
 	this.load.image('earthNight', 'assets/images/bg_earthNightSmall.jpg');
+	this.load.image('credits', 'assets/images/credits.png');
 	this.load.image('bullet', 'assets/images/bullet.png');
 	this.load.image('shield', 'assets/images/shield.png');
 	this.load.image('solarPanel', 'assets/images/solarPanel.png');
@@ -69,10 +71,10 @@ Preloader.prototype = {
 	this.load.atlasJSONHash('helpButton', 'assets/images/helpButtonSheet.png', 'assets/json/help_button.json');
 	this.load.atlasJSONHash('arrowButton', 'assets/images/arrowButtonSheet.png', 'assets/json/arrow_button.json');
 	//menu buttons
-	this.load.image('menu_title', 'assets/images/atic_menu_titleT.png');
-	this.load.image('menu_select', 'assets/images/atic_menu_selectT.png');
-	this.load.image('menu_manual', 'assets/images/atic_menu_manualT.png');
-	this.load.image('menu_credits', 'assets/images/atic_menu_creditsT.png');
+	this.load.spritesheet('startGameButton', 'assets/images/startGameButtonSheet.png', 256, 82);
+	this.load.spritesheet('missionSelectButton', 'assets/images/missionSelectButtonSheet.png', 256, 82);
+	this.load.spritesheet('creditsButton', 'assets/images/creditsButtonSheet.png', 256, 82);
+	this.load.image('title', 'assets/images/title.png');
 
 	
 	

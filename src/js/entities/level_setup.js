@@ -17,7 +17,7 @@ var LevelSetup = function(state, level) {
    this.game = this.state.game;
    this.level = level;
    // simplify
-   this.simplify = true;
+   this.simplify = false;
    // setup
    this.game.world.setBounds(0, 0, 8000, 4000);
    this.bg = this.game.add.sprite(0, 0, 'earthNight');
@@ -40,11 +40,11 @@ var LevelSetup = function(state, level) {
    this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
    this.levelData = JSON.parse(this.game.cache.getText(this.level));
-   this.loadLevel();
+   if (!this.simplify) { this.loadLevel(); }
    this.game.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this.state));
    this.game.camera.follow(this.state.coreModule.cube);
-   //this.mainSong = this.game.add.audio('mainSong', 1, true);
-	//if (!this.simplify) { this.mainSong.play('', 0,1, true, true); }
+   this.mainSong = this.game.add.audio('mainSong', 1, true);
+	if (!this.simplify) { this.mainSong.play('', 0,1, true, true); }
    this.state.mouse = new Mouse(this.game, this.state.input, this.state.player);
    this.updateDependents.push(this.state.mouse);
    this.state.soundManager = new SoundManager(this.state);
@@ -123,8 +123,8 @@ LevelSetup.prototype.render = function() {
 };
 
 LevelSetup.prototype.restartLevel = function() {
-   this.mainSong.stop();
-   this.game.state.start(playerState.currentLevel); // jshint ignore:line
+   // this.mainSong.stop();
+   // this.game.state.start(playerState.currentLevel); // jshint ignore:line
 };
 
 module.exports = LevelSetup;
