@@ -13,7 +13,7 @@ var Mouse = function(game, input, playerGroup) {
    this.grabbed = undefined;
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
-   this.removeThreshold = 50; // distance you must pull to remove module
+   this.removeThreshold = 40; // distance you must pull to remove module
    this.removeDist = 0; // distance you are pulling
    this.playerGroup = playerGroup;
    // keys
@@ -96,7 +96,7 @@ Mouse.prototype.click = function(pointer) {
    }
    
    //create sprite overlay to show selection
-   if(this.grabbed) {
+   if(this.grabbed && this.grabbed.sprite.key !== 'asteroid') {
 		this.selected = this.game.add.sprite(0, 0, 'selected');
 		this.grabbed.sprite.addChild(this.selected);
 		this.selected.x = 0 - this.grabbed.sprite.width;
@@ -106,7 +106,7 @@ Mouse.prototype.click = function(pointer) {
 };
   
  Mouse.prototype.release = function() {
-   if (this.grabbed) {
+   if (this.grabbed && this.grabbed.sprite.key !== 'asteroid') {
 		//destroy selected sprite
 		this.grabbed.sprite.removeChild(this.selected);
 		this.selected.destroy();

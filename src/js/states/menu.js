@@ -62,7 +62,7 @@ Menu.prototype = {
   
   changeToMenu: function(){
 	if(!this.credits.alive) {
-		menuSong.destroy();
+		this.menuSong.destroy();
 		this.playDownClick();
 		this.game.state.start('Menu');
 	}
