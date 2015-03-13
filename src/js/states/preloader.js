@@ -83,8 +83,9 @@ Preloader.prototype = {
 
   update: function () {
     if (!!this.ready) {
-      // this.game.state.start('Menu');
-      this.game.state.start(playerState.currentLevel); // jshint ignore:line
+      var params = ['menuSong', 0, 100];
+      this.game.state.start('Menu', true, false, params);
+      //this.game.state.start(playerState.currentLevel); // jshint ignore:line
     }
   },
 
