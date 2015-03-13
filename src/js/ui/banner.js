@@ -1,7 +1,7 @@
 var Utils = require('../utils');
 
 //NOTE: DON'T USE this code to create a Banner. Instead, use the UIBuilder object and call buildBanner
-var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables) {
+var Banner = function(state, xRatio, yRatio, textJSON, graphics, renderables) {
    this.bgBorderSize = 6;			//default size of background border
 	this.bgBorderColor = 0xffffff;	//default color of background border
 	this.bgColor = 0x4a4a4a;		//default color of background
@@ -14,9 +14,10 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.textWrapPadding = 10;
    this.offScreenPadding = -200;
    this.textJSON = textJSON;
-   this.gameState = gameState;
-   this.game = gameState.game;
+   this.state = state;
+   this.game = state.game;
    this.cam = this.game.camera;
+   this.sm = this.state.soundManager;
    this.xRatio = xRatio;
    this.yRatio = yRatio;
    this.graphics = graphics;
@@ -34,11 +35,11 @@ var Banner = function(gameState, xRatio, yRatio, textJSON, graphics, renderables
    this.visible = false;
    // add buttons
    this.rightButton = this.game.add.button(0, 0, 'arrowButton', this.nextIndex, this, 1, 0, 2);
-	this.rightButton.onInputOver.add(this.gameState.playHoverClick, this.gameState);
-	this.rightButton.onInputDown.add(this.gameState.playDownClick, this.gameState);
+	this.rightButton.onInputOver.add(this.sm.playHoverClick, this.sm);
+	this.rightButton.onInputDown.add(this.sm.playDownClick, this.sm);
    this.leftButton = this.game.add.button(0, 0, 'arrowButton', this.prevIndex, this, 1, 0, 2);
-	this.leftButton.onInputOver.add(this.gameState.playHoverClick, this.gameState);
-	this.leftButton.onInputDown.add(this.gameState.playDownClick, this.gameState);
+	this.leftButton.onInputOver.add(this.sm.playHoverClick, this.sm);
+	this.leftButton.onInputDown.add(this.sm.playDownClick, this.sm);
    this.leftButton.scale.x = -1;
    this.group = new Phaser.Group(this.game);
    this.group.add(this.graphics);
