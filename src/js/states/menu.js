@@ -9,9 +9,7 @@ Menu.prototype = {
   init: function(params){
   	
 	this.menuSong = this.game.add.audio(params[0]);
-	if(!this.menuSong.isPlaying){
-	  this.menuSong.play('',params[1],params[2],true,true);
-	} 
+	this.menuSong.play('',params[1],params[2],true,true);
   },
   
   pos: [-25, 25, 75],
@@ -28,6 +26,8 @@ Menu.prototype = {
   	
   	this.credits = this.addButton(3, 'menu_credits', this.changeToMenu);
   	this.credits.anchor.setTo(0.5, 0.5);
+  	
+  	
   },
 
   addButton: function(button, img, func){
