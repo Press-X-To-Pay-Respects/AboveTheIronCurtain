@@ -42,7 +42,7 @@
         },
        "hackable_enemy": {
          "x_pos": 1300,
-         "y_pos": 1300,
+         "y_pos": 1800,
          "type": "ram",
 			"blueprint": [
          ["shield", "shield", "solarPanel", "shield", "none", "none", "none"],

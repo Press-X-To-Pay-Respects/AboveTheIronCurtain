@@ -98,25 +98,54 @@ CubeGroup.prototype.add = function(cube, point) {
 CubeGroup.prototype.handleAttatch = function(origin, other) {
    if (this.debug) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
    if (this.debug) { this.displayCubes(); }
-   if (!other.group && this.isPlayer) {
-      var relSide = this.relativeSide(origin.body, other.body);
-      var originLoc = this.find(origin);
-      var otherLoc = this.calcPos(origin, relSide);
-      if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
-      this.set(other, otherLoc);
-      otherLoc = this.find(other); // update position since set can shift grid
-      if (!otherLoc) {
-         if (this.debug) {
-            console.log('handleCollision(): otherLoc DNE', '---------------------');
-            this.displayCubes();
-         }
-         return;
+   var relSide = this.relativeSide(origin.body, other.body);
+   var originLoc = this.find(origin);
+   var otherLoc = this.calcPos(origin, relSide);
+   if (this.debug) console.log('handleCollision() pre-find:', 'relSide:', relSide, 'originLoc:', Math.floor(originLoc.x), Math.floor(originLoc.y), 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
+   this.set(other, otherLoc);
+   otherLoc = this.find(other); // update position since set can shift grid
+   if (!otherLoc) {
+      if (this.debug) {
+         console.log('handleCollision(): otherLoc DNE', '---------------------');
+         this.displayCubes();
       }
-      if (this.debug) console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
-      this.createConstraints(other, otherLoc);
-      if (this.debug) { this.displayCubes(); }
+      return;
    }
+   if (this.debug) console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
+   this.createConstraints(other, otherLoc);
+   if (other.module.type === 'solarPanel') {
+      this.createConnectionFrom(other);
+   } else if (other.module.powerable) {
+      var spareSolarPanel = this.spareSolarPanel();
+      if (spareSolarPanel) {
+         spareSolarPanel.giveTarget(other.module);
+      }
+   }
+   if (this.debug) { this.displayCubes(); }
    if (this.debug) { console.log('handleCollision() end:', '------------------------------'); }
+};
+
+CubeGroup.prototype.createConnectionFrom = function(panel) {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && cube !== panel && !cube.myConnection && cube.module.powerable) {
+            panel.module.giveTarget(cube.module);
+            return;
+         }
+      }
+   }
+};
+
+CubeGroup.prototype.spareSolarPanel = function() {
+   for (var row = 0; row < this.cubesWidth(); row++) {
+      for (var col = 0; col < this.cubesHeight(); col++) {
+         var cube = this.cubes[row][col];
+         if (cube && !cube.myConnection && cube.module.type === 'solarPanel') {
+            return cube.module;
+         }
+      }
+   }
 };
 
 CubeGroup.prototype.handleRamming = function(origin, other) {
@@ -124,7 +153,7 @@ CubeGroup.prototype.handleRamming = function(origin, other) {
       return;
    }
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
-   console.log('handleRamming():', 'sumVel:', sumVel.toPrecision(4));
+   if (this.debug) { console.log('handleRamming():', 'sumVel:', sumVel.toPrecision(4)); }
    if (sumVel >= this.minRamVel) {
       if (this.game.juicy) {
          this.game.juicy.shake();

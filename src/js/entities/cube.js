@@ -138,7 +138,6 @@ Cube.prototype.hideIndicator = function() {
 };
 
 Cube.prototype.takeDamage = function(amt) {
-   console.log(amt);
    this.healthBar.addValue(-amt);
    this.healthBar.graphics.alpha = 1;
 };

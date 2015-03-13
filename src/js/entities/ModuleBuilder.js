@@ -222,6 +222,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 		newModule.cube.animations.add('hacker', [0,1,2,3,4], 10, true);
       newModule.onRemove = genericOnRemove;
       newModule.onLoseConnection = hackerOnLoseConnection;
+      newModule.powerable = true;
 	}
 	
 	//Store module if it is core
@@ -233,6 +234,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 		this.coreExists = true;
       newModule.onRemove = genericOnRemove;
 	}
+   
    // solar panel testing
    if (type === 'solarPanel') {
       newModule.giveTarget = solarPanelGiveTarget;
@@ -255,6 +257,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       newModule.update = thrusterUpdate;
       newModule.thrusterHalt = thrusterHalt;
       newModule.onRemove = genericOnRemove;
+      newModule.powerable = true;
 	}
 
 	//Gun module events
@@ -275,6 +278,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
       }
 	  newModule.update = gunUpdate;
      newModule.onRemove = genericOnRemove;
+     newModule.powerable = true;
 	}
    
    if (type === 'hackable') {
