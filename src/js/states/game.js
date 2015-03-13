@@ -59,7 +59,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
-   this.simplify = false; // prevents things that get in the way of debugging
+   this.simplify = true; // prevents things that get in the way of debugging
 	
 	this.mouse = new Mouse(this.game, this.input);
    
@@ -109,8 +109,8 @@ Game.prototype = {
 	
 	this.shopKey = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
 	this.shopKey.onDown.add(this.useShopButton, this);
-	/*this.pauseKey = this.game.input.keyboard.addKey(27);
-	this.pauseKey.onDown.add(this.pauseMenu, this);*/
+	this.pauseKey = this.game.input.keyboard.addKey(27);
+	this.pauseKey.onDown.add(this.pauseMenu, this);
 	
 	//DEBUGGING LISTENERS- allow you to create modules by pressing keys
 	//Module debug buttons are broken and obsolete with the purchasing menu
@@ -189,6 +189,10 @@ Game.prototype = {
     this.moneyText.fontSize = 24;
     this.moneyText.fill = '#ffffff';
 	this.be = this.game.add.image(this.moneyText.x + this.moneyText.width + 8, this.moneyText.y, 'be');
+	this.pauseText = this.game.add.text(-1000, -1000, 'Press \'Esc\' To Unpause');
+	this.pauseText.font = 'Roboto';
+    this.pauseText.fontSize = 64;
+    this.pauseText.fill = '#ffffff';
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
 	if (!this.simplify) { this.mainSong.play('',0,1,true,true); }
@@ -199,14 +203,19 @@ Game.prototype = {
 	this.game.state.start(playerState.currentLevel);
   },
   
-	/*pauseMenu: function() {
+	pauseMenu: function() {
+		
 		if(this.game.paused === false) {
+			this.pauseText.x = this.game.camera.x + (this.game.camera.width / 2) - (this.pauseText.width / 2);
+			this.pauseText.y = this.game.camera.y + (this.game.camera.height / 2) - (this.pauseText.height / 2);
 			this.game.paused = true;
 		}
 		else {
 			this.game.paused = false;
+			this.pauseText.x = -1000;
+			this.pauseText.y = -1000;
 		}
-	},*/
+	},
   
   loadData: function() {
       var myLevel = this.levelData['level_one'];

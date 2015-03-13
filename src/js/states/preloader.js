@@ -58,6 +58,10 @@ Preloader.prototype = {
 	this.load.audio('cashRegister', 'assets/sound/cashRegister.ogg');
 	this.load.audio('gun', 'assets/sound/gun.ogg');
 	this.load.audio('hacking', 'assets/sound/hacking.ogg');
+	this.load.audio('moduleImpact', 'assets/sound/moduleImpact.ogg');
+	this.load.audio('moduleConnect', 'assets/sound/moduleConnect.ogg');
+	this.load.audio('modulePower', 'assets/sound/modulePower.ogg');
+	this.load.audio('thrusterLoop', 'assets/sound/thrusterLoop.ogg');
 	
 	this.load.text('tutorial_text', 'assets/json/tutorial_text.json');
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
