@@ -43,8 +43,6 @@ var LevelSetup = function(state, level) {
    if (!this.simplify) { this.loadLevel(); }
    this.game.juicy = this.game.plugins.add(new Phaser.Plugin.Juicy(this.state));
    this.game.camera.follow(this.state.coreModule.cube);
-   this.mainSong = this.game.add.audio('mainSong', 1, true);
-	if (!this.simplify) { this.mainSong.play('', 0,1, true, true); }
    this.state.mouse = new Mouse(this.game, this.state.input, this.state.player);
    this.updateDependents.push(this.state.mouse);
    this.state.soundManager = new SoundManager(this.state);
@@ -120,11 +118,6 @@ LevelSetup.prototype.loadLevel = function() {
 LevelSetup.prototype.render = function() {
    this.state.mouse.render();
    this.renderables.renderAll(); 
-};
-
-LevelSetup.prototype.restartLevel = function() {
-   // this.mainSong.stop();
-   // this.game.state.start(playerState.currentLevel); // jshint ignore:line
 };
 
 module.exports = LevelSetup;
