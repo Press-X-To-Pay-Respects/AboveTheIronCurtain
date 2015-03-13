@@ -100,17 +100,23 @@ Cube.prototype.loseConnection = function() {
 };
 
 Cube.prototype.cubeCollide = function(other) {
-   if (!this.group || !this.group.isPlayer || !other || !other.sprite ||
-       (other.group && other.group === this.group) || (other.group && other.group.isPlayer) ||
-         other.prototype !== this.prototype) {
+   // floating cube, bad collision, collision with non-sprite, collision with non-cube
+   if (!this.group || !other || !other.sprite || other.prototype !== this.prototype) {
       return;
    }
-   if (other.sprite.tag === 'enemy_module') {
-      this.group.handleRamming(this, other.sprite);
-   } else if (other.sprite.tag === 'module') {
-      this.group.handleAttatch(this, other.sprite);
+   if (other.group && this.group === other.group) {// if cubes in same group
+      return;
    }
-	this.group.countCubes();
+   if (this.group.isPlayer) { // player
+      if (other.sprite.tag === 'enemy_module') { // collision with enemy, ramming
+         this.group.handleRamming(this, other.sprite);
+      } else if (other.sprite.tag === 'module') { // collision with floating, attatching
+         this.group.handleAttatch(this, other.sprite);
+      }
+   } else {// enemy
+      this.group.handleRamming(this, other.sprite); // enemies only ram on collision
+   }
+   this.group.countCubes();
 };
 
 Cube.prototype.toString = function() {

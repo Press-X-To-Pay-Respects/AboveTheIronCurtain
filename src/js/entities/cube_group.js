@@ -120,7 +120,6 @@ CubeGroup.prototype.handleAttatch = function(origin, other) {
 };
 
 CubeGroup.prototype.handleRamming = function(origin, other) {
-   console.log('handleRamming()');
    if (!other.group || other.group === this) {
       return;
    }
@@ -470,7 +469,6 @@ CubeGroup.prototype.displayConnection = function(connection) {
       var curPoint = new Phaser.Point(result[i].x, result[i].y);
       var curCube = this.get(curPoint);
       var indicator = curCube.cIndicator;
-      // var dir;
       var prevPoint;
       var nextPoint;
       var side;
