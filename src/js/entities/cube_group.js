@@ -95,60 +95,8 @@ CubeGroup.prototype.add = function(cube, point) {
   }
   cube.group = this;
   this.set(cube, point);
-  this.createConstraintsSpecial(cube, point);
+  this.createConstraintsSpecial(cube);
 };
-
-/*
-CubeGroup.prototype.createFromBlueprint = function (blueprint, x, y) {
-  var rootPoint;
-  for (var row = 0; row < blueprint.length; row++) {
-      for (var col = 0; col < blueprint[row].length; col++) {
-         if (blueprint[row][col] === 'core') {
-            rootPoint = new Phaser.Point(row, col);
-            var newModule = this.state.moduleBuilder.build(blueprint[rootPoint.x][rootPoint.y], x + rootPoint.x * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer),
-            y - rootPoint.y * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer), false);
-            newModule.cube.tag = 'enemy_module';
-            newModule.cube.group = this;
-            this.set(newModule.cube, rootPoint);
-            break;
-         }
-      }
-      if (rootPoint) {
-         break;
-      }
-  }  
-  var created = [];
-  var tempPoint = rootPoint;
-  for (; tempPoint.y < blueprint[0].length; tempPoint.y++) {
-     if (blueprint[tempPoint.x][tempPoint.y] !== 'none') {
-         var newModule = this.state.moduleBuilder.build(blueprint[tempPoint.x][tempPoint.y], x + tempPoint.x * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer),
-         y - tempPoint.y * (this.state.levelSetup.cubeWidth + this.state.levelSetup.cubeBuffer), false);
-         newModule.cube.tag = 'enemy_module';
-         newModule.cube.group = this;
-         this.set(newModule.cube, tempPoint);
-         this.createConstraints(newModule.cube, tempPoint);
-         created.push(tempPoint);
-     }
-  }
-  this.recursiveAdd(blueprint, rootPoint, created, -1);
-};
-
-CubeGroup.prototype.recursiveAdd = function(blueprint, point, created, dir) {
-  var flag = false;
-  for (var i = 0; i < created.length; i++) {
-      if (created[i] === point) {
-         flag = true;
-         continue;
-      }
-  }
-  if (!flag && blueprint[point.x][point.y] === 'none') {
-     flag = true;
-  }
-  if (!flag) {
-     
-  }
-};
-*/
 
 CubeGroup.prototype.handleAttatch = function(origin, other) {
    if (this.debugHandleAttatch) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
@@ -430,11 +378,10 @@ CubeGroup.prototype.createConstraints = function(me, myPoint, relativeNorth) {
    }
 };
 
-CubeGroup.prototype.createConstraintsSpecial = function(me, myPoint, relativeNorth) {
+CubeGroup.prototype.createConstraintsSpecial = function(me) {
    var neighbours = this.getNeighbours(me);
    for (var i = 0; i < neighbours.length; i++) {
       var neighbour = neighbours[i];
-      var neighbourPoint = this.find(neighbour);
       var mySide = this.relativeSide(me.body, neighbour.body);
       var neighbourSide = this.relativeSide(neighbour.body, me.body);
       if (this.debugCreateConstraints) { console.log('createConstraintsSpecial():', 'mySide:', mySide, 'neighbourSide:', neighbourSide); }
@@ -831,7 +778,7 @@ CubeGroup.prototype.destroyCube = function(cube) {
   // destroy cube
   if(cube.key === 'core' && cube.tag === 'module') {
 	cube.kill();
-	this.state.levelSetup.restartLevel();
+	// this.state.levelSetup.restartLevel();
   }
   cube.destroy(true);
 };
