@@ -1,7 +1,7 @@
 var game = new Phaser.Game(window.innerWidth, window.innerHeigh, Phaser.AUTO, 'atic-game');
 
 window.playerState = {
-    currentLevel: 'Game'
+    currentLevel: 'Menu'
 };
 
 //  The Google WebFont Loader will look for this object, so create it before loading the script.
