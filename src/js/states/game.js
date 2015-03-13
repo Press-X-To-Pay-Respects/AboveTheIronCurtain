@@ -59,6 +59,7 @@ Game.prototype = {
 	//add collision group
 	this.collisionGroup = this.game.physics.p2.createCollisionGroup();
 	
+   this.simplify = false; // prevents things that get in the way of debugging
 	
 	this.mouse = new Mouse(this.game, this.input);
    
@@ -95,7 +96,7 @@ Game.prototype = {
 	asteroids.enableBody = true;
 	asteroids.physicsBodyType = Phaser.Physics.P2JS;
 	asteroidList = new Phaser.ArraySet();
-	this.generateAsteroids();
+	if (!this.simplify) { this.generateAsteroids(); }
 	
 	timer = this.game.time.create(false);
 	warning = this.game.add.image(this.game.camera.x, this.game.camera.y, 'warning');
@@ -148,6 +149,7 @@ Game.prototype = {
     this.loadData();
     
 	//Buttons & Button Events
+   this.shopSpeed = 1;
 	shopPanel = this.game.add.image(this.game.camera.x + this.game.camera.width + 256 + 16, this.game.camera.y + 16, 'shopPanel');
 	shopPanel.kill();
 	shieldButton = this.game.add.button(this.game.camera.x + this.game.camera.width - diff, this.game.camera.y + 52 + (88 * 1), 'shieldButton', this.purchaseModule, {state: this, key: 'shield'}, 1, 0, 2);
@@ -189,7 +191,7 @@ Game.prototype = {
 	this.be = this.game.add.image(this.moneyText.x + this.moneyText.width + 8, this.moneyText.y, 'be');
 	
 	this.mainSong = this.game.add.audio('mainSong', 1, true);
-	//this.mainSong.play('',0,1,true,true);
+	if (!this.simplify) { this.mainSong.play('',0,1,true,true); }
   },
   
   restartLevel: function() {
@@ -375,14 +377,16 @@ Game.prototype = {
 	
 	//Shop Movement Code
 	if(shopMenuOpening === true) {	
-		diff += 4;
+		// diff += 4;
+      diff += this.shopSpeed * this.game.time.elapsed;
 		if(diff >= 276) {
 			shopMenuOpening = false;
 			this.addShopButtons();
 		}
 	}
 	else if(shopMenuClosing === true) {
-		diff -= 4;
+		// diff -= 4;
+      diff -= this.shopSpeed * this.game.time.elapsed;
 		if(diff <= 0) {
 			shopPanel.kill();
 			shopMenuClosing = false;
@@ -527,8 +531,7 @@ Game.prototype = {
 	this.moduleBuilder.build('core', this.mouse.x, this.mouse.y, true);
   },
   debugAddShield: function () {
-	var grab = this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
-   grab.cube.body.rotation = Math.random() * 4 * Math.PI - 2 * Math.PI;
+	this.moduleBuilder.build('shield', this.mouse.x, this.mouse.y, true);
   },
   debugAddThruster: function () {
 	this.moduleBuilder.build('thruster', this.mouse.x, this.mouse.y, true);

@@ -66,10 +66,14 @@ Hackable.prototype.update = function() {
 					this.beingHacked = true;
 					this.hackBar.addValue(0.1);
 					hacker.count++;
-					hacker.cube.animations.play('hacker');
 					if(hacker.count >= hacker.cycle) {
 						hacker.count = 0;
 						this.gameState.BinaryEmitter.emitBinary(this, hacker.cube.x, hacker.cube.y, 60);
+						if(hacker.cube.frame === 5) {
+							hacker.cube.frame = 0;
+						}
+						hacker.cube.frame++;
+						
 					}
 				}
 				else {
