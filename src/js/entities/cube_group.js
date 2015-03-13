@@ -18,7 +18,7 @@ var CubeGroup = function (game, root) {
    this.DIR = {NORTH: 0, EAST: 1, SOUTH: 2, WEST: 3};
    this.offset = 2;
 	this.activeHackerModules = [];	//list of hacker modules in this group
-	this.activeGuns = [];
+	// this.activeGuns = [];
 
    this.numCubes = 1;
    this.bounceBackForce = 30;
@@ -96,18 +96,16 @@ CubeGroup.prototype.add = function(cube, point) {
 };
 
 CubeGroup.prototype.handleCollision = function(origin, other) {
-   if (this.debug) console.log('handleCollision() start:', origin.module.type, other.module.type); // jshint ignore:line
+   if (this.debug) { console.log('handleCollision() start:', origin.module.type, other.module.type); }
    if (this.debug) { this.displayCubes(); }
    var sumVel = Math.abs(origin.body.velocity.x) + Math.abs(origin.body.velocity.y);
    if (other.group && other.group !== this && sumVel >= this.minRamVel) {
-      //console.log('collision');
       if (this.game.juicy) {
          this.game.juicy.shake();
       }
       other.takeDamage(3);
       this.call('thrusterHalt');
    } else if (!other.group && this.isPlayer) {
-      // console.log('origin-other:', this.relativeSide(origin.body, other.body), 'other-origin:', this.relativeSide(other.body, origin.body));
       var relSide = this.relativeSide(origin.body, other.body);
       var originLoc = this.find(origin);
       var otherLoc = this.calcPos(origin, relSide);
@@ -123,7 +121,7 @@ CubeGroup.prototype.handleCollision = function(origin, other) {
       }
       if (this.debug) console.log('handleCollision() post-find:', 'otherLoc:', Math.floor(otherLoc.x), Math.floor(otherLoc.y)); // jshint ignore:line
       this.createConstraints(other, otherLoc);
-      if (this.debug) this.displayCubes(); // jshint ignore:line
+      if (this.debug) { this.displayCubes(); }
    }
    if (this.debug) { console.log('handleCollision() end:', '------------------------------'); }
 };
@@ -627,7 +625,8 @@ CubeGroup.prototype.remove = function(cube) {
    for (row = 0; row < this.cubesWidth(); row++) {
       for (col = 0; col < this.cubesHeight(); col++) {
          if (this.cubes[row][col] === cube) {
-            // this.cubes[row][col].group = undefined;
+            cube.group = undefined;
+            cube.tag = 'module';
             this.cubes[row][col] = undefined;
             break;
          }
@@ -638,10 +637,6 @@ CubeGroup.prototype.remove = function(cube) {
 	   if(cube.module.type === 'hacker') {
 			var hackIndex = this.activeHackerModules.indexOf(cube.module);
 			this.activeHackerModules.splice(hackIndex, 1);
-	   }
-	   if(cube.module.type === 'gun') {
-			var gunIndex = this.activeGuns.indexOf(cube.module);
-			this.activeHackerModules.splice(gunIndex, 1);
 	   }
 	   cube.module.isActive = false;
    }

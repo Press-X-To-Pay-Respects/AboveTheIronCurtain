@@ -51,30 +51,51 @@ Cube.prototype.update = function() {
          this.dying = false;
          this.healthBar.destroy();
          if (this.group) {
-			if(this.tag === 'enemy_module') {
-				if(this.key === 'thruster') {
-					this.gameState.money += 35;
-				}
-				else if(this.key === 'shield') {
-					this.gameState.money += 10;
-				}
-				else if(this.key === 'gun') {
-					this.gameState.money += 50;
-				}
-				else if(this.key === 'solarPanel') {
-					this.gameState.money += 25;
-				}
-				this.gameState.moneyText.text = this.gameState.money;
-			}
+            if(this.tag === 'enemy_module') {
+               if(this.key === 'thruster') {
+                  this.gameState.money += 35;
+               }
+               else if(this.key === 'shield') {
+                  this.gameState.money += 10;
+               }
+               else if(this.key === 'gun') {
+                  this.gameState.money += 50;
+               }
+               else if(this.key === 'solarPanel') {
+                  this.gameState.money += 25;
+               }
+               this.gameState.moneyText.text = this.gameState.money;
+            }
             this.group.destroyCube(this);
          } else {
-			if(this.key === 'core' && this.tag === 'module') {
-				this.kill();
-				this.gameState.restartLevel();
-			}
-			this.destroy();
+            if(this.key === 'core' && this.tag === 'module') {
+               this.kill();
+               this.gameState.restartLevel();
+            }
+            this.destroy();
          }
       }
+   }
+};
+
+Cube.prototype.loseConnection = function() {
+  if (!this.myConnection) {
+    return;
+  }  
+  if (this.myConnection.start === this) {
+      var endModule = this.myConnection.end.module;
+      if (endModule.hasOwnProperty('onLoseConnection')) {
+         endModule.onLoseConnection();
+      }
+      this.myConnection.end.myConnection = undefined;
+      this.myConnection = undefined;
+   } else if (this.myConnection.end === this) {
+      var startModule = this.myConnection.end.module;
+      if (startModule.hasOwnProperty('onLoseConnection')) {
+         startModule.onLoseConnection();
+      }
+      this.myConnection.start.myConnection = undefined;
+      this.myConnection = undefined;
    }
 };
 
@@ -107,8 +128,14 @@ Cube.prototype.hideIndicator = function() {
 };
 
 Cube.prototype.takeDamage = function(amt) {
+   console.log(amt);
    this.healthBar.addValue(-amt);
    this.healthBar.graphics.alpha = 1;
+};
+
+Cube.prototype.dieQuick = function() {
+  this.dying = true;
+  this.life = 0;
 };
 
 Cube.prototype.remove = function() {
