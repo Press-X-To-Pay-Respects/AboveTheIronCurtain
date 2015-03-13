@@ -37,6 +37,7 @@ Preloader.prototype = {
 	this.load.image('shopPanel', 'assets/images/shopBackPanel.png');
 	this.load.image('warning', 'assets/images/warning.png');
 	this.load.image('be', 'assets/images/be.png');
+	this.load.image('selected', 'assets/images/selected.png');
     
 	//Load Fonts
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');

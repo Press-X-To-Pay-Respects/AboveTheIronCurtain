@@ -95,11 +95,23 @@ Mouse.prototype.click = function(pointer) {
      }
      this.lastClicked = temp;
    }
+   
+   //create sprite overlay to show selection
+   if(this.grabbed) {
+		this.selected = this.game.add.sprite(0, 0, 'selected');
+		this.grabbed.sprite.addChild(this.selected);
+		this.selected.x = 0 - this.grabbed.sprite.width;
+		this.selected.y = 0 - this.grabbed.sprite.height;
+		this.selected.bringToTop();
+   }
 };
   
  Mouse.prototype.release = function() {
    if (this.grabbed) {
-     this.grabbed = undefined;
+		//destroy selected sprite
+		this.grabbed.sprite.removeChild(this.selected);
+		this.selected.destroy();
+		this.grabbed = undefined;
    }
 };
 
