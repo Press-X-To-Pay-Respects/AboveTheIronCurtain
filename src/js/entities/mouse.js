@@ -17,8 +17,8 @@ var Mouse = function(game, input, playerGroup) {
    this.lastClicked = undefined;
    this.line = new Phaser.Line(0, 0, 0, 0);
    
-   this.removeThreshold = 400; // time in milliseconds
-   this.removeTime = 0; // time till threshold
+   this.removeThreshold = 100; // time distance you must pull to remove module
+   this.removeDist = 0; // distance you are pulling
    
    this.playerGroup = playerGroup;
 };
@@ -41,11 +41,12 @@ Mouse.prototype.update = function() {
          this.grabbed.force.y = Math.sin(angle) * dist * weight;
       }
       this.line.setTo(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
-      this.removeTime += this.game.time.elapsed;
+      var deltaX = this.grabbed.sprite.x - this.x;
+	  var deltaY = this.grabbed.sprite.y - this.y;
+	  this.removeDist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
       if(this.grabbed.sprite.tag === 'module') {
-		  if (this.removeTime >= this.removeThreshold && this.grabbed.sprite.key !== 'asteroid') {
+		  if (this.removeDist >= this.removeThreshold && this.grabbed.sprite.key !== 'asteroid') {
 			 this.grabbed.sprite.remove();
-			 this.removeTime = 0;
 		  }
 	  }
     } else {
@@ -83,7 +84,6 @@ Mouse.prototype.click = function(pointer) {
      if (temp.sprite && temp.sprite.group && temp.sprite.group !== this.playerGroup) {
         this.grabbed = undefined;
      }
-     this.removeTime = 0;
      this.lastClicked = temp;
    }
 };
