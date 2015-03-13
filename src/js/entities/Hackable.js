@@ -11,6 +11,8 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
 	this.gameState = gameState;
 	//set isHacked to false
 	this.isHacked = false;
+	this.beingHacked = false;
+	this.beingHackedPrev = false;
 	//add hackBar
 	this.hackBar = gameState.uiBuilder.buildProgressBar('growing', 1500, 1200, 100, 10,  200);
 	this.hackBar.setStyle(0, 0xFFFFFF, 0x363636, 0, 0, 0, 0xFFFFFF, 0x2020CC);
@@ -29,6 +31,7 @@ var Hackable = function (gameState, x, y, sprite, hackDistance) {
    this.anchor.setTo(0.5, 0.5);
    this.animations.add('hackable', [0,1,2,3,4], 10, true);
    this.animations.add('hacked', [5,6,7,8,9], 10, true);
+   this.hacking = this.gameState.add.audio('hacking', 1, true);
    
    //Set up physics body for 'hackable' sprite
    gameState.game.physics.p2.enable(this);
@@ -53,12 +56,16 @@ Hackable.prototype.update = function() {
 		if(this.gameState.player.activeHackerModules.length > 0) {
 			var dist;
 			var hacker;
-			//Loop through all hacker modules on the player's cubsat
+			//Loop through all hacker modules on the player's cubesat
 			for(var i = 0; i < this.gameState.player.activeHackerModules.length; i++) {
 				hacker = this.gameState.player.activeHackerModules[i];
 				dist = Math.sqrt( Math.pow(this.x - hacker.cube.x, 2) + Math.pow(this.y - hacker.cube.y, 2) );
 				if(dist < this.hackDistance) {
 					//If hacker is in range, increase hack value and try to emit binary particle
+					if(this.beingHacked === true) {
+						this.beingHackedPrev = true;
+					}
+					this.beingHacked = true;
 					this.hackBar.addValue(0.1);
 					hacker.count++;
 					if(hacker.count >= hacker.cycle) {
@@ -73,13 +80,27 @@ Hackable.prototype.update = function() {
 				}
 				else {
 					hacker.cube.animations.stop();
+					if(this.beingHacked === false) {
+						this.beingHackedPrev = false;
+					}
+					this.beingHacked = false;
 				}
 			}
 		}
 	}
 	else {
-		//this.animations.stop();
-		
+		this.hacking.stop();
+	}
+	if(this.beingHacked === true && this.beingHackedPrev === false) {
+		if(this.hacking.paused === true) {
+			this.hacking.resume();
+		}
+		else {
+			this.hacking.play();
+		}
+	}
+	else if(this.beingHacked === false && this.beingHackedPrev === true){
+		this.hacking.pause();
 	}
 };
 

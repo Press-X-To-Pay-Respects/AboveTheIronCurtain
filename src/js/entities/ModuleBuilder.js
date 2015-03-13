@@ -99,7 +99,8 @@ function thrusterHalt() {
 
 function gunUpdate() {
    if (!this.cube.myConnection || !this.act) {
-      return;
+      this.cube.animations.stop();
+	  return;
    }
    if (this.timer <= 0) {
       var angle = this.cube.body.rotation % (2*Math.PI);
@@ -108,6 +109,7 @@ function gunUpdate() {
       var speed = deltaDist * 50;
       new Bullet(this.gameState, this.cube.x + 30*direction[0], this.cube.y + 30*direction[1], 
                direction, speed, this.tag + 'Bullet');
+	  this.gun.play();
       this.timer = 400;
    } else {
       this.timer -= this.gameState.game.time.elapsed;
@@ -192,7 +194,7 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 	//Create module to wrap around cube class
 	var newModule = new Module(type, newCube, this.gameState);
 		
-	//TODO: edit special module atributes based on 'type'
+	//TODO: edit special module attributes based on 'type'
 	if(type === 'hacker') {
 		newModule.cycle = 6;
 		newModule.count = 0;
@@ -236,7 +238,9 @@ ModuleBuilder.prototype.build = function(type, x, y, forPlayer) {
 
 	//Gun module events
 	if(type === 'gun') {
-	  newModule.cube.animations.add('gun', [0,1,2,3,4,5], 24, true);
+	  newModule.cube.animations.add('gun', [0,1,2,3,4,5], 16, true);
+	  newModule.gun = this.gameState.add.audio('gun');
+	  newModule.gun.allowMultiple = true;
       if (forPlayer) {
 	     newModule.tag = 'player';
          var actKey = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
