@@ -10,6 +10,7 @@ module.exports = levelOne;
 levelOne.prototype = {
 	
 	init: function(params){
+      this.game.sound.stopAll();
 		this.levelSong = this.game.add.audio(params[0]);
 		this.levelSong.play('',params[1],params[2],true,true);
 	},

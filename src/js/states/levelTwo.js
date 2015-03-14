@@ -10,6 +10,7 @@ module.exports = levelTwo;
 levelTwo.prototype = {
 	
   init: function(params){
+   this.game.sound.stopAll();
   	this.levelSong = this.game.add.audio('secondSong');
 	this.levelSong.play('',params[1],params[2],true,true);
   },
