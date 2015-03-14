@@ -1,8 +1,8 @@
 {
-    "level_two": {
+    "level_three": {
 		"enemy_one": {
-         "x_pos": 300,
-         "y_pos": 1100,
+         "x_pos": 100,
+         "y_pos": 800,
          "type": "shoot",
 			"blueprint": [
          ["solarPanel", "none", "solarPanel", "shield", "none", "gun"],

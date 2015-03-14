@@ -94,7 +94,6 @@ Menu.prototype = {
 		this.menuSong.destroy();
 		var params = ['mainSong', 0, 0.75];
 		this.playDownClick();
-      console.log('foo');
 		this.game.state.start('levelThree', true, false, params);
 	}
   }, 

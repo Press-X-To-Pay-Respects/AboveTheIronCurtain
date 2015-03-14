@@ -117,7 +117,7 @@ LevelSetup.prototype.loadLevel = function() {
             }
             var aiType = element['type'];
             enemyGroup.giveAI(aiType, this.state.player);
-			this.state.numEnemies++;
+            this.state.numEnemies++;
          }
       }
    }
