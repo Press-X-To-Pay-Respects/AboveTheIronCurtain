@@ -180,6 +180,7 @@ function hackableUpdate() {
 			}
 		}
 	} else if (this.delay < 0) {
+      this.gameState.levelSetup.shop.addMoney(300);
       this.hacking.stop();
       this.hackBar.destroy();
       this.cube.dieQuick();
