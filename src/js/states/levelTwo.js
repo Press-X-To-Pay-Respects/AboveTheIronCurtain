@@ -67,7 +67,7 @@ levelTwo.prototype = {
 	},
 
 	restartLevel: function() {
-		if(this.context === 'key') {
+		if(this.context) {
 			if(this.game.state.game.paused) {
 				this.game.state.game.paused = false;
 				this.game.levelSong.destroy();
@@ -75,13 +75,13 @@ levelTwo.prototype = {
 			}
 		}
 		else {
-			this.game.levelSong.destroy();
-			this.game.game.state.start('levelTwo', true, false, ['secondSong', 0, 0.75]);
+			this.levelSong.destroy();
+			this.game.state.start('levelTwo', true, false, ['secondSong', 0, 0.75]);
 		}
 	},
 	
 	returnToMenu: function() {
-		if(this.state.game.paused) {
+		if(this.state.game.paused || this.complete || this.deathMenu) {
 			this.state.game.paused = false;
 			this.levelSong.destroy();
 			this.game.state.start('Menu', true, false, ['menuSong', 0, 1]);

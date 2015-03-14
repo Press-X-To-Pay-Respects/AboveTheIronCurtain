@@ -81,7 +81,6 @@ levelOne.prototype = {
 		}
 	},
 	
-	
 	returnToMenu: function() {
 		if(this.state.game.paused || this.complete || this.deathMenu) {
 			this.state.game.paused = false;
