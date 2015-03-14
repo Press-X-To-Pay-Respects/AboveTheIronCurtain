@@ -5,9 +5,13 @@
          "y_pos": 1100,
          "type": "ram",
 			"blueprint": [
-         ["thruster", "shield", "solarPanel", "shield"],
-         ["shield", "core", "shield", "shield"],
-         ["thruster", "shield", "solarPanel", "shield"]
+         ["thruster", "none", "solarPanel", "none", "none", "none"],
+         ["thruster", "shield", "solarPanel", "shield", "none", "none"],
+         ["thruster", "shield", "solarPanel", "shield", "none", "none"],
+         ["shield", "core", "shield", "shield", "hackable", "shield"],
+         ["thruster", "shield", "solarPanel", "shield", "none", "none"],
+         ["thruster", "shield", "solarPanel", "shield", "none", "none"],
+         ["thruster", "none", "solarPanel", "none", "none", "none"]
          ]
         },
        "enemy_two": {
@@ -15,9 +19,15 @@
          "y_pos": 1800,
          "type": "shoot",
 			"blueprint": [
-         ["shield", "shield", "solarPanel", "gun"],
-         ["shield", "core", "shield", "shield"],
-         ["shield", "shield", "solarPanel", "gun"]
+         ["shield", "shield", "shield", "shield", "shield", "shield"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "core", "shield", "shield", "shield", "none"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "shield", "solarPanel", "gun", "none", "none"],
+         ["shield", "shield", "shield", "shield", "shield", "shield"]
          ]
         },
        "enemy_three": {
@@ -25,19 +35,25 @@
          "y_pos": 1800,
          "type": "ram",
 			"blueprint": [
+         ["thruster", "solarPanel", "shield", "none"],
+         ["thruster", "solarPanel", "shield", "none"],
+         ["thruster", "solarPanel", "shield", "none"],
          ["thruster", "shield", "solarPanel", "shield"],
-         ["shield", "core", "shield", "shield"],
-         ["thruster", "shield", "solarPanel", "shield"]
+         ["hackable", "core", "shield", "shield"],
+         ["thruster", "shield", "solarPanel", "shield"],
+         ["thruster", "solarPanel", "shield", "none"],
+         ["thruster", "solarPanel", "shield", "none"],
+         ["thruster", "solarPanel", "shield", "none"]
          ]
         },
-       "hackable_enemy": {
+       "enemy_four": {
          "x_pos": 1300,
          "y_pos": 1800,
-         "type": "ram",
+         "type": "shoot",
 			"blueprint": [
-         ["shield", "shield", "solarPanel", "shield", "none", "none", "none"],
+         ["shield", "solarPanel", "solarPanel", "shield", "none", "none", "gun"],
          ["shield", "core", "shield", "shield", "shield", "hackable", "shield"],
-         ["shield", "shield", "solarPanel", "shield", "none", "none", "none"]
+         ["shield", "solarPanel", "solarPanel", "shield", "none", "none", "gun"]
          ]
         }
     }
