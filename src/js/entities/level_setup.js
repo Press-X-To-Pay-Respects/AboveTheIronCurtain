@@ -64,14 +64,16 @@ var LevelSetup = function(state, level) {
 LevelSetup.prototype.constructor = LevelSetup;
 
 LevelSetup.prototype.update = function() {
-   if(this.leftKey.isDown) {
-		if(this.state.coreModule.cube.body.angularVelocity > -9) { 
-			this.state.coreModule.cube.body.angularForce += -7.5 * Math.pow(this.state.player.numCubes, 1.65);
+   if(this.state.coreModule.cube.body) {
+	   if(this.leftKey.isDown) {
+			if(this.state.coreModule.cube.body.angularVelocity > -9) { 
+				this.state.coreModule.cube.body.angularForce += -7.5 * Math.pow(this.state.player.numCubes, 1.65);
+			}
 		}
-	}
-	if(this.rightKey.isDown) {
-		if(this.state.coreModule.cube.body.angularVelocity < 9) {
-			this.state.coreModule.cube.body.angularForce += 7.5 * Math.pow(this.state.player.numCubes, 1.65);
+		if(this.rightKey.isDown) {
+			if(this.state.coreModule.cube.body.angularVelocity < 9) {
+				this.state.coreModule.cube.body.angularForce += 7.5 * Math.pow(this.state.player.numCubes, 1.65);
+			}
 		}
 	}
    this.bg.x += 0.125;

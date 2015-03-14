@@ -17,10 +17,11 @@ levelThree.prototype = {
   create: function () {
 		this.numEnemies = 0;
 		this.numKilled = 0;
+		this.level = 'three';
 		this.playerDead = false;
 		this.deathMenu = false;
+		this.congrats = false;
 		this.levelSetup = new LevelSetup(this, 'level_three');
-		console.log(this.state.numEnemies);
 		this.complete = false;
 		this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
 		this.pauseMenu.kill();
@@ -38,6 +39,14 @@ levelThree.prototype = {
   
   update: function () {
    this.levelSetup.update();
+   if(this.deathMenu) {
+	this.deathMenu.x = this.game.camera.x + (this.game.camera.width / 2);
+	this.deathMenu.y = this.game.camera.y + (this.game.camera.height / 2);
+   }
+   if(this.congrats) {
+	this.congrats.x = this.game.camera.x + (this.game.camera.width / 2);
+	this.congrats.y = this.game.camera.y + (this.game.camera.height / 2);
+   }
   },
   
   render: function () {
@@ -87,7 +96,7 @@ levelThree.prototype = {
 			this.game.state.start('Menu', true, false, ['menuSong', 0, 0.75]);
 		}
 		if(this.numKilled === this.numEnemies && this.numKilled !== 0) {
-			this.congrats = this.game.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2), 'levelComplete');
+			this.congrats = this.game.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2), 'beatGame');
 			this.congrats.anchor.set(0.5, 0.5);
 			this.complete = true;
 		}

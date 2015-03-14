@@ -7,17 +7,17 @@ var thrustAmt = 5000;
 //Use this to create a moduleBuilder- only need to create one instance of it
 var ModuleBuilder = function(setGameState, setColGroup) {
 	//Ensure that cannot create multiple instances of this class
-	if(ModuleBuilder.prototype.exists) {
+	/*if(ModuleBuilder.prototype.exists) {
 		return ModuleBuilder.prototype.existingReference;
-	}
+	}*/
 		
 	this.gameState = setGameState;
-   this.colGroup = setColGroup;
+    this.colGroup = setColGroup;
 	// this.coreExists = false;	//records if core has been created
-	this.core = null;			//stores core when it is created
+	//this.core = null;			//stores core when it is created
 	//var space = this.gameState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	ModuleBuilder.prototype.exists = true;
-	ModuleBuilder.prototype.existingReference = this;
+	//ModuleBuilder.prototype.exists = true;
+	//ModuleBuilder.prototype.existingReference = this;
 };
 
 ModuleBuilder.prototype.constructor = ModuleBuilder;

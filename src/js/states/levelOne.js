@@ -17,10 +17,10 @@ levelOne.prototype = {
 	create: function () {
 		this.numEnemies = 0;
 		this.numKilled = 0;
+		this.level = 'one';
 		this.playerDead = false;
 		this.deathMenu = false;
 		this.levelSetup = new LevelSetup(this, 'level_one');
-		console.log(this.state.numEnemies);
 		this.complete = false;
 		this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
 		this.pauseMenu.kill();
@@ -39,6 +39,14 @@ levelOne.prototype = {
   
 	update: function () {
 		this.levelSetup.update();
+		if(this.deathMenu) {
+			this.deathMenu.x = this.game.camera.x + (this.game.camera.width / 2);
+			this.deathMenu.y = this.game.camera.y + (this.game.camera.height / 2);
+		}
+		if(this.congrats) {
+			this.congrats.x = this.game.camera.x + (this.game.camera.width / 2);
+			this.congrats.y = this.game.camera.y + (this.game.camera.height / 2);
+		}
 	},
   
 	render: function () {
