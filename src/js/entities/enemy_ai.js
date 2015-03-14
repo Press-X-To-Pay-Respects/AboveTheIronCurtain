@@ -6,9 +6,9 @@ var EnemyAI = function(game, group, type, playerGroup) {
    this.type = type;
    this.playerGroup = playerGroup;
    this.player = this.playerGroup.root;
-   this.ramDist = 500;
-   this.shootDist = 500;
-   this.rotationForce = 50;
+   this.ramDist = 750;
+   this.shootDist = 750;
+   this.rotationForce = 125;
    this.facingAllowance = Math.PI / 15;
    this.acting = false;
    switch (this.type) {

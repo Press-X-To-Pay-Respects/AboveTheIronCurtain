@@ -57,6 +57,8 @@ var LevelSetup = function(state, level) {
    this.warning = new Warning(this.state);
    this.updateDependents.push(this.warning);
    this.missionPrompt = new MissionPrompt(this.state);
+   this.missionPrompt.setDescription('Destroy Enemies');
+   this.missionPrompt.setProgress(this.state.numKilled + '/' + this.state.numEnemies);
 };
 
 LevelSetup.prototype.constructor = LevelSetup;
@@ -85,6 +87,9 @@ LevelSetup.prototype.update = function() {
 			this.updateDependents[i].update();
 		}
 	}
+	if(this.state.numKilled === this.state.numEnemies && this.state.numKilled !== 0 && this.state.complete === false) {
+		this.state.levelComplete();
+	}
 };
 
 LevelSetup.prototype.loadLevel = function() {
@@ -112,9 +117,10 @@ LevelSetup.prototype.loadLevel = function() {
             }
             var aiType = element['type'];
             enemyGroup.giveAI(aiType, this.state.player);
+			this.state.numEnemies++;
          }
       }
-   } 
+   }
 };
 
 LevelSetup.prototype.render = function() {

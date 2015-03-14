@@ -24,7 +24,7 @@ var Mouse = function(game, input, playerGroup) {
 Mouse.prototype.constructor = Mouse;
 
 Mouse.prototype.update = function() {
-   if (this.grabbed) {
+   if (this.grabbed && this.grabbed.sprite) {
       var angle = Math.atan2(this.grabbed.sprite.y - (this.input.position.y + this.game.camera.y), this.grabbed.sprite.x - (this.input.position.x+ this.game.camera.x)) + Math.PI;
       var dist = Utils.distance(this.grabbed.sprite.x, this.grabbed.sprite.y, (this.input.position.x+ this.game.camera.x), (this.input.position.y + this.game.camera.y));
       var weight;

@@ -67,12 +67,19 @@ Cube.prototype.update = function() {
                else if(this.key === 'solarPanel') {
                   this.state.shop.addMoney(25);
                }
+			   else if(this.key === 'core') {
+				  this.state.shop.addMoney(50);
+				  this.state.numKilled++;
+				  console.log(this.state.numKilled);
+				  this.state.levelSetup.missionPrompt.setProgress(this.state.numKilled + '/' + this.state.numEnemies);
+			   }
             }
             this.group.destroyCube(this);
          } else {
             if(this.key === 'core' && this.tag === 'module') {
                this.kill();
-               this.state.restartLevel();
+			   this.state.playerDead = true;
+			   this.state.playerDied();
             }
             this.destroy();
          }

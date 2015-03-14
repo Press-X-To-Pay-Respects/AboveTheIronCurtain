@@ -778,7 +778,8 @@ CubeGroup.prototype.destroyCube = function(cube) {
   // destroy cube
   if(cube.key === 'core' && cube.tag === 'module') {
 	cube.kill();
-	// this.state.levelSetup.restartLevel();
+	this.state.playerDead = true;
+	this.state.playerDied();
   }
   cube.destroy(true);
 };
