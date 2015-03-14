@@ -83,7 +83,7 @@ Menu.prototype = {
   changeToLevel2: function(){
 	if(!this.credits.alive) {
 		this.menuSong.destroy();
-		var params = ['mainSong', 0, 0.75];
+		var params = ['secondSong', 0, 0.75];
 		this.playDownClick();
 		this.game.state.start('levelTwo', true, false, params);
 	}
@@ -92,7 +92,7 @@ Menu.prototype = {
   changeToLevel3: function(){
 	if(!this.credits.alive) {
 		this.menuSong.destroy();
-		var params = ['mainSong', 0, 0.75];
+		var params = ['thirdSong', 0, 0.75];
 		this.playDownClick();
       console.log('foo');
 		this.game.state.start('levelThree', true, false, params);

@@ -12,7 +12,7 @@ var Shop = function(state) {
 	else if(this.state.level === 'three') {
 		this.money = 2000;
 	}
-   this.shopSpeed = 1;
+   this.shopSpeed = 16;
    this.diff = 0;
    this.newModuleSpeed = 1500;
    // create button
@@ -60,14 +60,14 @@ Shop.prototype.constructor = Shop;
 Shop.prototype.update = function() {
    // find diff
 	if(this.shopMenuOpening === true) {	
-      this.diff += this.shopSpeed * this.game.time.elapsed;
+      this.diff += this.shopSpeed;
 		if(this.diff >= 276) {
 			this.shopMenuOpening = false;
 			this.addShopButtons();
 		}
 	}
 	else if(this.shopMenuClosing === true) {
-      this.diff -= this.shopSpeed * this.game.time.elapsed;
+      this.diff -= this.shopSpeed;
 		if(this.diff <= 0) {
 			this.shopPanel.kill();
 			this.shopMenuClosing = false;

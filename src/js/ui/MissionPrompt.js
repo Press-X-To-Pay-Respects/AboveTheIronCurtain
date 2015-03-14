@@ -10,14 +10,14 @@ var MissionPrompt = function (state) {
 	this.cam = this.state.game.camera;
    this.anchor.setTo(0.5, 0.5);
    //add description text
-   var style = { font: '26px Arial', fill: '#333333', align: 'center' };
+   var style = { font: '26px Roboto', fill: '#ffffff', align: 'center' };
    this.descriptionText = state.game.add.text(0, 0, 'No description Entered', style);
    this.descriptionText.anchor.setTo(0.5, 0.5);
    this.addChild(this.descriptionText);
    this.descriptionText.x = 0;
    this.descriptionText.y = -14;
    //add value progress text
-	style = { font: '26px Arial', fill: '#FFFF66', align: 'center' };
+	style = { font: '26px Roboto', fill: '#ffffff', align: 'center' };
    this.progressText = state.game.add.text(0, 0, '0/0', style);
    this.progressText.anchor.setTo(0.5, 0.5);
    this.addChild(this.progressText);

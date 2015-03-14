@@ -94,7 +94,7 @@ levelOne.prototype = {
 		if(this.complete) {
 			this.congrats.destroy();
 			this.levelSong.destroy();
-			this.game.state.start('levelTwo', true, false, ['mainSong', 0, 0.75]);
+			this.game.state.start('levelTwo', true, false, ['secondSong', 0, 0.75]);
 		}
 		if(this.numKilled === this.numEnemies && this.numKilled !== 0) {
 			this.congrats = this.game.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2), 'levelComplete');
