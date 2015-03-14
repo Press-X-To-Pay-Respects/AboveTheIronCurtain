@@ -98,6 +98,8 @@ levelThree.prototype = {
 		if(this.numKilled === this.numEnemies && this.numKilled !== 0) {
 			this.congrats = this.game.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2), 'beatGame');
 			this.congrats.anchor.set(0.5, 0.5);
+			this.cheering = this.add.audio('cheering');
+			this.cheering.play();
 			this.complete = true;
 		}
 	},
