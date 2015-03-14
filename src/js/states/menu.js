@@ -29,10 +29,10 @@ Menu.prototype = {
 	this.bg2 = this.game.add.sprite(-12500, -500, 'earthNight');
     
 	//Main Screen
-    this.title = this.add.image(this.world.centerX, this.world.centerY + 32, 'title');
+    this.title = this.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2) + 32, 'title');
     this.title.anchor.setTo(0.5, 0.5);
     
-    this.startButton = this.addButton(0, 'startGameButton', this.changeToGame, this);
+    this.startButton = this.addButton(0, 'startGameButton', this.changeToLevel1, this);
 	this.formatButton(this.startButton);
   	
   	this.missionSelectButton = this.addButton(1, 'missionSelectButton', this.switchButtons, this);
@@ -54,7 +54,7 @@ Menu.prototype = {
 	this.backButton = this.addButton(2, 'backButton', this.switchButtons, this);
 	this.formatButton(this.backButton);
 
-	this.credits = this.add.image(this.world.centerX - 360, this.world.centerY - 256 + this.diff, 'credits');
+	this.credits = this.add.image(this.game.camera.x + (this.game.camera.width / 2) - 360, this.game.camera.y + (this.game.camera.height / 2) - 256 + this.diff, 'credits');
 	this.credits.kill();
 	this.creditsCloseButton = this.addButton(10, 'closeButton', this.doCredits, {game: this, button: 'closeCreditsButton'});
 	this.creditsCloseButton.x = this.credits.x + this.credits.width - 32;
@@ -64,7 +64,7 @@ Menu.prototype = {
   },
 
   addButton: function(button, img, func, context){
-    return this.add.button(this.world.centerX, this.world.centerY + (button) * 90, img, func, context, 1, 0, 2);
+    return this.add.button(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2) + (button) * 90, img, func, context, 1, 0, 2);
 
   },
   
@@ -186,7 +186,7 @@ Menu.prototype = {
 				this.creditsClosing = false;
 			}
 		}
-		this.credits.y = this.world.centerY - 256 + this.diff;
+		this.credits.y = this.game.camera.y + (this.game.camera.height / 2) - 256 + this.diff;
 		this.creditsCloseButton.x = this.credits.x + this.credits.width - 32;
 		this.creditsCloseButton.y = this.credits.y;
 		
@@ -204,9 +204,9 @@ Menu.prototype = {
 				this.mainButtonsUp = true;
 			}
 		}
-		this.startButton.x = this.world.centerX + this.butDiff;
-		this.missionSelectButton.x = this.world.centerX + this.butDiff;
-		this.creditsButton.x = this.world.centerX + this.butDiff;
+		this.startButton.x = this.game.camera.x + (this.game.camera.width / 2) + this.butDiff;
+		this.missionSelectButton.x = this.game.camera.x + (this.game.camera.width / 2) + this.butDiff;
+		this.creditsButton.x = this.game.camera.x + (this.game.camera.width / 2) + this.butDiff;
 		this.level1Button.x = this.startButton.x + 768;
 		this.level2Button.x = this.startButton.x + 768;
 		this.level3Button.x = this.startButton.x + 768;

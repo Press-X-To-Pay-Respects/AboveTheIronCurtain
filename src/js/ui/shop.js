@@ -13,6 +13,8 @@ var Shop = function(state) {
    this.shopButton = this.game.add.button(this.game.camera.x + this.game.camera.width - 48, 16, 'shopButton', this.useShopButton, this, 1, 0, 2);
 	this.shopButton.onInputOver.add(this.sm.playHoverClick, this.sm);
 	this.shopButton.onInputDown.add(this.sm.playDownClick, this.sm);
+	this.shopKey = this.game.input.keyboard.addKey(Phaser.Keyboard.R);
+	this.shopKey.onDown.add(this.useShopButton, this);
    // create text
    this.moneyText = this.game.add.text(this.shopButton.x - 8, this.shopButton.y + 48, this.money);
    this.moneyText.font = 'VT323';
@@ -173,6 +175,7 @@ Shop.prototype.debugAddMoney = function() {
 };
 
 Shop.prototype.useShopButton = function() {
+	this.sm.playDownClick();
    if(!this.shopPanel.alive && !this.shopMenuOpening && !this.shopMenuClosing) {
       this.shopPanel.revive();
       this.diff = 0;
