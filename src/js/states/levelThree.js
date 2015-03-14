@@ -11,7 +11,7 @@ levelThree.prototype = {
 	
   init: function(params){
   	this.levelSong = this.game.add.audio(params[0]);
-	this.levelSong.play('',params[1],params[2],true,true);
+	this.levelSong.play('',params[1],1,true,true);
   },
 	
   create: function () {
@@ -72,12 +72,12 @@ levelThree.prototype = {
 			if(this.game.state.game.paused) {
 				this.game.state.game.paused = false;
 				this.game.levelSong.destroy();
-				this.game.game.state.start('levelThree', true, false, ['mainSong', 0, 0.75]);
+				this.game.game.state.start('levelThree', true, false, ['thirdSong', 0, 0.75]);
 			}
 		}
 		else {
 			this.game.levelSong.destroy();
-			this.game.game.state.start('levelThree', true, false, ['mainSong', 0, 0.75]);
+			this.game.game.state.start('levelThree', true, false, ['thirdSong', 0, 0.75]);
 		}
 	},
 	
@@ -106,7 +106,7 @@ levelThree.prototype = {
 		if(this.deathMenu) {
 			this.deathMenu.destroy();
 			this.levelSong.destroy();
-			this.game.state.start('levelThree', true, false, ['mainSong', 0, 0.75]);
+			this.game.state.start('levelThree', true, false, ['thirdSong', 0, 0.75]);
 		}
 		if(this.playerDead) {
 			this.deathMenu = this.game.add.image(this.game.camera.x + (this.game.camera.width / 2), this.game.camera.y + (this.game.camera.height / 2), 'deathMenu');

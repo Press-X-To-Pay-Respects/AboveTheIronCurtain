@@ -94,6 +94,8 @@ Preloader.prototype = {
 	//Load Music
 	this.load.audio('menuSong', 'assets/sound/Yet Another.ogg');
 	this.load.audio('mainSong', 'assets/sound/Top (down) Night.ogg');
+	this.load.audio('secondSong', 'assets/sound/We All Move.ogg');
+	this.load.audio('thirdSong', 'assets/sound/Wargames.ogg');
 
   },
 
