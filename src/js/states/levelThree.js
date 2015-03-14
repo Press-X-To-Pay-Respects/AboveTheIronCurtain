@@ -15,6 +15,7 @@ levelThree.prototype = {
   },
 	
   create: function () {
+   console.log('create');
 	this.levelSetup = new LevelSetup(this, 'level_three');
 	this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
 	this.pauseMenu.kill();
