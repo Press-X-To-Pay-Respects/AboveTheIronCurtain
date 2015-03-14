@@ -7,7 +7,7 @@ module.exports = Menu;
 Menu.prototype = {
 
   init: function(params){
-  	
+   this.game.sound.stopAll();
 	this.menuSong = this.game.add.audio(params[0]);
 	this.menuSong.play('',params[1],params[2],true,true);
 	this.hoverClick = this.game.add.audio('hoverClick');
