@@ -15,41 +15,26 @@ levelThree.prototype = {
   },
 	
   create: function () {
-<<<<<<< HEAD
-   console.log('create');
-	this.levelSetup = new LevelSetup(this, 'level_three');
-	this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
-	this.pauseMenu.kill();
-	this.pauseMenu.anchor.setTo(0.5, 0.5);
-	this.pauseKey = this.game.input.keyboard.addKey(27);
-	this.pauseKey.onDown.add(this.pauseGame, {game: this, context: 'key'});
-	this.menuKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	this.menuKey.onDown.add(this.returnToMenu, this);
-	this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.G);
-	this.restartKey.onDown.add(this.restartLevel, {game: this, context: 'key'});
-	this.state.game.input.onDown.add(this.pauseGame, {game: this, context: 'mouse'});
-=======
-		this.numEnemies = 0;
-		this.numKilled = 0;
-		this.level = 'three';
-		this.playerDead = false;
-		this.deathMenu = false;
-		this.congrats = false;
-		this.levelSetup = new LevelSetup(this, 'level_three');
-		this.complete = false;
-		this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
-		this.pauseMenu.kill();
-		this.pauseMenu.anchor.setTo(0.5, 0.5);
-		this.pauseKey = this.game.input.keyboard.addKey(27);
-		this.pauseKey.onDown.add(this.pauseGame, {game: this, context: 'key'});
-		this.menuKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-		this.menuKey.onDown.add(this.returnToMenu, this);
-		this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.G);
-		this.restartKey.onDown.add(this.restartLevel, {game: this, context: 'key'});
-		this.state.game.input.onDown.add(this.pauseGame, {game: this, context: 'mouse'});
-		this.state.game.input.onDown.add(this.levelComplete, this);
-		this.state.game.input.onDown.add(this.playerDied, this);
->>>>>>> origin/gh-pages
+   this.numEnemies = 0;
+   this.numKilled = 0;
+   this.level = 'three';
+   this.playerDead = false;
+   this.deathMenu = false;
+   this.congrats = false;
+   this.levelSetup = new LevelSetup(this, 'level_three');
+   this.complete = false;
+   this.pauseMenu = this.game.add.image(-2000, -2000, 'pauseMenu');
+   this.pauseMenu.kill();
+   this.pauseMenu.anchor.setTo(0.5, 0.5);
+   this.pauseKey = this.game.input.keyboard.addKey(27);
+   this.pauseKey.onDown.add(this.pauseGame, {game: this, context: 'key'});
+   this.menuKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+   this.menuKey.onDown.add(this.returnToMenu, this);
+   this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.G);
+   this.restartKey.onDown.add(this.restartLevel, {game: this, context: 'key'});
+   this.state.game.input.onDown.add(this.pauseGame, {game: this, context: 'mouse'});
+   this.state.game.input.onDown.add(this.levelComplete, this);
+   this.state.game.input.onDown.add(this.playerDied, this);
   },
   
   update: function () {
