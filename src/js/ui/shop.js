@@ -6,6 +6,12 @@ var Shop = function(state) {
    this.sm = this.state.soundManager;
    this.mouse = this.state.mouse;
    this.money = 500;
+   if(this.state === 'levelTwo') {
+		this.money = 800;
+	}
+	else if(this.state === 'levelThree') {
+		this.money = 2000;
+	}
    this.shopSpeed = 1;
    this.diff = 0;
    this.newModuleSpeed = 1500;
