@@ -70,7 +70,6 @@ Cube.prototype.update = function() {
 			   else if(this.key === 'core') {
 				  this.state.shop.addMoney(50);
 				  this.state.numKilled++;
-				  console.log(this.state.numKilled);
 				  this.state.levelSetup.missionPrompt.setProgress(this.state.numKilled + '/' + this.state.numEnemies);
 			   }
             }
