@@ -99,11 +99,14 @@ Banner.prototype.addTexts = function() {
       newText.wordWrapWidth = this.width - this.textWrapPadding;
       newText.anchor.set(0.5);
       newText.setShadow(this.shadowOffsetX, this.shadowOffsetY, this.shadowColor, this.shadowBlur);
-      var newColors = textColors[i];
-      for (var j = 0; j < newColors.length; j++) {
-         newText.addColor(this.highlightText, newColors[j]);
-         j++;
-         newText.addColor(this.normalText, newColors[j]);
+      var higlights = textColors[i];
+      for (var j = 0; j < higlights.length; j++) {
+         var word = higlights[j];
+         var indices = this.indicesOf(word, newText.text);
+         for (var k = 0; k < indices.length; k++) {
+            newText.addColor(this.highlightText, indices[k]);
+            newText.addColor(this.normalText, indices[k] + word.length);
+         }
       }
       this.textObjs.push(newText);
       this.group.add(newText);
@@ -118,6 +121,29 @@ Banner.prototype.render = function() {
 	this.graphics.beginFill(this.bgColor); //sets color of background fill
 	this.graphics.drawRect(this.x-this.width/2, this.y-this.height/2, this.width, this.height);
 	this.graphics.endFill();
+};
+
+Banner.prototype.indicesOf = function(search, target) {
+   var startIndex = 0;
+   var searchLength = search.length;
+   var index;
+   var indices = [];
+   target = target.toLowerCase();
+   var firstA = false;
+   while ((index = target.indexOf(search, startIndex)) > -1) {
+      var left = target.charAt(index - 1);
+      var right = target.charAt(index + searchLength);
+      if ((left === '' || left === ' ') && (right === '' || right === ' ')) {
+         if (!firstA && target.charAt(index) === 'a') {
+            firstA = true;
+            indices.push(index);
+         } else if (target.charAt(index) !== 'a') {
+            indices.push(index);
+         }
+      }
+      startIndex = index + searchLength;
+   }
+   return indices;
 };
 
 Banner.prototype.show = function() {
